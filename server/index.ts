@@ -1,7 +1,9 @@
 import Koa from 'koa'
 import http from 'http'
 import next from 'next'
-import socket from './socket'
+
+import { Server } from 'socket.io'
+import RoomSocketHandler from './handler/RoomSocketHandler'
 
 const port = parseInt(process.env.PORT || '3000', 10)
 const dev = process.env.NODE_ENV !== 'production'
@@ -9,7 +11,10 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 const koa = new Koa()
 const server = http.createServer(koa.callback())
-socket(server) // init socket io server
+
+const io = new Server(server)
+
+RoomSocketHandler.listen(io)
 
 const main = async () => {
   await app.prepare()

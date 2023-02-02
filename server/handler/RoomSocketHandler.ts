@@ -1,5 +1,6 @@
 import { RoomsRepository } from '../repository/rooms'
 import { v4 as uuid } from 'uuid'
+import { Socket, Server } from 'socket.io'
 
 export const CONNECT_EVENT = 'room/connect'
 export const CREATE_ROOM_REQUEST = 'room/create'
@@ -12,9 +13,9 @@ export const NEW_MESSAGE = 'room/new-message'
 export const SEND_MESSAEGE = 'room/send-message'
 
 class RoomSocketHandler {
-  private static io: SocketIO.Server
+  private static io: Server
 
-  public static listen(io: SocketIO.Server) {
+  public static listen(io: Server) {
     this.io = io
 
     this.connect()
@@ -36,21 +37,21 @@ class RoomSocketHandler {
     })
   }
 
-  public static listRoomDataRequestListener(socket: SocketIO.Socket) {
+  public static listRoomDataRequestListener(socket: Socket) {
     socket.on(LIST_ROOM_DATA_REQUEST, (ack: Function) => {
       const rooms = RoomsRepository.getRooms
       ack(rooms)
     })
   }
 
-  public static creatRoomRequestListener(socket: SocketIO.Socket) {
+  public static creatRoomRequestListener(socket: Socket) {
     socket.on(CREATE_ROOM_REQUEST, (roomNm: string) => {
       const rooms = RoomsRepository.addRoom(roomNm)
       this.io.to('wating-room').emit(UPDATE_ROOM_LIST, rooms)
     })
   }
 
-  public static joinRoomRequestListener(socket: SocketIO.Socket) {
+  public static joinRoomRequestListener(socket: Socket) {
     socket.on(JOIN_ROOM, (roomId) => {
       socket.join(roomId)
       if (roomId !== 'wating-room') {
@@ -59,13 +60,13 @@ class RoomSocketHandler {
     })
   }
 
-  public static leaveRoomRequestListener(socket: SocketIO.Socket) {
+  public static leaveRoomRequestListener(socket: Socket) {
     socket.on(LEAVE_ROOM, (roomId) => {
       socket.leave(roomId)
     })
   }
 
-  public static inRoomUserListener(socket: SocketIO.Socket) {
+  public static inRoomUserListener(socket: Socket) {
     socket.on(IN_ROOM_USER, () => {
       socket.broadcast.emit(IN_ROOM_USER, { id: socket.id })
     })

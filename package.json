@@ -1,0 +1,68 @@
+{
+  "name": "meta-casion",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@react-three/drei": "^9.56.5",
+    "@react-three/fiber": "^8.10.1",
+    "cross-env": "^7.0.3",
+    "express": "^4.18.2",
+    "glsl-random": "^0.0.5",
+    "immer": "^9.0.19",
+    "koa": "^2.14.1",
+    "koa-logger": "^3.2.1",
+    "next": "^13.1.6",
+    "next-pwa": "^5.6.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0",
+    "three": "^0.149.0",
+    "three-stdlib": "^2.21.6",
+    "use-immer": "^0.8.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@next/bundle-analyzer": "^13.1.6",
+    "@types/koa": "^2.13.5",
+    "@types/koa-logger": "^3.1.2",
+    "@types/node": "^18.11.18",
+    "@types/react": "^18.0.27",
+    "@types/socket.io": "^2.1.4",
+    "@types/socket.io-client": "^1.4.32",
+    "@types/uuid": "^9.0.0",
+    "autoprefixer": "^10.4.12",
+    "eslint": "^8.33.0",
+    "eslint-config-next": "^13.1.6",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-tailwind": "^0.2.1",
+    "file-loader": "^6.2.0",
+    "glslify": "^7.1.1",
+    "glslify-loader": "^2.0.0",
+    "nodemon": "^2.0.20",
+    "postcss": "^8.4.21",
+    "prettier": "^2.8.3",
+    "raw-loader": "^4.0.2",
+    "tailwindcss": "^3.2.4",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5",
+    "url-loader": "^4.1.1"
+  },
+  "scripts": {
+    "nodemon": "nodemon",
+    "build": "next build && tsc --project tsconfig.server.json",
+    "start": "cross-env NODE_ENV=production node dist/index.js",
+    "lint": "yarn prettier && yarn eslint",
+    "eslint": "next lint --fix --dir src",
+    "prettier": "prettier --list-different \"./src/**/*.{ts,tsx,md}\"",
+    "dev": "next dev",
+    
+    "export": "EXPORT=true next build && EXPORT=true next export",
+    "analyze": "ANALYZE=true next build"
+    
+  }
+}

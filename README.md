@@ -1,3 +1,5 @@
-# my-app
+# META CASINO
 
-This project was bootstrapped with [`create-r3f-app`](https://github.com/utsuboco/create-r3f-app)
+NextJS + THREE JS + Socket.io
+
+메타로 즐기는 실시간 카지노 게임

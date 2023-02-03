@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SEND_MESSAEGE = exports.NEW_MESSAGE = exports.IN_ROOM_USER = exports.UPDATE_ROOM_LIST = exports.LEAVE_ROOM = exports.JOIN_ROOM = exports.LIST_ROOM_DATA_REQUEST = exports.CREATE_ROOM_REQUEST = exports.CONNECT_EVENT = void 0;
 const rooms_1 = require("../repository/rooms");
-const uuid_1 = require("uuid");
 exports.CONNECT_EVENT = 'room/connect';
 exports.CREATE_ROOM_REQUEST = 'room/create';
 exports.LIST_ROOM_DATA_REQUEST = 'room/list-room-data-request';
@@ -59,7 +58,8 @@ class SocketRoom {
             this.io.emit(exports.NEW_MESSAGE, {
                 message: message.message,
                 senderId: socket.id,
-                chatId: (0, uuid_1.v4)(),
+                chatId: message.chatId,
+                nickname: message.nickname,
             });
         });
         socket.on('disconnect', socket.removeAllListeners);

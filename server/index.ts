@@ -3,7 +3,8 @@ import http from 'http'
 import next from 'next'
 
 import { Server } from 'socket.io'
-import RoomSocketHandler from './handler/RoomSocketHandler'
+import SocketRoom from './handler/SocketRoom'
+import SocketThree from './handler/SocketThree'
 
 const port = parseInt(process.env.PORT || '3000', 10)
 const dev = process.env.NODE_ENV !== 'production'
@@ -14,7 +15,13 @@ const server = http.createServer(koa.callback())
 
 const io = new Server(server)
 
-RoomSocketHandler.listen(io)
+const link = () => {
+  io.on('connection', (socket) => {
+    SocketRoom.listen(io, socket)
+    SocketThree.three(io, socket)
+    socket.on('disconnect', socket.removeAllListeners)
+  })
+}
 
 const main = async () => {
   await app.prepare()
@@ -31,3 +38,4 @@ const main = async () => {
 }
 
 main()
+link()

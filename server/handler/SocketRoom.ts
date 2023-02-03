@@ -12,29 +12,25 @@ export const IN_ROOM_USER = 'room/in-room-user'
 export const NEW_MESSAGE = 'room/new-message'
 export const SEND_MESSAEGE = 'room/send-message'
 
-class RoomSocketHandler {
+class SocketRoom {
   private static io: Server
 
-  public static listen(io: Server) {
+  public static listen(io: Server, socket: Socket) {
     this.io = io
 
-    this.connect()
+    this.connect(socket)
+    this.inRoomUserListener(socket)
   }
 
   /**
    * 최초 접속시
    */
-  public static connect() {
-    this.io.on('connection', (socket) => {
-      socket.emit(CONNECT_EVENT, RoomsRepository.getRooms)
-
-      this.creatRoomRequestListener(socket)
-      this.joinRoomRequestListener(socket)
-      this.leaveRoomRequestListener(socket)
-      this.listRoomDataRequestListener(socket)
-
-      socket.on('disconnect', socket.removeAllListeners)
-    })
+  public static connect(socket) {
+    socket.emit(CONNECT_EVENT, RoomsRepository.getRooms)
+    this.creatRoomRequestListener(socket)
+    this.joinRoomRequestListener(socket)
+    this.leaveRoomRequestListener(socket)
+    this.listRoomDataRequestListener(socket)
   }
 
   public static listRoomDataRequestListener(socket: Socket) {
@@ -54,9 +50,6 @@ class RoomSocketHandler {
   public static joinRoomRequestListener(socket: Socket) {
     socket.on(JOIN_ROOM, (roomId) => {
       socket.join(roomId)
-      if (roomId !== 'wating-room') {
-        this.inRoomUserListener(socket)
-      }
     })
   }
 
@@ -79,7 +72,12 @@ class RoomSocketHandler {
         chatId: uuid(),
       })
     })
+    socket.on('disconnect', socket.removeAllListeners)
+    return () => {
+      socket.off(SEND_MESSAEGE, socket.removeAllListeners)
+      socket.off(NEW_MESSAGE, socket.removeAllListeners)
+    }
   }
 }
 
-export default RoomSocketHandler
+export default SocketRoom

@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
+import { Socket } from 'socket.io-client'
 import {
   JOIN_ROOM,
   LEAVE_ROOM,
@@ -6,10 +7,10 @@ import {
   CONNECT_EVENT,
   LIST_ROOM_DATA_REQUEST,
   IN_ROOM_USER,
-} from '../../server/handler/RoomSocketHandler'
+} from '../../server/handler/SocketRoom'
 import { IRoom } from '../../server/repository/rooms'
 
-export const useJoinRoom = (socket: SocketIOClient.Socket, roomId: string) => {
+export const useJoinRoom = (socket: Socket, roomId: string) => {
   const requestJoin = () => {
     console.log(`join Room: ${roomId}`)
     socket.emit(JOIN_ROOM, roomId)
@@ -23,7 +24,7 @@ export const useJoinRoom = (socket: SocketIOClient.Socket, roomId: string) => {
   useEffect(requestJoin, [])
 }
 
-export const useRoomsIo = (socket: SocketIOClient.Socket) => {
+export const useRoomsIo = (socket: Socket) => {
   const [rooms, setRooms] = useState<IRoom[]>([])
   const roomData = () => {
     console.log('userRoomsIo Mount')
@@ -44,7 +45,7 @@ export const useRoomsIo = (socket: SocketIOClient.Socket) => {
   return [rooms]
 }
 
-export const useWatingRoom = (socket: SocketIOClient.Socket) => {
+export const useWatingRoom = (socket: Socket) => {
   const ms = useMemo(() => socket, [socket])
   const [rooms, setRooms] = useState<IRoom[]>([])
   const roomData = () => {
@@ -65,7 +66,7 @@ export const useWatingRoom = (socket: SocketIOClient.Socket) => {
   return { rooms }
 }
 
-export const useJoinNewUser = (socket: SocketIOClient.Socket) => {
+export const useJoinNewUser = (socket: Socket) => {
   const ms = useMemo(() => socket, [socket])
   const [id, setId] = useState('')
 

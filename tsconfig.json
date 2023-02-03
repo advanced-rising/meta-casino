@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
@@ -21,6 +19,13 @@
     "jsx": "preserve",
     "resolveJsonModule": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "server/index.js", "server/scene.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "server/index.js",
+    "server/scene.js",
+    "server/handler/ThreeScene.js"
+  ],
   "exclude": ["node_modules", "dist", ".next", "out", "next.config.js"]
 }

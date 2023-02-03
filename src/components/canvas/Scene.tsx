@@ -7,7 +7,7 @@ interface Props {
 export default function Scene({ children, ...props }: Props) {
   // Everything defined in here will persist between route changes, only children are swapped
   return (
-    <Canvas {...props}>
+    <Canvas style={{ width: '100%', height: '100%' }} {...props}>
       <directionalLight intensity={0.75} />
       <ambientLight intensity={0.75} />
       {children}

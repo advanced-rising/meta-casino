@@ -2,7 +2,7 @@ import dynamic from 'next/dynamic'
 import Instructions from '@/components/dom/Instructions'
 import Link from 'next/link'
 import { useJoinRoom, useWatingRoom } from '../utils/hook'
-import { CREATE_ROOM_REQUEST } from '../../server/handler/RoomSocketHandler'
+import { CREATE_ROOM_REQUEST } from '../../server/handler/SocketRoom'
 import { IRoom } from '../../server/repository/rooms'
 import { socket } from '../utils/context'
 import { useState } from 'react'
@@ -23,7 +23,7 @@ export default function Page(props) {
   const createRoomEnterHandler = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && newRoom.length > 0) {
       if (rooms.filter((room) => newRoom === room.roomNm).length > 0) {
-        alert('이미 존재하는 방이름')
+        alert('해당 방 이름은 이미 존재합니다.')
         return
       }
       socket.emit(CREATE_ROOM_REQUEST, newRoom)
@@ -39,9 +39,9 @@ export default function Page(props) {
         value={newRoom}
         onKeyDown={createRoomEnterHandler}
       />
-      <ul className='bg-blue-200'>
+      <ul className=''>
         {rooms.map((room: IRoom) => (
-          <li key={room.id}>
+          <li key={room.id} className='text-white'>
             <Link href={`/room/[id]`} as={`/room/${room.id}`}>
               {room.roomNm}
             </Link>
@@ -54,7 +54,9 @@ export default function Page(props) {
 
 // Canvas components go here
 // It will receive same props as the Page component (from getStaticProps, etc.)
-Page.canvas = (props) => <Logo scale={0.5} route='/blob' position-y={-1} />
+Page.canvas = (props) => {
+  return <Logo scale={0.5} route='/blob' position-y={-1} />
+}
 
 export async function getStaticProps() {
   return { props: { title: 'Index' } }

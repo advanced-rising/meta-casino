@@ -1,5 +1,4 @@
 import { useEffect, useState, useMemo } from 'react'
-import { Socket } from 'socket.io-client'
 import {
   JOIN_ROOM,
   LEAVE_ROOM,
@@ -7,8 +6,13 @@ import {
   CONNECT_EVENT,
   LIST_ROOM_DATA_REQUEST,
   IN_ROOM_USER,
-} from '../../server/handler/SocketRoom'
-import { IRoom } from '../../server/repository/rooms'
+  NEW_MESSAGE,
+} from 'server/handler/SocketRoom'
+import { IRoom } from 'server/repository/rooms'
+import { Socket } from 'socket.io-client'
+import { useImmer } from 'use-immer'
+
+import { socket } from './context'
 
 export const useJoinRoom = (socket: Socket, roomId: string) => {
   const requestJoin = () => {
@@ -68,12 +72,20 @@ export const useWatingRoom = (socket: Socket) => {
 
 export const useJoinNewUser = (socket: Socket) => {
   const ms = useMemo(() => socket, [socket])
-  const [id, setId] = useState('')
+  const [id, setId] = useImmer({
+    id: '',
+    nickname: '',
+  })
+
+  console.log('socket', socket)
 
   const newUserJoinListener = () => {
-    ms.on(IN_ROOM_USER, ({ id }: any) => {
-      setId(id)
-      console.log(`newUserJoinListener: `, id)
+    ms.on(IN_ROOM_USER, ({ id, nickname }: any) => {
+      setId((draft) => {
+        draft.id = id
+        draft.nickname = nickname
+      })
+      console.log(`newUserJoinListener: `, id, nickname)
     })
 
     return () => {
@@ -83,5 +95,26 @@ export const useJoinNewUser = (socket: Socket) => {
 
   useEffect(newUserJoinListener, [])
 
-  return { id }
+  return { id: id.id, nickname: id.nickname }
+}
+
+export const useNewMessage = () => {
+  const [message, setMessage] = useState<{
+    message: string
+    senderId: string
+    chatId: string
+    nickname: string
+  }>()
+
+  useEffect(() => {
+    socket.on(NEW_MESSAGE, (ack: { message: string; senderId: string; chatId: string; nickname: string }) => {
+      setMessage(ack)
+    })
+
+    return () => {
+      socket.off(NEW_MESSAGE)
+    }
+  }, [])
+
+  return { message }
 }

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SEND_MESSAEGE = exports.NEW_MESSAGE = exports.IN_ROOM_USER = exports.UPDATE_ROOM_LIST = exports.LEAVE_ROOM = exports.JOIN_ROOM = exports.LIST_ROOM_DATA_REQUEST = exports.CREATE_ROOM_REQUEST = exports.CONNECT_EVENT = void 0;
+exports.DISCONNECT_ROOM = exports.SEND_MESSAEGE = exports.NEW_MESSAGE = exports.IN_ROOM_USER = exports.UPDATE_ROOM_LIST = exports.LEAVE_ROOM = exports.JOIN_ROOM = exports.LIST_ROOM_DATA_REQUEST = exports.CREATE_ROOM_REQUEST = exports.CONNECT_EVENT = void 0;
 const rooms_1 = require("../repository/rooms");
 exports.CONNECT_EVENT = 'room/connect';
 exports.CREATE_ROOM_REQUEST = 'room/create';
@@ -11,21 +11,28 @@ exports.UPDATE_ROOM_LIST = 'room/update-room-list';
 exports.IN_ROOM_USER = 'room/in-room-user';
 exports.NEW_MESSAGE = 'room/new-message';
 exports.SEND_MESSAEGE = 'room/send-message';
+exports.DISCONNECT_ROOM = 'room/disconnect';
 class SocketRoom {
-    static listen(io, socket) {
+    static listen(io) {
         this.io = io;
-        this.connect(socket);
-        this.inRoomUserListener(socket);
+        this.connect();
     }
     /**
      * 최초 접속시
      */
-    static connect(socket) {
-        socket.emit(exports.CONNECT_EVENT, rooms_1.RoomsRepository.getRooms);
-        this.creatRoomRequestListener(socket);
-        this.joinRoomRequestListener(socket);
-        this.leaveRoomRequestListener(socket);
-        this.listRoomDataRequestListener(socket);
+    static connect() {
+        this.io.on('connection', (socket) => {
+            socket.emit(exports.CONNECT_EVENT, rooms_1.RoomsRepository.getRooms);
+            this.creatRoomRequestListener(socket);
+            this.joinRoomRequestListener(socket);
+            this.leaveRoomRequestListener(socket);
+            this.listRoomDataRequestListener(socket);
+            this.inRoomUserListener(socket);
+            socket.on('disconnect', () => {
+                socket.broadcast.emit(exports.DISCONNECT_ROOM, { type: 'disconnect', message: socket.id });
+                return socket.removeAllListeners;
+            });
+        });
     }
     static listRoomDataRequestListener(socket) {
         socket.on(exports.LIST_ROOM_DATA_REQUEST, (ack) => {
@@ -50,8 +57,8 @@ class SocketRoom {
         });
     }
     static inRoomUserListener(socket) {
-        socket.on(exports.IN_ROOM_USER, () => {
-            socket.broadcast.emit(exports.IN_ROOM_USER, { id: socket.id });
+        socket.on(exports.IN_ROOM_USER, (user) => {
+            socket.broadcast.emit(exports.IN_ROOM_USER, { id: socket.id, nickname: user.nickname });
         });
         socket.on(exports.SEND_MESSAEGE, (message) => {
             console.log(`[SERVER] send: ${message.message} to ${message.roomId}`);

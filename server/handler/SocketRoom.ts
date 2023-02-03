@@ -11,26 +11,32 @@ export const UPDATE_ROOM_LIST = 'room/update-room-list'
 export const IN_ROOM_USER = 'room/in-room-user'
 export const NEW_MESSAGE = 'room/new-message'
 export const SEND_MESSAEGE = 'room/send-message'
+export const DISCONNECT_ROOM = 'room/disconnect'
 
 class SocketRoom {
   private static io: Server
 
-  public static listen(io: Server, socket: Socket) {
+  public static listen(io: Server) {
     this.io = io
-
-    this.connect(socket)
-    this.inRoomUserListener(socket)
+    this.connect()
   }
 
   /**
    * 최초 접속시
    */
-  public static connect(socket) {
-    socket.emit(CONNECT_EVENT, RoomsRepository.getRooms)
-    this.creatRoomRequestListener(socket)
-    this.joinRoomRequestListener(socket)
-    this.leaveRoomRequestListener(socket)
-    this.listRoomDataRequestListener(socket)
+  public static connect() {
+    this.io.on('connection', (socket) => {
+      socket.emit(CONNECT_EVENT, RoomsRepository.getRooms)
+      this.creatRoomRequestListener(socket)
+      this.joinRoomRequestListener(socket)
+      this.leaveRoomRequestListener(socket)
+      this.listRoomDataRequestListener(socket)
+      this.inRoomUserListener(socket)
+      socket.on('disconnect', () => {
+        socket.broadcast.emit(DISCONNECT_ROOM, { type: 'disconnect', message: socket.id })
+        return socket.removeAllListeners
+      })
+    })
   }
 
   public static listRoomDataRequestListener(socket: Socket) {
@@ -60,8 +66,8 @@ class SocketRoom {
   }
 
   public static inRoomUserListener(socket: Socket) {
-    socket.on(IN_ROOM_USER, () => {
-      socket.broadcast.emit(IN_ROOM_USER, { id: socket.id })
+    socket.on(IN_ROOM_USER, (user) => {
+      socket.broadcast.emit(IN_ROOM_USER, { id: socket.id, nickname: user.nickname })
     })
 
     socket.on(SEND_MESSAEGE, (message: { roomId: string; message: string; chatId: string; nickname: string }) => {

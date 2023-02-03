@@ -5,7 +5,7 @@ import usePlayerControls from '@/templates/hooks/usePlayerControls'
 
 import * as THREE from 'three'
 
-const BaseCharacter = ({ socket, id, ...props }) => {
+const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
   const direction = new THREE.Vector3()
   const frontVector = new THREE.Vector3()
   const sideVector = new THREE.Vector3()
@@ -27,20 +27,22 @@ const BaseCharacter = ({ socket, id, ...props }) => {
   useEffect(() => api.velocity.subscribe((v) => (velocity.current = v)), [])
 
   useFrame((state) => {
-    ref.current.getWorldPosition(camera.position)
-    frontVector.set(0, 0, Number(backward) - Number(forward))
-    sideVector.set(Number(left) - Number(right), 0, 0)
-    direction.subVectors(frontVector, sideVector).normalize().multiplyScalar(SPEED).applyEuler(camera.rotation)
-    speed.fromArray(velocity.current)
+    if (enteredInput) {
+      ref.current.getWorldPosition(camera.position)
+      frontVector.set(0, 0, Number(backward) - Number(forward))
+      sideVector.set(Number(left) - Number(right), 0, 0)
+      direction.subVectors(frontVector, sideVector).normalize().multiplyScalar(SPEED).applyEuler(camera.rotation)
+      speed.fromArray(velocity.current)
 
-    socket.emit('move', {
-      id,
-      rotation: [camera.quaternion._x, camera.quaternion._y, camera.quaternion._z, camera.quaternion._w],
-      position: [camera.position.x, camera.position.y, camera.position.z],
-    })
-    api.velocity.set(direction.x, velocity.current[1], direction.z)
-    if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
-      api.velocity.set(velocity.current[0], 5, velocity.current[2])
+      socket.emit('move', {
+        id,
+        rotation: [camera.quaternion._x, camera.quaternion._y, camera.quaternion._z, camera.quaternion._w],
+        position: [camera.position.x, camera.position.y, camera.position.z],
+      })
+      api.velocity.set(direction.x, velocity.current[1], direction.z)
+      if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
+        api.velocity.set(velocity.current[0], 5, velocity.current[2])
+    }
   })
   const controlsRef = useRef()
 

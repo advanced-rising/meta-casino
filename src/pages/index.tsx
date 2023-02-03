@@ -1,15 +1,14 @@
 import dynamic from 'next/dynamic'
-import Instructions from '@/components/dom/Instructions'
-import Link from 'next/link'
-import { useJoinRoom, useWatingRoom } from '../utils/hook'
-import { CREATE_ROOM_REQUEST } from '../../server/handler/SocketRoom'
-import { IRoom } from '../../server/repository/rooms'
-import { socket } from '../utils/context'
+
 import { useCallback, useEffect, useState } from 'react'
 import { useFormik, FormikProvider, Form } from 'formik'
 import * as Yup from 'yup'
 import { useImmer } from 'use-immer'
 import { useRouter } from 'next/router'
+import { socket } from '@/utils/context'
+import { useJoinRoom, useWatingRoom } from '@/utils/hook'
+import { IRoom } from 'server/repository/rooms'
+import { CREATE_ROOM_REQUEST } from 'server/handler/SocketRoom'
 
 // Dynamic import is used to prevent a payload when the website starts, that includes threejs, r3f etc..
 // WARNING ! errors might get obfuscated by using dynamic import.
@@ -22,7 +21,7 @@ export default function Page(props) {
   useJoinRoom(socket, 'wating-room')
   const router = useRouter()
   const { rooms } = useWatingRoom(socket)
-  console.log('rooms', rooms)
+
   const [formData, setFormData] = useImmer({
     nickname: '',
   })
@@ -96,7 +95,7 @@ export default function Page(props) {
       <FormikProvider value={formik}>
         <Form onSubmit={formik.handleSubmit} className='w-full'>
           {formData.nickname ? (
-            <p>{formData.nickname}</p>
+            <p className='flex self-center justify-start text-2xl px-[20px] h-[40px]'>{formData.nickname}</p>
           ) : (
             <input
               className='w-full text-[#000000] h-[40px] placeholder:text-[#dddddd] px-[20px]'

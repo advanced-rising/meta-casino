@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react'
-import { GetServerSidePropsContext, NextPage } from 'next'
-import { useJoinRoom, useJoinNewUser } from '../../utils/hook'
-import { socket } from '../../utils/context'
-import { IN_ROOM_USER, NEW_MESSAGE, SEND_MESSAEGE } from '../../../server/handler/SocketRoom'
+
+import { IN_ROOM_USER, NEW_MESSAGE, SEND_MESSAEGE } from 'server/handler/SocketRoom'
 import { v4 as uuid } from 'uuid'
 import { useImmer } from 'use-immer'
 import { OrbitControls, Text, Stats, Sky } from '@react-three/drei'
@@ -16,47 +14,29 @@ import { useFormik, FormikProvider, Form } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 
-const useNewMessage = () => {
-  const [message, setMessage] = useState<{
-    message: string
-    senderId: string
-    chatId: string
-    nickname: string
-  }>()
+import { socket } from '@/utils/context'
+import { useJoinNewUser, useJoinRoom, useNewMessage } from '@/utils/hook'
 
-  useEffect(() => {
-    socket.on(NEW_MESSAGE, (ack: { message: string; senderId: string; chatId: string; nickname: string }) => {
-      setMessage(ack)
-    })
-
-    return () => {
-      socket.off(NEW_MESSAGE)
-    }
-  }, [])
-
-  return { message }
-}
-
-type Props = {
-  id?: any
-  roomNm: string
+interface Props {
+  id: any
 }
 
 const RoomIn = (props: Props) => {
-  const { roomNm } = props
   const [chats, setChats] = useImmer<any>([])
-  useJoinRoom(socket, `/room/${roomNm}`)
+  useJoinRoom(socket, `/room/${props.id}`)
   const { message: newMessage } = useNewMessage()
-  const { id } = useJoinNewUser(socket)
+  const { id, nickname } = useJoinNewUser(socket)
   const chatContainerRef = useRef<any>()
   const router = useRouter()
-
+  const [enteredInput, setEnteredInput] = useImmer(true)
   const roomInEventEmitter = () => {
     socket.emit(IN_ROOM_USER)
   }
 
+  console.log('nickname', nickname)
+
   const newUserJoinHandler = () => {
-    setChats(chats.concat({ type: 'new', userId: id, chatId: uuid(), nickname: router.query?.nickname }))
+    setChats(chats.concat({ type: 'new', userId: id, chatId: uuid(), nickname: router?.query.nickname || 'unknwon' }))
   }
 
   useEffect(() => {
@@ -82,7 +62,7 @@ const RoomIn = (props: Props) => {
   }, [id])
 
   const [socketClient, setSocketClient] = useState(null)
-  const [clients, setClients] = useState({})
+  // const [clients, setClients] = useState({})
 
   useEffect(() => {
     // On mount initialize the socket connection
@@ -94,13 +74,13 @@ const RoomIn = (props: Props) => {
     }
   }, [])
 
-  useEffect(() => {
-    if (socketClient) {
-      socketClient.on('move', (clients) => {
-        setClients(clients)
-      })
-    }
-  }, [socketClient])
+  // useEffect(() => {
+  //   if (socketClient) {
+  //     socketClient.on('move', (clients) => {
+  //       setClients(clients)
+  //     })
+  //   }
+  // }, [socketClient])
 
   const formik = useFormik({
     initialValues: {
@@ -115,7 +95,7 @@ const RoomIn = (props: Props) => {
           roomId: props.id,
           message: values.message,
           chatId: uuid(),
-          nickname: router.query?.nickname,
+          nickname: router?.query.nickname || 'unknwon',
         })
         fn.resetForm()
         fn.setFieldValue('message', '')
@@ -135,13 +115,19 @@ const RoomIn = (props: Props) => {
               if (chat.type === 'new') {
                 return (
                   <li key={chat.chatId} className='text-white'>
-                    {chat.userId} 님이 입장하셨습니다.
+                    {chat.nickname || 'unknwon'} 님이 입장하셨습니다.
                   </li>
                 )
               } else if (chat.type === 'message') {
                 return (
                   <li key={chat.chatId} className='text-white'>
-                    {chat.nickname} : {chat.message}
+                    {chat.nickname || 'unknwon'} : {chat.message}
+                  </li>
+                )
+              } else if (chat.type === 'disconnect') {
+                return (
+                  <li key={chat.chatId} className='text-white'>
+                    {chat.nickname || 'unknwon'} : {chat.message}
                   </li>
                 )
               }
@@ -151,6 +137,8 @@ const RoomIn = (props: Props) => {
           <FormikProvider value={formik}>
             <Form onSubmit={formik.handleSubmit}>
               <input
+                onFocus={() => setEnteredInput(false)}
+                onBlur={() => setEnteredInput(true)}
                 name='message'
                 className='block w-full text-black h-[50px] px-20px'
                 type='text'
@@ -161,7 +149,7 @@ const RoomIn = (props: Props) => {
           </FormikProvider>
         </div>
         <div className='w-screen h-screen'>
-          {socketClient && clients && (
+          {socketClient && socket && (
             // <Scene>
             //   <Stats />
             //   <ControlsWrapper socket={socketClient} />
@@ -183,14 +171,14 @@ const RoomIn = (props: Props) => {
               <BaseBox text={false} position={[0, 0.5, 0]} args={[2, 1, 2]} color='red' />
               <BaseBox text={false} position={[5, 1, 0]} args={[1.5, 2, 1.3]} color='orange' />
               <BaseBox text={false} position={[0, 0.5, 5]} args={[3, 1, 1.3]} color='green' />
-              {Object.keys(clients)
+              {Object.keys(socket)
                 .filter((clientKey) => clientKey !== socketClient.id)
                 .map((client) => {
-                  const { position, rotation } = clients[client]
+                  const { position, rotation } = socket[client]
                   return (
                     <BaseCharacter
                       id={id}
-                      socket={socketClient}
+                      socket={socket}
                       controls
                       // position={[0, 2, 0]}
                       position={position}
@@ -198,6 +186,7 @@ const RoomIn = (props: Props) => {
                       args={[0.5]}
                       color='yellow'
                       key={client}
+                      enteredInput={enteredInput}
                     />
                   )
                 })}

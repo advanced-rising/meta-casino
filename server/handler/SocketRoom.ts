@@ -64,12 +64,13 @@ class SocketRoom {
       socket.broadcast.emit(IN_ROOM_USER, { id: socket.id })
     })
 
-    socket.on(SEND_MESSAEGE, (message: { roomId: string; message: string }) => {
+    socket.on(SEND_MESSAEGE, (message: { roomId: string; message: string; chatId: string; nickname: string }) => {
       console.log(`[SERVER] send: ${message.message} to ${message.roomId}`)
       this.io.emit(NEW_MESSAGE, {
         message: message.message,
         senderId: socket.id,
-        chatId: uuid(),
+        chatId: message.chatId,
+        nickname: message.nickname,
       })
     })
     socket.on('disconnect', socket.removeAllListeners)

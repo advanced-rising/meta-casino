@@ -1,83 +1,31 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react'
-import { NextPage } from 'next'
+import { GetServerSidePropsContext, NextPage } from 'next'
 import { useJoinRoom, useJoinNewUser } from '../../utils/hook'
 import { socket } from '../../utils/context'
 import { IN_ROOM_USER, NEW_MESSAGE, SEND_MESSAEGE } from '../../../server/handler/SocketRoom'
 import { v4 as uuid } from 'uuid'
 import { useImmer } from 'use-immer'
-import Scene from '@/components/canvas/Scene'
 import { OrbitControls, Text, Stats, Sky } from '@react-three/drei'
 import { io } from 'socket.io-client'
-import usePlayerControls from '@/templates/hooks/usePlayerControls'
-import * as THREE from 'three'
-import { useFrame, useThree } from '@react-three/fiber'
-import { Physics, useSphere } from '@react-three/cannon'
+
 import BaseBox from '@/components/ui/BaseBox'
 import ThreeModel from '@/components/ui/ThreeModel'
 import BaseCharacter from '@/components/ui/BaseCharacter'
 import BaseScene from '@/components/ui/BaseScene'
-
-const ControlsWrapper = ({ socket }) => {
-  const controlsRef = useRef()
-  const [updateCallback, setUpdateCallback] = useState(null)
-
-  // Register the update event and clean up
-  useEffect(() => {
-    const onControlsChange = (val) => {
-      const { position, rotation } = val.target.object
-      const { id } = socket
-
-      const posArray = []
-      const rotArray = []
-
-      position.toArray(posArray)
-      rotation.toArray(rotArray)
-
-      socket.emit('move', {
-        id,
-        rotation: rotArray,
-        position: posArray,
-      })
-    }
-
-    if (controlsRef && controlsRef.current) {
-      // @ts-ignore
-      return setUpdateCallback(controlsRef!.current!.addEventListener('change', onControlsChange))
-    }
-
-    // Dispose
-    return () => {
-      if (updateCallback && controlsRef.current) {
-        // @ts-ignore
-        return controlsRef!.current!.removeEventListener('change', onControlsChange)
-      }
-    }
-  }, [controlsRef, socket])
-
-  return <OrbitControls ref={controlsRef} />
-}
-
-const UserWrapper = ({ position, rotation, id, ...props }) => {
-  return (
-    <mesh position={position}>
-      {/* Optionally show the ID above the user's mesh */}
-      {/* @ts-ignore */}
-      <Text position={[0, 1.0, 0]} color='black' anchorX='center' anchorY='middle' fontSize={0.3}>
-        {id}
-      </Text>
-    </mesh>
-  )
-}
+import { useFormik, FormikProvider, Form } from 'formik'
+import * as Yup from 'yup'
+import { useRouter } from 'next/router'
 
 const useNewMessage = () => {
   const [message, setMessage] = useState<{
     message: string
     senderId: string
     chatId: string
+    nickname: string
   }>()
 
   useEffect(() => {
-    socket.on(NEW_MESSAGE, (ack: { message: string; senderId: string; chatId: string }) => {
+    socket.on(NEW_MESSAGE, (ack: { message: string; senderId: string; chatId: string; nickname: string }) => {
       setMessage(ack)
     })
 
@@ -90,47 +38,36 @@ const useNewMessage = () => {
 }
 
 type Props = {
-  id: any
+  id?: any
+  roomNm: string
 }
 
-const RoomIn: NextPage<Props> = (props) => {
+const RoomIn = (props: Props) => {
+  const { roomNm } = props
   const [chats, setChats] = useImmer<any>([])
-  const [message, setMessage] = useState('')
-  useJoinRoom(socket, `/room/${props.id}`)
+  useJoinRoom(socket, `/room/${roomNm}`)
   const { message: newMessage } = useNewMessage()
   const { id } = useJoinNewUser(socket)
   const chatContainerRef = useRef<any>()
+  const router = useRouter()
 
   const roomInEventEmitter = () => {
     socket.emit(IN_ROOM_USER)
   }
 
   const newUserJoinHandler = () => {
-    setChats(chats.concat({ type: 'new', userId: id, chatId: uuid() }))
-  }
-
-  const sendMessage = (e: React.KeyboardEvent) => {
-    let abc = 0
-    if (e.key === 'Enter' && message.length > 0 && message) {
-      console.log('message ######', message, (abc += 1))
-
-      socket.emit(SEND_MESSAEGE, {
-        roomId: props.id,
-        message,
-      })
-      return setMessage('')
-    }
+    setChats(chats.concat({ type: 'new', userId: id, chatId: uuid(), nickname: router.query?.nickname }))
   }
 
   useEffect(() => {
     if (newMessage) {
-      console.log('newMessage,newMessage', newMessage)
       setChats((draft) =>
         draft.concat({
           type: 'message',
           message: newMessage.message,
           senderId: newMessage.senderId,
           chatId: newMessage.chatId,
+          nickname: newMessage.nickname,
         }),
       )
 
@@ -165,6 +102,27 @@ const RoomIn: NextPage<Props> = (props) => {
     }
   }, [socketClient])
 
+  const formik = useFormik({
+    initialValues: {
+      message: '',
+    },
+    validationSchema: Yup.object({
+      message: Yup.string().required(),
+    }),
+    onSubmit: async (values, fn) => {
+      if (values.message.length > 0 && values.message) {
+        socket.emit(SEND_MESSAEGE, {
+          roomId: props.id,
+          message: values.message,
+          chatId: uuid(),
+          nickname: router.query?.nickname,
+        })
+        fn.resetForm()
+        fn.setFieldValue('message', '')
+      }
+    },
+  })
+
   return (
     <>
       <div>
@@ -172,7 +130,7 @@ const RoomIn: NextPage<Props> = (props) => {
           <h3 className='text-black bg-[#00000033] px-[40px]'>
             CASINO Room <small>{props.id}</small>
           </h3>
-          <ul className='flex flex-col self-end h-full overflow-y-scroll bg-[#00000033] px-[40px] pb-[40px]'>
+          <ul className='flex flex-col self-end h-full overflow-y-scroll bg-[#00000033] px-[40px] pb-[40px] pt-[60px]'>
             {chats.map((chat: any) => {
               if (chat.type === 'new') {
                 return (
@@ -183,22 +141,24 @@ const RoomIn: NextPage<Props> = (props) => {
               } else if (chat.type === 'message') {
                 return (
                   <li key={chat.chatId} className='text-white'>
-                    {chat.message}
+                    {chat.nickname} : {chat.message}
                   </li>
                 )
               }
             })}
             <li ref={chatContainerRef} className='list-none h-[50px]'></li>
           </ul>
-          <input
-            className='block w-full text-black h-[50px] px-20px'
-            type='text'
-            onChange={(e) => {
-              setMessage(e.target.value)
-            }}
-            value={message}
-            onKeyDown={sendMessage}
-          />
+          <FormikProvider value={formik}>
+            <Form onSubmit={formik.handleSubmit}>
+              <input
+                name='message'
+                className='block w-full text-black h-[50px] px-20px'
+                type='text'
+                onChange={formik.handleChange}
+                value={formik.values.message}
+              />
+            </Form>
+          </FormikProvider>
         </div>
         <div className='w-screen h-screen'>
           {socketClient && clients && (

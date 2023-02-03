@@ -58,47 +58,13 @@ const ControlsWrapper = ({ socket }) => {
 }
 
 const UserWrapper = ({ position, rotation, id, ...props }) => {
-  const direction = new THREE.Vector3()
-  const frontVector = new THREE.Vector3()
-  const sideVector = new THREE.Vector3()
-  const speed = new THREE.Vector3()
-  const SPEED = 5
-
-  const { camera } = useThree()
-
-  const [ref, api] = useSphere((index) => ({
-    mass: 1,
-    type: 'Dynamic',
-
-    position: [0, 10, 0],
-    ...props,
-  }))
-
-  const { forward, backward, left, right, jump } = usePlayerControls()
-  const velocity = useRef([0, 0, 0])
-  useEffect(() => api.velocity.subscribe((v) => (velocity.current = v)), [])
-
-  useFrame((state) => {
-    ref.current.getWorldPosition(camera.position)
-    frontVector.set(0, 0, Number(backward) - Number(forward))
-    sideVector.set(Number(left) - Number(right), 0, 0)
-    direction.subVectors(frontVector, sideVector).normalize().multiplyScalar(SPEED).applyEuler(camera.rotation)
-    speed.fromArray(velocity.current)
-
-    api.velocity.set(direction.x, velocity.current[1], direction.z)
-    if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
-      api.velocity.set(velocity.current[0], 5, velocity.current[2])
-  })
-
   return (
-    <mesh ref={ref} position={position}>
+    <mesh position={position}>
       {/* Optionally show the ID above the user's mesh */}
       {/* @ts-ignore */}
       <Text position={[0, 1.0, 0]} color='black' anchorX='center' anchorY='middle' fontSize={0.3}>
         {id}
       </Text>
-      <sphereGeometry />
-      <meshStandardMaterial color='#FFFF00' />
     </mesh>
   )
 }
@@ -145,8 +111,9 @@ const RoomIn: NextPage<Props> = (props) => {
 
   const sendMessage = (e: React.KeyboardEvent) => {
     let abc = 0
-    if (e.key === 'Enter' && message.length > 0 && !message) {
+    if (e.key === 'Enter' && message.length > 0 && message) {
       console.log('message ######', message, (abc += 1))
+
       socket.emit(SEND_MESSAEGE, {
         roomId: props.id,
         message,
@@ -201,36 +168,40 @@ const RoomIn: NextPage<Props> = (props) => {
   return (
     <>
       <div>
-        <h3>
-          hello world room <small>{props.id}</small>
-        </h3>
-        <div
-          style={{
-            width: 800,
-            height: 200,
-            display: 'flex',
-            flexDirection: 'column',
-          }}>
-          <ul className='flex flex-col overflow-y-scroll'>
+        <div className='fixed w-full h-[200px] z-[1000] '>
+          <h3 className='text-black bg-[#00000033] px-[40px]'>
+            CASINO Room <small>{props.id}</small>
+          </h3>
+          <ul className='flex flex-col h-full  overflow-y-scroll bg-[#00000033] px-[40px]'>
             {chats.map((chat: any) => {
               if (chat.type === 'new') {
-                return <li key={chat.chatId}>{chat.userId} 님이 입장하셨습니다.</li>
+                return (
+                  <li key={chat.chatId} className='text-white'>
+                    {chat.userId} 님이 입장하셨습니다.
+                  </li>
+                )
               } else if (chat.type === 'message') {
-                return <li key={chat.chatId}>{chat.message}</li>
+                return (
+                  <li key={chat.chatId} className='text-white'>
+                    {chat.message}
+                  </li>
+                )
               }
             })}
-            <li ref={chatContainerRef} style={{ listStyleType: 'none', height: 50 }}></li>
+            <li ref={chatContainerRef} className='list-none h-[50px]'></li>
           </ul>
           <input
-            className='block w-full text-black h-[50px]'
+            className='block w-full text-black h-[50px] px-20px'
             type='text'
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => {
+              setMessage(e.target.value)
+            }}
             value={message}
             onKeyDown={sendMessage}
           />
         </div>
         <div className='w-screen h-screen'>
-          {socketClient && (
+          {socketClient && clients && (
             // <Scene>
             //   <Stats />
             //   <ControlsWrapper socket={socketClient} />
@@ -258,13 +229,15 @@ const RoomIn: NextPage<Props> = (props) => {
                   const { position, rotation } = clients[client]
                   return (
                     <BaseCharacter
-                      socketClient={socketClient}
+                      id={id}
+                      socket={socketClient}
                       controls
-                      position={[0, 2, 0]}
+                      // position={[0, 2, 0]}
+                      position={position}
+                      rotation={rotation}
                       args={[0.5]}
                       color='yellow'
                       key={client}
-                      rotation={rotation}
                     />
                   )
                 })}

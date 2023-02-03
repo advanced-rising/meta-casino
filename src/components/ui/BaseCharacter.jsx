@@ -5,8 +5,7 @@ import usePlayerControls from '@/templates/hooks/usePlayerControls'
 
 import * as THREE from 'three'
 
-const BaseCharacter = (props) => {
-  const { socketClient: socket } = props
+const BaseCharacter = ({ socket, id, ...props }) => {
   const direction = new THREE.Vector3()
   const frontVector = new THREE.Vector3()
   const sideVector = new THREE.Vector3()
@@ -34,44 +33,16 @@ const BaseCharacter = (props) => {
     direction.subVectors(frontVector, sideVector).normalize().multiplyScalar(SPEED).applyEuler(camera.rotation)
     speed.fromArray(velocity.current)
 
+    socket.emit('move', {
+      id,
+      rotation: [camera.quaternion._x, camera.quaternion._y, camera.quaternion._z, camera.quaternion._w],
+      position: [camera.position.x, camera.position.y, camera.position.z],
+    })
     api.velocity.set(direction.x, velocity.current[1], direction.z)
     if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
       api.velocity.set(velocity.current[0], 5, velocity.current[2])
   })
   const controlsRef = useRef()
-  const [updateCallback, setUpdateCallback] = useState(null)
-  // Register the update event and clean up
-  useEffect(() => {
-    const onControlsChange = (val) => {
-      const { position, rotation } = val.target.object
-      const { id } = socket
-
-      const posArray = []
-      const rotArray = []
-
-      position.toArray(posArray)
-      rotation.toArray(rotArray)
-
-      socket.emit('move', {
-        id,
-        rotation: rotArray,
-        position: posArray,
-      })
-    }
-
-    if (controlsRef && controlsRef.current) {
-      // @ts-ignore
-      return setUpdateCallback(controlsRef.current.addEventListener('change', onControlsChange))
-    }
-
-    // Dispose
-    return () => {
-      if (updateCallback && controlsRef.current) {
-        // @ts-ignore
-        return controlsRef.current.removeEventListener('change', onControlsChange)
-      }
-    }
-  }, [controlsRef, socket])
 
   return (
     <group>

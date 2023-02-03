@@ -18,10 +18,10 @@ const io = new Server(server)
 const link = () => {
   io.on('connection', (socket) => {
     SocketRoom.listen(io, socket)
-    SocketThree.three(io, socket)
     socket.on('disconnect', socket.removeAllListeners)
   })
 }
+SocketThree.three(io)
 
 const main = async () => {
   await app.prepare()

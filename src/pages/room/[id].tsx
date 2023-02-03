@@ -172,7 +172,7 @@ const RoomIn: NextPage<Props> = (props) => {
           <h3 className='text-black bg-[#00000033] px-[40px]'>
             CASINO Room <small>{props.id}</small>
           </h3>
-          <ul className='flex flex-col h-full  overflow-y-scroll bg-[#00000033] px-[40px]'>
+          <ul className='flex flex-col self-end h-full overflow-y-scroll bg-[#00000033] px-[40px] pb-[40px]'>
             {chats.map((chat: any) => {
               if (chat.type === 'new') {
                 return (

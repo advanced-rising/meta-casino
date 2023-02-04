@@ -16,6 +16,7 @@ import { useRouter } from 'next/router'
 
 import { socket } from '@/utils/context'
 import { useJoinNewUser, useJoinRoom, useNewMessage } from '@/utils/hook'
+import Header from '@/config'
 
 interface Props {
   id: any
@@ -33,10 +34,13 @@ const RoomIn = (props: Props) => {
     socket.emit(IN_ROOM_USER)
   }
 
+  const [nick, setNick] = useImmer('unknwon')
+  console.log('id', id)
   console.log('nickname', nickname)
 
   const newUserJoinHandler = () => {
-    setChats(chats.concat({ type: 'new', userId: id, chatId: uuid(), nickname: router?.query.nickname || 'unknwon' }))
+    if (!nick) return
+    setChats(chats.concat({ type: 'new', userId: id, chatId: uuid(), nickname: nick || 'unknwon' }))
   }
 
   useEffect(() => {
@@ -95,7 +99,7 @@ const RoomIn = (props: Props) => {
           roomId: props.id,
           message: values.message,
           chatId: uuid(),
-          nickname: router?.query.nickname || 'unknwon',
+          nickname: nick || 'unknwon',
         })
         fn.resetForm()
         fn.setFieldValue('message', '')
@@ -103,8 +107,15 @@ const RoomIn = (props: Props) => {
     },
   })
 
+  useEffect(() => {
+    if (nick) return
+    const userName = prompt('닉네임을 입력하세요.')
+    setNick(userName)
+  }, [])
+
   return (
     <>
+      <Header title={id || ''} />
       <div>
         <div className='fixed w-full h-[200px] z-[1000] '>
           <h3 className='text-black bg-[#00000033] px-[40px]'>
@@ -150,25 +161,8 @@ const RoomIn = (props: Props) => {
         </div>
         <div className='w-screen h-screen'>
           {socketClient && socket && (
-            // <Scene>
-            //   <Stats />
-            //   <ControlsWrapper socket={socketClient} />
-            //   <gridHelper rotation={[0, 0, 0]} />
-
-            //   {/* Filter myself from the client list and create user boxes with IDs */}
-            //   <Physics>
-            //     <group>
-            //       {Object.keys(clients)
-            //         .filter((clientKey) => clientKey !== socketClient.id)
-            //         .map((client) => {
-            //           const { position, rotation } = clients[client]
-            //           return <UserWrapper key={client} id={client} position={position} rotation={rotation} />
-            //         })}
-            //     </group>
-            //   </Physics>
-            // </Scene>
             <BaseScene>
-              <BaseBox text={false} position={[0, 0.5, 0]} args={[2, 1, 2]} color='red' />
+              <BaseBox text={false} position={[-5, 0.5, 0]} args={[2, 1, 2]} color='red' />
               <BaseBox text={false} position={[5, 1, 0]} args={[1.5, 2, 1.3]} color='orange' />
               <BaseBox text={false} position={[0, 0.5, 5]} args={[3, 1, 1.3]} color='green' />
               {Object.keys(socket)
@@ -180,7 +174,6 @@ const RoomIn = (props: Props) => {
                       id={id}
                       socket={socket}
                       controls
-                      // position={[0, 2, 0]}
                       position={position}
                       rotation={rotation}
                       args={[0.5]}

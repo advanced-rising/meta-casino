@@ -1,6 +1,7 @@
-import { Canvas } from '@react-three/fiber'
-import { Loader, PointerLockControls } from '@react-three/drei'
+import { Canvas, useThree } from '@react-three/fiber'
+import { Loader, OrthographicCamera, PointerLockControls } from '@react-three/drei'
 import { Physics } from '@react-three/cannon'
+import * as THREE from 'three'
 
 import Lights from './Lights'
 import Floor from './Floor'
@@ -8,7 +9,20 @@ import Floor from './Floor'
 const BasicScene = ({ children }) => {
   return (
     <div className='w-full h-full'>
-      <Canvas shadows camera={{ fov: 50 }} style={{ width: '100%', height: '100%' }}>
+      <Canvas
+        shadows
+        orthographic
+        camera={{
+          zoom: 100,
+          position: [1, 5, 5],
+          left: -(window.innerWidth / window.innerHeight),
+          right: window.innerWidth / window.innerHeight,
+          top: 1,
+          bottom: -1,
+          near: -1000,
+          far: 1000,
+        }}
+        style={{ width: '100%', height: '100%' }}>
         <Lights />
 
         <Physics gravity={[0, -9.8, 0]}>
@@ -17,7 +31,9 @@ const BasicScene = ({ children }) => {
           <Floor rotation={[Math.PI / -2, 0, 0]} color='white' />
         </Physics>
 
-        <PointerLockControls />
+        {/* <OrthographicCamera /> */}
+        {/* 화면 움직임 가능 */}
+        {/* <PointerLockControls /> */}
       </Canvas>
       <Loader />
     </div>

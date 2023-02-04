@@ -16,7 +16,12 @@ const handle = app.getRequestHandler();
 const koa = new koa_1.default();
 const server = http_1.default.createServer(koa.callback());
 const io = new socket_io_1.Server(server);
-SocketRoom_1.default.listen(io);
+const link = () => {
+    io.on('connection', (socket) => {
+        SocketRoom_1.default.listen(io, socket);
+        socket.on('disconnect', socket.removeAllListeners);
+    });
+};
 SocketThree_1.default.three(io);
 const main = async () => {
     await app.prepare();
@@ -29,3 +34,4 @@ const main = async () => {
     });
 };
 main();
+link();

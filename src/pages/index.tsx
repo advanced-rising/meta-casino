@@ -9,6 +9,7 @@ import { socket } from '@/utils/context'
 import { useJoinRoom, useWatingRoom } from '@/utils/hook'
 import { IRoom } from 'server/repository/rooms'
 import { CREATE_ROOM_REQUEST } from 'server/handler/SocketRoom'
+import Header from '@/config'
 
 // Dynamic import is used to prevent a payload when the website starts, that includes threejs, r3f etc..
 // WARNING ! errors might get obfuscated by using dynamic import.
@@ -22,27 +23,7 @@ export default function Page(props) {
   const router = useRouter()
   const { rooms } = useWatingRoom(socket)
 
-  const [formData, setFormData] = useImmer({
-    nickname: '',
-  })
-
   const formik = useFormik({
-    initialValues: {
-      nickname: '',
-    },
-    validationSchema: Yup.object({
-      nickname: Yup.string().required(),
-    }),
-    onSubmit: async (values, fn) => {
-      setFormData((draft) => {
-        draft.nickname = values.nickname
-      })
-      fn.resetForm()
-      fn.setFieldValue('nickname', '')
-    },
-  })
-
-  const roomFormik = useFormik({
     initialValues: {
       roomName: '',
     },
@@ -69,16 +50,8 @@ export default function Page(props) {
     const { key, keyCode } = event
 
     if (keyCode === 13 || key === 'Enter') {
-      if (formik.values.nickname.length > 0 && roomFormik.values.roomName.length > 0) {
-        formik.handleSubmit()
-        roomFormik.handleSubmit()
-        return
-      }
-      if (formik.values.nickname.length > 0) {
+      if (formik.values.roomName.length > 0) {
         return formik.handleSubmit()
-      }
-      if (roomFormik.values.roomName.length > 0) {
-        return roomFormik.handleSubmit()
       }
     }
   }, [])
@@ -91,58 +64,41 @@ export default function Page(props) {
   }, [handleUserKeyPress])
 
   return (
-    <div className='w-full'>
-      <FormikProvider value={formik}>
-        <Form onSubmit={formik.handleSubmit} className='w-full'>
-          {formData.nickname ? (
-            <p className='flex self-center justify-start text-2xl px-[20px] h-[40px]'>{formData.nickname}</p>
-          ) : (
+    <>
+      <Header title='META CASINO' />
+      <div className='w-full'>
+        <FormikProvider value={formik}>
+          <Form onSubmit={formik.handleSubmit} className='w-full'>
             <input
               className='w-full text-[#000000] h-[40px] placeholder:text-[#dddddd] px-[20px]'
-              name='nickname'
+              name='roomName'
               type='text'
               onChange={formik.handleChange}
-              value={formik.values.nickname}
-              placeholder='닉네임'
+              value={formik.values.roomName}
+              placeholder='방 이름을 적어주세요'
             />
-          )}
-        </Form>
-      </FormikProvider>
-      <FormikProvider value={roomFormik}>
-        <Form onSubmit={roomFormik.handleSubmit} className='w-full'>
-          <input
-            className='w-full text-[#000000] h-[40px] placeholder:text-[#dddddd] px-[20px]'
-            name='roomName'
-            type='text'
-            onChange={roomFormik.handleChange}
-            value={roomFormik.values.roomName}
-            placeholder='방 이름을 적어주세요'
-          />
-        </Form>
-      </FormikProvider>
-      <ul className='flex flex-col w-full p-[40px] gap-[20px]'>
-        {rooms.map((room: IRoom) => (
-          <li key={room.id} className='text-2xl text-white'>
-            <button
-              onClick={() => {
-                if (!formData.nickname) {
-                  alert('닉네임을 정해주세요.')
-                } else {
+          </Form>
+        </FormikProvider>
+        <ul className='flex flex-col w-full p-[40px] gap-[20px]'>
+          {rooms.map((room: IRoom) => (
+            <li key={room.id} className='text-2xl text-white'>
+              <button
+                onClick={() => {
                   router.push(
                     {
                       pathname: `/room/${room.roomNm}`,
-                      query: { roomNm: room.roomNm, nickname: formData.nickname },
+                      query: { roomNm: room.roomNm },
                     },
                     `/room/${room.roomNm}`,
                   )
-                }
-              }}>
-              {room.roomNm}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
+                }}>
+                {room.roomNm}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   )
 }
 

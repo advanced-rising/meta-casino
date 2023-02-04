@@ -21,7 +21,6 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
     position: [0, 10, 0],
     ...props,
   }))
-
   const { forward, backward, left, right, jump } = usePlayerControls()
   const velocity = useRef([0, 0, 0])
   useEffect(() => api.velocity.subscribe((v) => (velocity.current = v)), [])
@@ -44,12 +43,51 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
         api.velocity.set(velocity.current[0], 5, velocity.current[2])
     }
   })
-  const controlsRef = useRef()
+
+  // // 마우스 좌표를 three.js에 맞게 변환
+  // function calculateMousePosition(e) {
+  //   mouse.x = (e.clientX / canvas.clientWidth) * 2 - 1
+  //   mouse.y = -((e.clientY / canvas.clientHeight) * 2 - 1)
+  // }
+
+  // // 변환된 마우스 좌표를 이용해 래이캐스팅
+  // function raycasting() {
+  //   raycaster.setFromCamera(mouse, camera)
+  //   checkIntersects()
+  // }
+
+  // // 마우스 이벤트
+  // canvas.addEventListener('mousedown', (e) => {
+  //   isPressed = true
+  //   calculateMousePosition(e)
+  // })
+  // canvas.addEventListener('mouseup', () => {
+  //   isPressed = false
+  // })
+  // canvas.addEventListener('mousemove', (e) => {
+  //   if (isPressed) {
+  //     calculateMousePosition(e)
+  //   }
+  // })
+
+  // // 터치 이벤트
+  // canvas.addEventListener('touchstart', (e) => {
+  //   isPressed = true
+  //   calculateMousePosition(e.touches[0])
+  // })
+  // canvas.addEventListener('touchend', () => {
+  //   isPressed = false
+  // })
+  // canvas.addEventListener('touchmove', (e) => {
+  //   if (isPressed) {
+  //     calculateMousePosition(e.touches[0])
+  //   }
+  // })
 
   return (
     <group>
       <mesh castShadow position={props.position} ref={ref}>
-        <sphereGeometry args={props.args} ref={controlsRef} />
+        <sphereGeometry args={props.args} />
         <meshStandardMaterial color='#FFFF00' />
       </mesh>
     </group>

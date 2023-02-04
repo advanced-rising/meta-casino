@@ -15,7 +15,12 @@ const server = http.createServer(koa.callback())
 
 const io = new Server(server)
 
-SocketRoom.listen(io)
+const link = () => {
+  io.on('connection', (socket) => {
+    SocketRoom.listen(io, socket)
+    socket.on('disconnect', socket.removeAllListeners)
+  })
+}
 SocketThree.three(io)
 
 const main = async () => {
@@ -33,3 +38,4 @@ const main = async () => {
 }
 
 main()
+link()

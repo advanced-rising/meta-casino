@@ -1,9 +1,11 @@
 import { useSphere } from '@react-three/cannon'
-import { useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useRef, useState } from 'react'
+import { useFrame, useLoader, useThree } from '@react-three/fiber'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import usePlayerControls from '@/templates/hooks/usePlayerControls'
 
 import * as THREE from 'three'
+import { useGLTF } from '@react-three/drei'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
   const direction = new THREE.Vector3()
@@ -22,6 +24,7 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
     position: [0, 10, 0],
     ...props,
   }))
+
   const { forward, backward, left, right, jump, mouse, touch } = usePlayerControls()
 
   const velocity = useRef([0, 0, 0])
@@ -45,6 +48,16 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
       if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
         api.velocity.set(velocity.current[0], 5, velocity.current[2])
     }
+  })
+  const gltf = useLoader(GLTFLoader, '/assets/models/puffin.gltf')
+  console.log('gltf', gltf)
+
+  const mixer = new THREE.AnimationMixer(gltf.scene)
+  void mixer.clipAction(gltf.animations[6]).play()
+
+  useFrame((state, delta) => {
+    mixer.update(delta)
+    // console.log(ca);
   })
 
   // // 마우스 좌표를 three.js에 맞게 변환
@@ -89,9 +102,24 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
 
   return (
     <group>
-      <mesh castShadow position={props.position} ref={ref}>
-        <sphereGeometry args={props.args} />
-        <meshStandardMaterial color='#FFFF00' />
+      {/* <mesh
+        
+        scale={props.scale}
+        
+        receiveShadow
+        geometry={nodes['tree-beech'].geometry}
+        material={materials.color_main}
+      /> */}
+      <mesh lookAt={camera.position} ref={ref}>
+        <Suspense fallback={gltf}>
+          <primitive
+            object={gltf.scene}
+            scale={[0.005, 0.005, 0.005]}
+            position={props.position}
+            castShadow
+            rotation={[0, 0, 0, 0]}
+          />
+        </Suspense>
       </mesh>
     </group>
   )

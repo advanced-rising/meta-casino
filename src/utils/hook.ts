@@ -71,14 +71,11 @@ export const useWatingRoom = (socket: Socket) => {
 }
 
 export const useJoinNewUser = (socket: Socket) => {
-  console.log('socket ##############', socket)
   const ms = useMemo(() => socket, [socket])
   const [id, setId] = useImmer({
     id: '',
     nickname: '',
   })
-
-  console.log('socket', socket)
 
   const newUserJoinListener = () => {
     ms.on(IN_ROOM_USER, ({ id, nickname }: any) => {

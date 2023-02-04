@@ -60,8 +60,10 @@ class SocketRoom {
   }
 
   public static inRoomUserListener(socket: Socket) {
-    socket.on(IN_ROOM_USER, () => {
-      socket.broadcast.emit(IN_ROOM_USER, { id: socket.id })
+    socket.on(IN_ROOM_USER, ({ nickname }: { nickname: string }) => {
+      console.log('socket ######################', socket)
+      console.log('socket ######################', nickname)
+      socket.broadcast.emit(IN_ROOM_USER, { id: socket.id, nickname: nickname })
     })
 
     socket.on(SEND_MESSAEGE, (message: { roomId: string; message: string; chatId: string; nickname: string }) => {

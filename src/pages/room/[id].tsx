@@ -30,13 +30,15 @@ const RoomIn = (props: Props) => {
   const chatContainerRef = useRef<any>()
   const router = useRouter()
   const [enteredInput, setEnteredInput] = useImmer(true)
+  const [nick, setNick] = useImmer<string>('unknwon')
   const roomInEventEmitter = () => {
-    socket.emit(IN_ROOM_USER)
+    socket.emit(IN_ROOM_USER, {
+      nickname: nick,
+    })
   }
 
-  const [nick, setNick] = useImmer('unknwon')
   console.log('id', id)
-  console.log('nickname', nickname)
+  console.log('client - nickname', nickname)
 
   const newUserJoinHandler = () => {
     if (!nick) return
@@ -59,7 +61,7 @@ const RoomIn = (props: Props) => {
     }
   }, [newMessage])
 
-  useEffect(roomInEventEmitter, [])
+  useEffect(roomInEventEmitter, [nick])
 
   useEffect(() => {
     id && newUserJoinHandler()
@@ -107,20 +109,43 @@ const RoomIn = (props: Props) => {
     },
   })
 
-  useEffect(() => {
-    if (nick) return
-    const userName = prompt('닉네임을 입력하세요.')
-    setNick(userName)
-  }, [])
+  const nickFormik = useFormik({
+    initialValues: {
+      nickname: '',
+    },
+    validationSchema: Yup.object({
+      nickname: Yup.string().required(),
+    }),
+    onSubmit: async (values, fn) => {
+      setNick(values.nickname)
+      fn.setFieldValue('nickname', '')
+    },
+  })
 
   return (
     <>
       <Header title={id || ''} />
       <div>
         <div className='fixed w-full h-[200px] z-[1000] '>
-          <h3 className='text-black bg-[#00000033] px-[40px]'>
-            CASINO Room <small>{props.id}</small>
-          </h3>
+          <div className='flex self-center justify-start bg-[#00000033] pt-[20px]'>
+            <h3 className='text-black  px-[40px]'>
+              CASINO Room <small>{props.id}</small>
+            </h3>
+            <FormikProvider value={nickFormik}>
+              <Form onSubmit={nickFormik.handleSubmit}>
+                <input
+                  onFocus={() => setEnteredInput(false)}
+                  onBlur={() => setEnteredInput(true)}
+                  placeholder='닉네임을 입력하세요.'
+                  className='block  text-black h-[30px] px-20px'
+                  name='nickname'
+                  type='text'
+                  onChange={nickFormik.handleChange}
+                  value={nickFormik.values.nickname}
+                />
+              </Form>
+            </FormikProvider>
+          </div>
           <ul className='flex flex-col self-end h-full overflow-y-scroll bg-[#00000033] px-[40px] pb-[40px] pt-[60px]'>
             {chats.map((chat: any) => {
               if (chat.type === 'new') {

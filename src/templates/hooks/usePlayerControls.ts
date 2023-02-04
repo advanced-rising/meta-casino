@@ -16,8 +16,6 @@ export const usePlayerControls = () => {
     document.addEventListener('keydown', handleKeyDown)
     document.addEventListener('keyup', handleKeyUp)
 
-    console.log('#########')
-
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
       document.removeEventListener('keyup', handleKeyUp)

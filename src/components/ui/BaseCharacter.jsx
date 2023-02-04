@@ -10,6 +10,7 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
   const frontVector = new THREE.Vector3()
   const sideVector = new THREE.Vector3()
   const speed = new THREE.Vector3()
+
   const SPEED = 5
 
   const { camera } = useThree()
@@ -21,7 +22,8 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
     position: [0, 10, 0],
     ...props,
   }))
-  const { forward, backward, left, right, jump } = usePlayerControls()
+  const { forward, backward, left, right, jump, mouse, touch } = usePlayerControls()
+
   const velocity = useRef([0, 0, 0])
   useEffect(() => api.velocity.subscribe((v) => (velocity.current = v)), [])
 
@@ -34,10 +36,11 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
       speed.fromArray(velocity.current)
 
       socket.emit('move', {
-        id,
+        id: socket.id,
         rotation: [camera.quaternion._x, camera.quaternion._y, camera.quaternion._z, camera.quaternion._w],
         position: [camera.position.x, camera.position.y, camera.position.z],
       })
+
       api.velocity.set(direction.x, velocity.current[1], direction.z)
       if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
         api.velocity.set(velocity.current[0], 5, velocity.current[2])

@@ -1,5 +1,6 @@
 # META CASINO
 
+```
 로컬 실행 방법
 
  - yarn install
@@ -9,6 +10,8 @@
  - yarn dev
  
  - http://localhost:3000
+ 
+ ```
 
 NextJS + THREE JS + Socket.io + R3F(React Three Fiber)
 

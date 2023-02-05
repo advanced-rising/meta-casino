@@ -92,20 +92,24 @@ const Message = ({ id, setEnteredInput }: { id: any; setEnteredInput: any }) => 
         <h3 className='text-black  px-[40px]'>
           CASINO Room <small>{id}</small>
         </h3>
-        <FormikProvider value={nickFormik}>
-          <Form onSubmit={nickFormik.handleSubmit}>
-            <input
-              onFocus={() => setEnteredInput(false)}
-              onBlur={() => setEnteredInput(true)}
-              placeholder='닉네임을 입력하세요.'
-              className='block  text-black h-[30px] px-20px'
-              name='nickname'
-              type='text'
-              onChange={nickFormik.handleChange}
-              value={nickFormik.values.nickname}
-            />
-          </Form>
-        </FormikProvider>
+        {nick === 'unknwon' ? (
+          <FormikProvider value={nickFormik}>
+            <Form onSubmit={nickFormik.handleSubmit}>
+              <input
+                onFocus={() => setEnteredInput(false)}
+                onBlur={() => setEnteredInput(true)}
+                placeholder='닉네임을 입력하세요.'
+                className='block  text-black h-[30px] px-20px'
+                name='nickname'
+                type='text'
+                onChange={nickFormik.handleChange}
+                value={nickFormik.values.nickname}
+              />
+            </Form>
+          </FormikProvider>
+        ) : (
+          <p>Your Nick : {nick}</p>
+        )}
       </div>
       <ul className='flex flex-col self-end h-full overflow-y-scroll bg-[#00000033] px-[40px] pb-[40px] pt-[60px]'>
         {chats.map((chat: any) => {

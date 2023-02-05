@@ -26,7 +26,6 @@ class SocketThree {
       this.io.sockets.emit('move', clients)
 
       socket.on('move', ({ id, rotation, position }) => {
-        console.log('id, rotation, position', id, rotation, position)
         clients[socket.id].id = socket.id
         clients[socket.id].position = position
         clients[socket.id].rotation = rotation

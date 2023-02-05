@@ -50,8 +50,8 @@ class SocketRoom {
         });
     }
     static inRoomUserListener(socket) {
-        socket.on(exports.IN_ROOM_USER, () => {
-            socket.broadcast.emit(exports.IN_ROOM_USER, { id: socket.id });
+        socket.on(exports.IN_ROOM_USER, ({ nickname }) => {
+            socket.broadcast.emit(exports.IN_ROOM_USER, { id: socket.id, nickname: nickname });
         });
         socket.on(exports.SEND_MESSAEGE, (message) => {
             console.log(`[SERVER] send: ${message.message} to ${message.roomId}`);

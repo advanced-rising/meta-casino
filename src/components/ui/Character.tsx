@@ -1,12 +1,14 @@
 import { useFrame, useLoader, useThree } from '@react-three/fiber'
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { Suspense, useCallback, useEffect, useRef } from 'react'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { useFBX, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 
 import { Mesh } from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { useBox } from '@react-three/cannon'
+import { useBox, usePlane } from '@react-three/cannon'
+import socket from 'socket.io-client'
+import usePlayerControls from '@/templates/hooks/usePlayerControls'
 
 interface Animations {
   [name: string]: {
@@ -19,8 +21,6 @@ interface CharacterProps {
 }
 
 const Character = ({ camera }: CharacterProps) => {
-  const character = useRef<Mesh>(null!)
-
   const activeAnimation: {
     forward: boolean
     backward: boolean
@@ -38,7 +38,7 @@ const Character = ({ camera }: CharacterProps) => {
     dance: false,
     jump: false,
   }
-
+  const character = useRef<Mesh>(null!)
   const animations: Animations = {}
 
   const currentPosition = new THREE.Vector3()
@@ -46,10 +46,14 @@ const Character = ({ camera }: CharacterProps) => {
   const decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0)
   const acceleration = new THREE.Vector3(1, 0.125, 100.0)
   const velocity = new THREE.Vector3(0, 0, 0)
-  const { camera: asCamera } = useThree()
-  const puffinChar = useLoader(GLTFLoader, '/assets/models/puffin.gltf')
+  const direction = new THREE.Vector3()
+  const frontVector = new THREE.Vector3()
+  const sideVector = new THREE.Vector3()
+  const speed = new THREE.Vector3()
 
-  console.log('puffinChar', puffinChar.animations)
+  const SPEED = 5
+
+  const puffinChar = useLoader(GLTFLoader, '/assets/models/puffin.gltf')
 
   puffinChar.scene.traverse((f) => {
     f.castShadow = true
@@ -145,7 +149,6 @@ const Character = ({ camera }: CharacterProps) => {
   }
 
   const calculateIdealLookat = () => {
-    console.log('character.current.position,character.current.position', character.current.position)
     const idealLookat = new THREE.Vector3(1, -2, 5)
     idealLookat.applyQuaternion(character.current.quaternion)
     idealLookat.add(character.current.position)
@@ -195,13 +198,14 @@ const Character = ({ camera }: CharacterProps) => {
     }
 
     if (activeAnimation.forward) {
-      newVelocity.z += acc.z * delta
+      newVelocity.z += (acc.z * delta) / 5
     }
     if (activeAnimation.backward) {
-      newVelocity.z -= acc.z * delta
+      newVelocity.z -= (acc.z * delta) / 5
     }
     if (activeAnimation.left) {
       _A.set(0, 3, 0)
+      _Q.set(0, 3, 0, 0)
       _Q.setFromAxisAngle(_A, 2.0 * Math.PI * delta * acceleration.y)
       _R.multiply(_Q)
     }
@@ -232,6 +236,7 @@ const Character = ({ camera }: CharacterProps) => {
 
     character.current.position.copy(controlObject.position)
     // character.current.getWorldPosition(camera.position)
+    // puffinChar.scene.lookAt(forward)
     updateCameraTarget(delta)
   }
 
@@ -263,10 +268,10 @@ const Character = ({ camera }: CharacterProps) => {
         currAction = animations['walk'].clip
       }
     } else if (activeAnimation.jump) {
-      if (activeAnimation.jump) {
+      if (activeAnimation.run) {
         currAction = animations['jump'].clip
       } else {
-        currAction = animations['walk'].clip
+        currAction = animations['idle'].clip
       }
     } else if (activeAnimation.dance) {
       currAction = animations['dance'].clip
@@ -288,9 +293,11 @@ const Character = ({ camera }: CharacterProps) => {
     }
 
     characterState(delta)
+
     const idealLookat = calculateIdealLookat()
 
-    state.camera.lookAt(idealLookat)
+    state.camera.lookAt(puffinChar.scene.position)
+
     // state.camera.lookAt(puffinChar.scene.children[0].position)
 
     state.camera.updateProjectionMatrix()

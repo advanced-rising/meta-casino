@@ -45,8 +45,8 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
       })
 
       api.velocity.set(direction.x, velocity.current[1], direction.z)
-      if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
-        api.velocity.set(velocity.current[0], 5, velocity.current[2])
+      // if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
+      //   api.velocity.set(velocity.current[0], 5, velocity.current[2])
     }
   })
   const gltf = useLoader(GLTFLoader, '/assets/models/puffin.gltf')
@@ -59,46 +59,6 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
     mixer.update(delta)
     // console.log(ca);
   })
-
-  // // 마우스 좌표를 three.js에 맞게 변환
-  // function calculateMousePosition(e) {
-  //   mouse.x = (e.clientX / canvas.clientWidth) * 2 - 1
-  //   mouse.y = -((e.clientY / canvas.clientHeight) * 2 - 1)
-  // }
-
-  // // 변환된 마우스 좌표를 이용해 래이캐스팅
-  // function raycasting() {
-  //   raycaster.setFromCamera(mouse, camera)
-  //   checkIntersects()
-  // }
-
-  // // 마우스 이벤트
-  // canvas.addEventListener('mousedown', (e) => {
-  //   isPressed = true
-  //   calculateMousePosition(e)
-  // })
-  // canvas.addEventListener('mouseup', () => {
-  //   isPressed = false
-  // })
-  // canvas.addEventListener('mousemove', (e) => {
-  //   if (isPressed) {
-  //     calculateMousePosition(e)
-  //   }
-  // })
-
-  // // 터치 이벤트
-  // canvas.addEventListener('touchstart', (e) => {
-  //   isPressed = true
-  //   calculateMousePosition(e.touches[0])
-  // })
-  // canvas.addEventListener('touchend', () => {
-  //   isPressed = false
-  // })
-  // canvas.addEventListener('touchmove', (e) => {
-  //   if (isPressed) {
-  //     calculateMousePosition(e.touches[0])
-  //   }
-  // })
 
   return (
     <group>

@@ -1,23 +1,15 @@
 import { useFrame, useLoader, useThree } from '@react-three/fiber'
-import React, { Suspense, useCallback, useEffect, useRef } from 'react'
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
-import { useFBX, useGLTF } from '@react-three/drei'
+import React, { useCallback, useEffect, useRef } from 'react'
+
 import * as THREE from 'three'
 
 import { Mesh } from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { useBox, usePlane } from '@react-three/cannon'
-import socket from 'socket.io-client'
-import usePlayerControls from '@/templates/hooks/usePlayerControls'
 
 interface Animations {
   [name: string]: {
     clip: THREE.AnimationAction
   }
-}
-
-interface CharacterProps {
-  camera: THREE.OrthographicCamera
 }
 
 const Character = () => {
@@ -46,12 +38,6 @@ const Character = () => {
   const decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0)
   const acceleration = new THREE.Vector3(1, 0.125, 100.0)
   const velocity = new THREE.Vector3(0, 0, 0)
-  const direction = new THREE.Vector3()
-  const frontVector = new THREE.Vector3()
-  const sideVector = new THREE.Vector3()
-  const speed = new THREE.Vector3()
-
-  const SPEED = 5
 
   const puffinChar = useLoader(GLTFLoader, '/assets/models/puffin.gltf')
   const { camera } = useThree()
@@ -89,7 +75,6 @@ const Character = () => {
 
   // Controll Input
   const handleKeyPress = useCallback((event) => {
-    console.log('event', event.keyCode)
     switch (event.keyCode) {
       case 87: //w
         activeAnimation.forward = true
@@ -204,12 +189,12 @@ const Character = () => {
     }
     if (activeAnimation.left) {
       _A.set(0, 1, 0)
-      _Q.setFromAxisAngle(_A, 4.0 * Math.PI * delta * acceleration.y)
+      _Q.setFromAxisAngle(_A, 12.0 * Math.PI * delta * acceleration.y)
       _R.multiply(_Q)
     }
     if (activeAnimation.right) {
       _A.set(0, 1, 0)
-      _Q.setFromAxisAngle(_A, 4.0 * -Math.PI * delta * acceleration.y)
+      _Q.setFromAxisAngle(_A, 12.0 * -Math.PI * delta * acceleration.y)
       _R.multiply(_Q)
     }
 

@@ -3,12 +3,13 @@ import { KeyboardControls, Loader, OrbitControls, PerspectiveCamera, softShadows
 import { Canvas, useThree } from '@react-three/fiber'
 
 import * as THREE from 'three'
-import Character from './Character'
+
 import Lights from './ui/Lights'
 import { Physics } from '@react-three/cannon'
 import Floor from './ui/Floor'
 import BaseBox from './ui/BaseBox'
 import ThreeModel from './ui/Tree'
+import Character from './Character'
 
 softShadows()
 const Scene = ({ children }: { children: any }) => {
@@ -53,7 +54,7 @@ const Scene = ({ children }: { children: any }) => {
             <ThreeModel args={[0.5, 2, 0.5]} scale={0.5} position={[-5, 0, -5]} />
             <ThreeModel args={[0.5, 2, 0.5]} scale={0.5} position={[0, 0, -10]} />
             <ThreeModel args={[0.5, 2, 0.5]} scale={0.5} position={[10, 0, 5]} />
-            {/* <fog attach='fog' color='#ffffff' near={50} far={300} /> */}
+            <fog attach='fog' color='#ffffff' near={50} far={300} />
           </Physics>
         </Canvas>
 

@@ -10,9 +10,10 @@ import Floor from './ui/Floor'
 import BaseBox from './ui/BaseBox'
 import ThreeModel from './ui/Tree'
 import Character from './Character'
+import { Socket } from 'socket.io-client'
 
 softShadows()
-const Scene = ({ children }: { children: any }) => {
+const Scene = ({ children, socket }: { children: any; socket: Socket }) => {
   const [isSet, setIsSet] = useState(false)
   useEffect(() => {
     if (window) {
@@ -41,7 +42,7 @@ const Scene = ({ children }: { children: any }) => {
           <Lights />
           <Physics gravity={[0, -9.8, 0]}>
             <Suspense fallback={null}>
-              <Character />
+              <Character socket={socket} />
 
               <Floor rotation={[Math.PI / -2, 0, 0]} color='white' />
             </Suspense>

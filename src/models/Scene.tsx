@@ -26,7 +26,7 @@ const Scene = ({ children }: { children: any }) => {
     isSet && (
       <div className='w-full h-screen bg-white'>
         <Canvas
-          shadows
+          shadows={'soft'}
           camera={{
             zoom: 100,
             position: [1, 5, 5],

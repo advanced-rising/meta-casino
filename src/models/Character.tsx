@@ -1,3 +1,4 @@
+import { socket } from '@/utils/context'
 import { useFrame, useLoader, useThree } from '@react-three/fiber'
 import React, { useCallback, useEffect, useRef } from 'react'
 
@@ -75,6 +76,7 @@ const Character = () => {
 
   // Controll Input
   const handleKeyPress = useCallback((event) => {
+    console.log('event.keyCode', event.keyCode)
     switch (event.keyCode) {
       case 87: //w
         activeAnimation.forward = true
@@ -278,6 +280,12 @@ const Character = () => {
     state.camera.position.copy(puffinChar.scene.children[0].position)
     character.current.getWorldPosition(camera.position)
     state.camera.updateProjectionMatrix()
+    socket.emit('move', {
+      id: socket.id,
+      rotation: [camera.quaternion.x, camera.quaternion.y, camera.quaternion.z, camera.quaternion.w],
+      position: [camera.position.x, camera.position.y, camera.position.z],
+    })
+
     mixer?.update(delta)
   })
 

@@ -10,11 +10,7 @@
     "@react-three/cannon": "^6.5.2",
     "@react-three/drei": "^9.56.5",
     "@react-three/fiber": "^8.10.1",
-<<<<<<< version
     "@react-three/rapier": "^0.13.0",
-=======
-    "@react-three/rapier": "^0.12.2",
->>>>>>> dir update
     "cross-env": "^7.0.3",
     "formik": "^2.2.9",
     "glsl-random": "^0.0.5",

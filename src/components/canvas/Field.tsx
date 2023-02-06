@@ -1,17 +1,9 @@
 import React, { useEffect, useState, useRef, useCallback, Suspense } from 'react'
 
 import { OrbitControls, Text, Stats, Sky } from '@react-three/drei'
-import { io } from 'socket.io-client'
-
-import BaseBox from '@/models/ui/BaseBox'
-import ThreeModel from '@/models/ui/Tree'
-import BaseCharacter from '@/models/BaseCharacter'
-import BaseScene from '@/models/BaseScene'
 
 import { socket } from '@/utils/context'
-import Character from '../ui/Character'
-import { useThree } from '@react-three/fiber'
-import Scene from '../ui/Scene'
+import Scene from '@/models/Scene'
 
 const Field = ({ id, enteredInput }: { id: any; enteredInput: boolean }) => {
   const [socketClient, setSocketClient] = useState(null)

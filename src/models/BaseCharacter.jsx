@@ -44,8 +44,8 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
       })
 
       api.velocity.set(direction.x, velocity.current[1], direction.z)
-      // if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
-      //   api.velocity.set(velocity.current[0], 5, velocity.current[2])
+      if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
+        api.velocity.set(velocity.current[0], 5, velocity.current[2])
     }
   })
   const gltf = useLoader(GLTFLoader, '/assets/models/puffin.gltf')
@@ -59,11 +59,6 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
     // console.log(ca);
   })
 
-<<<<<<< version:src/components/ui/BaseCharacter.jsx
-=======
-  console.log('camera.position', camera.position)
-
->>>>>>> dir update:src/models/BaseCharacter.jsx
   return (
     <group>
       {/* <mesh

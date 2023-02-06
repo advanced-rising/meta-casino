@@ -37,11 +37,11 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
       direction.subVectors(frontVector, sideVector).normalize().multiplyScalar(SPEED).applyEuler(camera.rotation)
       speed.fromArray(velocity.current)
 
-      socket.emit('move', {
-        id: socket.id,
-        rotation: [camera.quaternion._x, camera.quaternion._y, camera.quaternion._z, camera.quaternion._w],
-        position: [camera.position.x, camera.position.y, camera.position.z],
-      })
+      // socket.emit('move', {
+      //   id: socket.id,
+      //   rotation: [camera.quaternion._x, camera.quaternion._y, camera.quaternion._z, camera.quaternion._w],
+      //   position: [camera.position.x, camera.position.y, camera.position.z],
+      // })
 
       api.velocity.set(direction.x, velocity.current[1], direction.z)
       if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)

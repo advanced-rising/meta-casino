@@ -20,7 +20,7 @@ interface CharacterProps {
   camera: THREE.OrthographicCamera
 }
 
-const Character = ({ camera }: CharacterProps) => {
+const Character = () => {
   const activeAnimation: {
     forward: boolean
     backward: boolean
@@ -54,7 +54,7 @@ const Character = ({ camera }: CharacterProps) => {
   const SPEED = 5
 
   const puffinChar = useLoader(GLTFLoader, '/assets/models/puffin.gltf')
-
+  const { camera } = useThree()
   puffinChar.scene.traverse((f) => {
     f.castShadow = true
     f.receiveShadow = true
@@ -142,14 +142,14 @@ const Character = ({ camera }: CharacterProps) => {
   }, [])
 
   const calculateIdealOffset = () => {
-    const idealOffset = new THREE.Vector3(0, 20, -30)
+    const idealOffset = new THREE.Vector3(0, 20, -10)
     idealOffset.applyQuaternion(character.current.quaternion)
     idealOffset.add(character.current.position)
     return idealOffset
   }
 
   const calculateIdealLookat = () => {
-    const idealLookat = new THREE.Vector3(1, -2, 5)
+    const idealLookat = new THREE.Vector3(0, 10, 10)
     idealLookat.applyQuaternion(character.current.quaternion)
     idealLookat.add(character.current.position)
     return idealLookat
@@ -164,14 +164,13 @@ const Character = ({ camera }: CharacterProps) => {
     currentPosition.lerp(idealOffset, t)
     currentLookAt.lerp(idealLookat, t)
 
-    camera.position.copy(currentPosition)
+    // camera.position.copy(currentPosition)
+    // camera.position.copy(currentPosition)
   }
 
   // movement
   const characterState = (delta: number) => {
     const newVelocity = velocity
-    // console.log('newVelocity', newVelocity)
-    // console.log('delta####', delta)
     const frameDecceleration = new THREE.Vector3(
       newVelocity.x * decceleration.x,
       newVelocity.y * decceleration.y,
@@ -204,14 +203,13 @@ const Character = ({ camera }: CharacterProps) => {
       newVelocity.z -= (acc.z * delta) / 5
     }
     if (activeAnimation.left) {
-      _A.set(0, 3, 0)
-      _Q.set(0, 3, 0, 0)
-      _Q.setFromAxisAngle(_A, 2.0 * Math.PI * delta * acceleration.y)
+      _A.set(0, 1, 0)
+      _Q.setFromAxisAngle(_A, 4.0 * Math.PI * delta * acceleration.y)
       _R.multiply(_Q)
     }
     if (activeAnimation.right) {
-      _A.set(0, 3, 0)
-      _Q.setFromAxisAngle(_A, 2.0 * -Math.PI * delta * acceleration.y)
+      _A.set(0, 1, 0)
+      _Q.setFromAxisAngle(_A, 4.0 * -Math.PI * delta * acceleration.y)
       _R.multiply(_Q)
     }
 
@@ -235,8 +233,6 @@ const Character = ({ camera }: CharacterProps) => {
     controlObject.position.add(sideways)
 
     character.current.position.copy(controlObject.position)
-    // character.current.getWorldPosition(camera.position)
-    // puffinChar.scene.lookAt(forward)
     updateCameraTarget(delta)
   }
 
@@ -294,12 +290,8 @@ const Character = ({ camera }: CharacterProps) => {
 
     characterState(delta)
 
-    const idealLookat = calculateIdealLookat()
-
-    state.camera.lookAt(puffinChar.scene.position)
-
-    // state.camera.lookAt(puffinChar.scene.children[0].position)
-
+    state.camera.position.copy(puffinChar.scene.children[0].position)
+    character.current.getWorldPosition(camera.position)
     state.camera.updateProjectionMatrix()
     mixer?.update(delta)
   })

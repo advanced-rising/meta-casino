@@ -3,7 +3,6 @@ import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useState } from 'react'
 import { useFormik, FormikProvider, Form } from 'formik'
 import * as Yup from 'yup'
-import { useImmer } from 'use-immer'
 import { useRouter } from 'next/router'
 import { socket } from '@/utils/context'
 import { useJoinRoom, useWatingRoom } from '@/utils/hook'
@@ -104,10 +103,10 @@ export default function Page(props) {
 
 // Canvas components go here
 // It will receive same props as the Page component (from getStaticProps, etc.)
-Page.canvas = (props) => {
-  return <Logo scale={0.5} route='/blob' position-y={-1} />
-}
+// Page.canvas = (props) => {
+//   return <Logo scale={0.5} route='/blob' position-y={-1} />
+// }
 
-export async function getStaticProps() {
-  return { props: { title: 'Index' } }
-}
+// export async function getStaticProps() {
+//   return { props: { title: 'Index' } }
+// }

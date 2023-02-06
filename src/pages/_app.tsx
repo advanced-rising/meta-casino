@@ -6,7 +6,7 @@ import '@/styles/index.css'
 
 const Scene: any = dynamic(() => import('@/components/canvas/Scene'), { ssr: true })
 
-export default function App({ Component, pageProps = { title: 'index' } }) {
+export default function App({ Component, pageProps = { title: 'META CASINO' } }) {
   const ref = useRef()
   return (
     <>

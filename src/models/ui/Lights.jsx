@@ -20,7 +20,7 @@ function Lights() {
   light.shadow.camera.bottom = -100
   return (
     <>
-      <hemisphereLight {...hemiLight} />/
+      <hemisphereLight {...hemiLight} />
       <directionalLight {...light} />
       <ambientLight intensity={1} />
       <spotLight position={[10, 10, 5]} castShadow={true} penumbra={0.5} />

@@ -25,7 +25,8 @@
     "**/*.tsx",
     "server/index.js",
     "server/scene.js",
-    "server/handler/ThreeScene.js"
+    "server/handler/ThreeScene.js",
+    "src/templates/hooks/PointerLockControls.js"
   ],
   "exclude": ["node_modules", "dist", ".next", "out", "next.config.js"]
 }

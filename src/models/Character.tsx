@@ -75,57 +75,63 @@ const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boo
   let prevAction: THREE.AnimationAction
 
   // Controll Input
-  const handleKeyPress = useCallback((event) => {
-    switch (event.keyCode) {
-      case 87: //w
-        activeAnimation.forward = true
-        break
-      case 65: //a
-        activeAnimation.left = true
-        break
-      case 83: //s
-        activeAnimation.backward = true
-        break
-      case 68: // d
-        activeAnimation.right = true
-        break
-      case 69: //e dance
-        activeAnimation.dance = true
-        break
-      case 16: // shift
-        activeAnimation.run = true
-        break
-      case 32: // space
-        activeAnimation.jump = true
-        break
-    }
-  }, [])
+  const handleKeyPress = useCallback(
+    (event) => {
+      switch (event.keyCode) {
+        case 87: //w
+          activeAnimation.forward = true
+          break
+        case 65: //a
+          activeAnimation.left = true
+          break
+        case 83: //s
+          activeAnimation.backward = true
+          break
+        case 68: // d
+          activeAnimation.right = true
+          break
+        case 69: //e dance
+          activeAnimation.dance = true
+          break
+        case 16: // shift
+          activeAnimation.run = true
+          break
+        case 32: // space
+          activeAnimation.jump = true
+          break
+      }
+    },
+    [activeAnimation],
+  )
 
-  const handleKeyUp = useCallback((event) => {
-    switch (event.keyCode) {
-      case 87: //w
-        activeAnimation.forward = false
-        break
-      case 65: //a
-        activeAnimation.left = false
-        break
-      case 83: //s
-        activeAnimation.backward = false
-        break
-      case 68: // d
-        activeAnimation.right = false
-        break
-      case 69: //e dance
-        activeAnimation.dance = false
-        break
-      case 16: // shift
-        activeAnimation.run = false
-        break
-      case 32: // space
-        activeAnimation.jump = false
-        break
-    }
-  }, [])
+  const handleKeyUp = useCallback(
+    (event) => {
+      switch (event.keyCode) {
+        case 87: //w
+          activeAnimation.forward = false
+          break
+        case 65: //a
+          activeAnimation.left = false
+          break
+        case 83: //s
+          activeAnimation.backward = false
+          break
+        case 68: // d
+          activeAnimation.right = false
+          break
+        case 69: //e dance
+          activeAnimation.dance = false
+          break
+        case 16: // shift
+          activeAnimation.run = false
+          break
+        case 32: // space
+          activeAnimation.jump = false
+          break
+      }
+    },
+    [activeAnimation],
+  )
 
   const calculateIdealOffset = () => {
     const idealOffset = new THREE.Vector3(0, 20, -10)
@@ -280,12 +286,8 @@ const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boo
     state.camera.position.copy(puffinChar.scene.children[0].position)
     character.current.getWorldPosition(camera.position)
     state.camera.updateProjectionMatrix()
-    // socket.emit('move', {
-    //   rotation: [camera.quaternion.x, camera.quaternion.y, camera.quaternion.z, camera.quaternion.w],
-    //   position: [camera.position.x, camera.position.y, camera.position.z],
-    // })
 
-    mixer?.update(delta)
+    mixer.update(delta)
   })
 
   useEffect(() => {
@@ -296,7 +298,7 @@ const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boo
       document.removeEventListener('keydown', handleKeyPress)
       document.removeEventListener('keyup', handleKeyUp)
     }
-  }, [])
+  }, [currAction, handleKeyPress, handleKeyUp])
 
   return <primitive ref={character} object={puffinChar.scene} scale={[0.005, 0.005, 0.005]} />
 }

@@ -50,12 +50,11 @@ const Field = ({ id, enteredInput }: { id: any; enteredInput: boolean }) => {
           }}
           orthographic>
           <Physics gravity={[0, -9.8, 0]}>
+            <Lights />
             <Suspense fallback={null}>
-              <Lights />
               <Character socket={socket} enteredInput={enteredInput} />
-
-              <Floor rotation={[Math.PI / -2, 0, 0]} color='white' />
             </Suspense>
+            <Floor rotation={[Math.PI / -2, 0, 0]} color='white' />
             <BaseBox text={false} position={[-5, 0.5, 0]} args={[2, 1, 2]} color='red' />
             <BaseBox text={false} position={[5, 1, 0]} args={[1.5, 2, 1.3]} color='orange' />
             <BaseBox text={false} position={[0, 0.5, 5]} args={[3, 1, 1.3]} color='green' />
@@ -65,9 +64,8 @@ const Field = ({ id, enteredInput }: { id: any; enteredInput: boolean }) => {
             <Tree args={[0.5, 2, 0.5]} scale={0.5} position={[-5, 0, -5]} />
             <Tree args={[0.5, 2, 0.5]} scale={0.5} position={[0, 0, -10]} />
             <Tree args={[0.5, 2, 0.5]} scale={0.5} position={[10, 0, 5]} />
-            <fog attach='fog' color='#ffffff' near={50} far={300} />
+            <Sky />
           </Physics>
-          <Sky />
         </Canvas>
 
         <Loader dataInterpolation={(p) => `Loading ${p.toFixed(2)}%`} initialState={(active) => active} />

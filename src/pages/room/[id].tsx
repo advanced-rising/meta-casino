@@ -3,7 +3,7 @@ import React from 'react'
 import { useImmer } from 'use-immer'
 
 import Header from '@/config'
-import Field from '@/components/canvas/Field'
+import Field from '@/models/Field'
 import Message from '@/components/dom/Message'
 
 interface Props {

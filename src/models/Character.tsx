@@ -1,4 +1,3 @@
-import { socket } from '@/utils/context'
 import { useFrame, useLoader, useThree } from '@react-three/fiber'
 import React, { useCallback, useEffect, useRef } from 'react'
 import { Socket } from 'socket.io-client'
@@ -14,7 +13,7 @@ interface Animations {
   }
 }
 
-const Character = ({ socket }: { socket: Socket }) => {
+const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boolean }) => {
   const activeAnimation: {
     forward: boolean
     backward: boolean
@@ -77,7 +76,6 @@ const Character = ({ socket }: { socket: Socket }) => {
 
   // Controll Input
   const handleKeyPress = useCallback((event) => {
-    console.log('event.keyCode', event.keyCode)
     switch (event.keyCode) {
       case 87: //w
         activeAnimation.forward = true
@@ -225,6 +223,7 @@ const Character = ({ socket }: { socket: Socket }) => {
   }
 
   useFrame((state, delta) => {
+    if (!enteredInput) return
     prevAction = currAction
 
     if (activeAnimation.forward) {
@@ -282,7 +281,6 @@ const Character = ({ socket }: { socket: Socket }) => {
     character.current.getWorldPosition(camera.position)
     state.camera.updateProjectionMatrix()
     // socket.emit('move', {
-    //   id: socket?.id,
     //   rotation: [camera.quaternion.x, camera.quaternion.y, camera.quaternion.z, camera.quaternion.w],
     //   position: [camera.position.x, camera.position.y, camera.position.z],
     // })
@@ -292,15 +290,13 @@ const Character = ({ socket }: { socket: Socket }) => {
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyPress)
-
     document.addEventListener('keyup', handleKeyUp)
     currAction.play()
     return () => {
       document.removeEventListener('keydown', handleKeyPress)
-
       document.removeEventListener('keyup', handleKeyUp)
     }
-  })
+  }, [])
 
   return <primitive ref={character} object={puffinChar.scene} scale={[0.005, 0.005, 0.005]} />
 }

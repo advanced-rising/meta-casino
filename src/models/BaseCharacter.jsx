@@ -1,10 +1,10 @@
-import { useSphere } from '@react-three/cannon'
+import { useBox, useSphere } from '@react-three/cannon'
 import { useFrame, useLoader, useThree } from '@react-three/fiber'
 import { Suspense, useEffect, useRef, useState } from 'react'
 import usePlayerControls from '@/templates/hooks/usePlayerControls'
 
 import * as THREE from 'three'
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, useKeyboardControls } from '@react-three/drei'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
@@ -17,10 +17,9 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
 
   const { camera } = useThree()
 
-  const [ref, api] = useSphere((index) => ({
+  const [ref, api] = useBox((index) => ({
     mass: 1,
     type: 'Dynamic',
-
     position: [0, 10, 0],
     ...props,
   }))
@@ -60,6 +59,11 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
     // console.log(ca);
   })
 
+<<<<<<< version:src/components/ui/BaseCharacter.jsx
+=======
+  console.log('camera.position', camera.position)
+
+>>>>>>> dir update:src/models/BaseCharacter.jsx
   return (
     <group>
       {/* <mesh
@@ -70,7 +74,7 @@ const BaseCharacter = ({ socket, id, enteredInput, ...props }) => {
         geometry={nodes['tree-beech'].geometry}
         material={materials.color_main}
       /> */}
-      <mesh lookAt={camera.position} ref={ref}>
+      <mesh lookAt={frontVector} ref={ref}>
         <Suspense fallback={gltf}>
           <primitive
             object={gltf.scene}

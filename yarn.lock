@@ -954,10 +954,17 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
+<<<<<<< version
 "@dimforge/rapier3d-compat@0.11.1":
   version "0.11.1"
   resolved "https://registry.yarnpkg.com/@dimforge/rapier3d-compat/-/rapier3d-compat-0.11.1.tgz#24cdf14ea7c6551242f186133c0b09ada310803d"
   integrity sha512-Xt3KcvwxnTZxjZ3uA4Qx5S9LoAqCvj4mTzcSwdPnVpM0F/ZPU7cY9bjGiNqB3+/IvUSCQB1eVamAd2IQX7hzTA==
+=======
+"@dimforge/rapier3d-compat@0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@dimforge/rapier3d-compat/-/rapier3d-compat-0.10.0.tgz#d8c3c75ea5183cfdc0db616a6ee9b0983a219d4c"
+  integrity sha512-3SPxyAnPQz9P3cIhgF8VncwJwrqyAW2xsNEYgXbxDhvB2IaIG63eTX7rNIJUnec5FDYqgvVo/nqY1XarzT5T2Q==
+>>>>>>> dir update
 
 "@eslint/eslintrc@^1.4.1":
   version "1.4.1"
@@ -1914,6 +1921,7 @@
     suspend-react "^0.0.8"
     zustand "^3.7.1"
 
+<<<<<<< version
 "@react-three/rapier@^0.13.0":
   version "0.13.0"
   resolved "https://registry.yarnpkg.com/@react-three/rapier/-/rapier-0.13.0.tgz#03722427313e65f53e9845dd91dce62d2ef1e773"
@@ -1922,6 +1930,16 @@
     "@dimforge/rapier3d-compat" "0.11.1"
     three-stdlib "2.21.6"
     use-asset "1.0.4"
+=======
+"@react-three/rapier@^0.12.2":
+  version "0.12.2"
+  resolved "https://registry.yarnpkg.com/@react-three/rapier/-/rapier-0.12.2.tgz#602c37617476397f3d91d586b31d98e76785b328"
+  integrity sha512-h0WMnw2BOKBULRobxrPGGM+ZTIqjrEydqv1bxbDNoRNtyEtljq8hTkDnpOzWpE2YnHbc/pEN/dznn8P6w075ow==
+  dependencies:
+    "@dimforge/rapier3d-compat" "0.10.0"
+    three-stdlib "^2.15.0"
+    use-asset "^1.0.4"
+>>>>>>> dir update
 
 "@rollup/plugin-babel@^5.2.0":
   version "5.3.1"
@@ -6949,6 +6967,7 @@ three-mesh-bvh@^0.5.22:
   resolved "https://registry.yarnpkg.com/three-mesh-bvh/-/three-mesh-bvh-0.5.22.tgz#9c20fbaba1f55c7afe3fe769a90c4605e3bd53ee"
   integrity sha512-vi9X78CoEz1VVfkKRpUZQa34SEc0QGDd9Hmyis0aeBRAmjp4BpHQ2URcirBsOvFMNBXqB9Klp8sQ9NCRsUEW0w==
 
+<<<<<<< version
 three-stdlib@2.21.6:
   version "2.21.6"
   resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.21.6.tgz#764711f317a355a47138a8a5abe95bff0a0bbd45"
@@ -6967,6 +6986,9 @@ three-stdlib@2.21.6:
     zstddec "^0.0.2"
 
 three-stdlib@^2.21.6, three-stdlib@^2.21.8:
+=======
+three-stdlib@^2.15.0, three-stdlib@^2.21.6, three-stdlib@^2.21.8:
+>>>>>>> dir update
   version "2.21.8"
   resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.21.8.tgz#37b11b7f62d07b10742c212153b14db21433b3c6"
   integrity sha512-kqisiKvO4mSy59v5vWqBQSH8famLxp7Z51LxpMJI9GwDxqODaW02rhIwmjYDEzZWNFpjZpoDHVGbdpeHf8h3SA==
@@ -7281,7 +7303,11 @@ url-loader@^4.1.1:
     mime-types "^2.1.27"
     schema-utils "^3.0.0"
 
+<<<<<<< version
 use-asset@1.0.4:
+=======
+use-asset@^1.0.4:
+>>>>>>> dir update
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/use-asset/-/use-asset-1.0.4.tgz#506caafc29f602890593799e58b577b70293a6e2"
   integrity sha512-7/hqDrWa0iMnCoET9W1T07EmD4Eg/Wmoj/X8TGBc++ECRK4m5yTsjP4O6s0yagbxfqIOuUkIxe2/sA+VR2GxZA==

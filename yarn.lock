@@ -954,6 +954,11 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
+"@dimforge/rapier3d-compat@0.11.1":
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/@dimforge/rapier3d-compat/-/rapier3d-compat-0.11.1.tgz#24cdf14ea7c6551242f186133c0b09ada310803d"
+  integrity sha512-Xt3KcvwxnTZxjZ3uA4Qx5S9LoAqCvj4mTzcSwdPnVpM0F/ZPU7cY9bjGiNqB3+/IvUSCQB1eVamAd2IQX7hzTA==
+
 "@eslint/eslintrc@^1.4.1":
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-1.4.1.tgz#af58772019a2d271b7e2d4c23ff4ddcba3ccfb3e"
@@ -1908,6 +1913,15 @@
     scheduler "^0.21.0"
     suspend-react "^0.0.8"
     zustand "^3.7.1"
+
+"@react-three/rapier@^0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@react-three/rapier/-/rapier-0.13.0.tgz#03722427313e65f53e9845dd91dce62d2ef1e773"
+  integrity sha512-/9EJzI8z+dRfnB+MY0eQhhI6ZxRjEVUAlZjcKIrbfV2wtsJ1CiuYp29uHcNDWt3SXL/RMLDZ4Jje06c45GmstQ==
+  dependencies:
+    "@dimforge/rapier3d-compat" "0.11.1"
+    three-stdlib "2.21.6"
+    use-asset "1.0.4"
 
 "@rollup/plugin-babel@^5.2.0":
   version "5.3.1"
@@ -6935,6 +6949,23 @@ three-mesh-bvh@^0.5.22:
   resolved "https://registry.yarnpkg.com/three-mesh-bvh/-/three-mesh-bvh-0.5.22.tgz#9c20fbaba1f55c7afe3fe769a90c4605e3bd53ee"
   integrity sha512-vi9X78CoEz1VVfkKRpUZQa34SEc0QGDd9Hmyis0aeBRAmjp4BpHQ2URcirBsOvFMNBXqB9Klp8sQ9NCRsUEW0w==
 
+three-stdlib@2.21.6:
+  version "2.21.6"
+  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.21.6.tgz#764711f317a355a47138a8a5abe95bff0a0bbd45"
+  integrity sha512-J3DyCVKIpYJw7TWG4mQKKPpMgswq4pRRPMtxgipKedpUj8e4EgGtNLt623ws9RHvphPPamTHXacaEzOrm3dFsA==
+  dependencies:
+    "@babel/runtime" "^7.16.7"
+    "@types/offscreencanvas" "^2019.6.4"
+    "@webgpu/glslang" "^0.0.15"
+    chevrotain "^10.1.2"
+    draco3d "^1.4.1"
+    fflate "^0.6.9"
+    ktx-parse "^0.4.5"
+    mmd-parser "^1.0.4"
+    opentype.js "^1.3.3"
+    potpack "^1.0.1"
+    zstddec "^0.0.2"
+
 three-stdlib@^2.21.6, three-stdlib@^2.21.8:
   version "2.21.8"
   resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.21.8.tgz#37b11b7f62d07b10742c212153b14db21433b3c6"
@@ -7249,6 +7280,13 @@ url-loader@^4.1.1:
     loader-utils "^2.0.0"
     mime-types "^2.1.27"
     schema-utils "^3.0.0"
+
+use-asset@1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/use-asset/-/use-asset-1.0.4.tgz#506caafc29f602890593799e58b577b70293a6e2"
+  integrity sha512-7/hqDrWa0iMnCoET9W1T07EmD4Eg/Wmoj/X8TGBc++ECRK4m5yTsjP4O6s0yagbxfqIOuUkIxe2/sA+VR2GxZA==
+  dependencies:
+    fast-deep-equal "^3.1.3"
 
 use-immer@^0.8.1:
   version "0.8.1"

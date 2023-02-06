@@ -19,6 +19,7 @@ class SocketThree {
 
       //Add a new client indexed by his id
       socket[socket.id] = {
+        id: socket.id,
         position: [0, 0, 0],
         rotation: [0, 0, 0],
       }

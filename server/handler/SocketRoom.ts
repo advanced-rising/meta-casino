@@ -73,6 +73,7 @@ class SocketRoom {
         nickname: message.nickname,
       })
     })
+
     socket.on('disconnect', socket.removeAllListeners)
     return () => {
       socket.off(SEND_MESSAEGE, socket.removeAllListeners)

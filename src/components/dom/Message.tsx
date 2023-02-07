@@ -18,7 +18,7 @@ const Message = ({ id, setEnteredInput }: { id: any; setEnteredInput: any }) => 
   const { id: socketId, nickname } = useJoinNewUser(socket)
   const chatContainerRef = useRef<any>()
   const router = useRouter()
-
+  console.log('socketId', socketId)
   const [nick, setNick] = useImmer<string>('unknwon')
   const roomInEventEmitter = () => {
     socket.emit(IN_ROOM_USER, {
@@ -28,8 +28,10 @@ const Message = ({ id, setEnteredInput }: { id: any; setEnteredInput: any }) => 
 
   const newUserJoinHandler = () => {
     if (!nick) return
-    setChats(chats.concat({ type: 'new', userId: id, chatId: uuid(), nickname: nick || 'unknwon' }))
+    setChats(chats.concat({ type: 'new', userId: socketId, chatId: socketId, nickname: nick || 'unknwon' }))
   }
+
+  console.log('chats#########', chats)
 
   useEffect(() => {
     if (newMessage) {
@@ -65,7 +67,7 @@ const Message = ({ id, setEnteredInput }: { id: any; setEnteredInput: any }) => 
         socket.emit(SEND_MESSAEGE, {
           roomId: id,
           message: values.message,
-          chatId: uuid(),
+          chatId: socketId,
           nickname: nick || 'unknwon',
         })
         fn.resetForm()

@@ -11,26 +11,39 @@ import { Physics } from '@react-three/cannon'
 import Character from '@/models/Character'
 import Floor from '@/models/ui/Floor'
 import Tree from '@/models/ui/Tree'
+import { useJoinNewUser } from '@/utils/hook'
 
 softShadows()
 const Field = ({ id, enteredInput }: { id: any; enteredInput: boolean }) => {
-  const [clients, setClients] = useState({})
-
   const [isSet, setIsSet] = useState(false)
   useEffect(() => {
     if (window) {
       setIsSet(true)
     }
   }, [])
+  const { id: socketId, nickname } = useJoinNewUser(socket)
+  const [socketClient, setSocketClient] = useState(null)
+  const [clients, setClients] = useState({})
+
+  console.log('socketClient', socketClient)
 
   useEffect(() => {
-    if (socket) {
-      socket.on('move', (clients) => {
-        setClients(clients)
-      })
-    }
-  }, [socket])
+    // On mount initialize the socket connection
+    setSocketClient(socket)
 
+    // Dispose gracefuly
+    return () => {
+      if (socketClient) socketClient.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
+    socket.on('move', (clients) => {
+      console.log('socket client ####### !!!!!!!!!!!', clients)
+      setClients(clients)
+    })
+  }, [socket])
+  console.log('client ####### clients', clients)
   return (
     isSet &&
     clients &&
@@ -52,7 +65,21 @@ const Field = ({ id, enteredInput }: { id: any; enteredInput: boolean }) => {
           <Physics gravity={[0, -9.8, 0]}>
             <Lights />
             <Suspense fallback={null}>
-              <Character socket={socket} enteredInput={enteredInput} />
+              {Object.keys(clients)
+                .filter((clientKey) => clientKey !== socketClient.id)
+                .map((client) => {
+                  const { position, rotation } = clients[client]
+                  return (
+                    <Character
+                      socket={socketClient}
+                      enteredInput={enteredInput}
+                      key={client}
+                      id={client}
+                      position={position}
+                      rotation={rotation}
+                    />
+                  )
+                })}
             </Suspense>
             <Floor rotation={[Math.PI / -2, 0, 0]} color='white' />
             <BaseBox text={false} position={[-5, 0.5, 0]} args={[2, 1, 2]} color='red' />

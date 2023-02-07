@@ -1,11 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useFrame, useLoader, useThree } from '@react-three/fiber'
-import React, { useCallback, useEffect, useRef } from 'react'
-import { Socket } from 'socket.io-client'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Socket as SocketTypes } from 'socket.io-client'
 
 import * as THREE from 'three'
 
 import { Mesh } from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { useImmer } from 'use-immer'
+import { socket as ContextSocket } from '@/utils/context'
+import { Text } from '@react-three/drei'
 
 interface Animations {
   [name: string]: {
@@ -13,7 +17,19 @@ interface Animations {
   }
 }
 
-const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boolean }) => {
+const Character = ({
+  socket,
+  enteredInput,
+  position,
+  rotation,
+  id,
+}: {
+  socket: SocketTypes
+  enteredInput: boolean
+  position: any
+  rotation: any
+  id: any
+}) => {
   const activeAnimation: {
     forward: boolean
     backward: boolean
@@ -31,6 +47,7 @@ const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boo
     dance: false,
     jump: false,
   }
+
   const character = useRef<Mesh>(null!)
   const animations: Animations = {}
 
@@ -196,12 +213,12 @@ const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boo
     }
     if (activeAnimation.left) {
       _A.set(0, 1, 0)
-      _Q.setFromAxisAngle(_A, 12.0 * Math.PI * delta * acceleration.y)
+      _Q.setFromAxisAngle(_A, 6.0 * Math.PI * delta * acceleration.y)
       _R.multiply(_Q)
     }
     if (activeAnimation.right) {
       _A.set(0, 1, 0)
-      _Q.setFromAxisAngle(_A, 12.0 * -Math.PI * delta * acceleration.y)
+      _Q.setFromAxisAngle(_A, 6.0 * -Math.PI * delta * acceleration.y)
       _R.multiply(_Q)
     }
 
@@ -283,12 +300,55 @@ const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boo
 
     characterState(delta)
 
+    const posArray = []
+    const rotArray = []
+
+    position.toArray(posArray)
+    rotation.toArray(rotArray)
+
+    socket.emit('move', {
+      id,
+      rotation: rotArray,
+      position: posArray,
+    })
+
     state.camera.position.copy(puffinChar.scene.children[0].position)
     character.current.getWorldPosition(camera.position)
     state.camera.updateProjectionMatrix()
 
     mixer.update(delta)
   })
+
+  const [updateCallback, setUpdateCallback] = useState(null)
+
+  // Register the update event and clean up
+  useEffect(() => {
+    const onControlsChange = (val: any) => {
+      const { position, rotation } = val.target.object
+      const { id } = socket
+
+      const posArray = []
+      const rotArray = []
+
+      position.toArray(posArray)
+      rotation.toArray(rotArray)
+
+      socket.emit('move', {
+        id,
+        rotation: rotArray,
+        position: posArray,
+      })
+    }
+
+    if (character.current) {
+      setUpdateCallback(character.current.addEventListener('change', onControlsChange))
+    }
+
+    // Dispose
+    return () => {
+      if (updateCallback && character.current) character.current.removeEventListener('change', onControlsChange)
+    }
+  }, [character, socket])
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyPress)
@@ -300,7 +360,19 @@ const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boo
     }
   }, [currAction, handleKeyPress, handleKeyUp])
 
-  return <primitive ref={character} object={puffinChar.scene} scale={[0.005, 0.005, 0.005]} />
+  return (
+    <group>
+      <primitive ref={character} object={puffinChar.scene} scale={[0.005, 0.005, 0.005]} />
+      <Text
+        position={[camera.position.x, 10, camera.position.z]}
+        color='black'
+        anchorX='center'
+        anchorY='middle'
+        scale={[1, 1, 1]}>
+        {id}
+      </Text>
+    </group>
+  )
 }
 
 export default Character

@@ -5,7 +5,7 @@ import { useImmer } from 'use-immer'
 import Header from '@/config'
 import Field from '@/models/Field'
 import Message from '@/components/dom/Message'
-
+import { socket } from '@/utils/context'
 interface Props {
   id: any
 }
@@ -17,10 +17,12 @@ const RoomIn = (props: Props) => {
   return (
     <>
       <Header title={id || ''} />
-      <div>
-        <Message id={id} setEnteredInput={setEnteredInput} />
-        <Field id={id} enteredInput={enteredInput} />
-      </div>
+      {socket && (
+        <div>
+          <Message id={id} setEnteredInput={setEnteredInput} socket={socket} />
+          <Field id={id} enteredInput={enteredInput} socket={socket} />
+        </div>
+      )}
     </>
   )
 }

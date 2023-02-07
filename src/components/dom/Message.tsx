@@ -8,10 +8,9 @@ import { useFormik, FormikProvider, Form } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 
-import { socket } from '@/utils/context'
 import { useJoinNewUser, useJoinRoom, useNewMessage } from '@/utils/hook'
 
-const Message = ({ id, setEnteredInput }: { id: any; setEnteredInput: any }) => {
+const Message = ({ id, setEnteredInput, socket }: { id: any; setEnteredInput: any; socket: any }) => {
   const [chats, setChats] = useImmer<any>([])
   useJoinRoom(socket, `/room/${id}`)
   const { message: newMessage } = useNewMessage()

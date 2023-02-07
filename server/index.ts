@@ -29,6 +29,7 @@ const link = () => {
     io.sockets.emit('move', clients)
 
     socket.on('move', ({ id, rotation, position }) => {
+      console.log('id, rotation, position', id, rotation, position)
       clients[id].position = position
       clients[id].rotation = rotation
 

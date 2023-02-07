@@ -7,9 +7,6 @@ import * as THREE from 'three'
 
 import { Mesh } from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { useImmer } from 'use-immer'
-import { socket as ContextSocket } from '@/utils/context'
-import { Text } from '@react-three/drei'
 
 interface Animations {
   [name: string]: {
@@ -300,18 +297,6 @@ const Character = ({
 
     characterState(delta)
 
-    const posArray = []
-    const rotArray = []
-
-    position.toArray(posArray)
-    rotation.toArray(rotArray)
-
-    socket.emit('move', {
-      id,
-      rotation: rotArray,
-      position: posArray,
-    })
-
     state.camera.position.copy(puffinChar.scene.children[0].position)
     character.current.getWorldPosition(camera.position)
     state.camera.updateProjectionMatrix()
@@ -319,11 +304,22 @@ const Character = ({
     mixer.update(delta)
   })
 
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyPress)
+    document.addEventListener('keyup', handleKeyUp)
+    currAction.play()
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress)
+      document.removeEventListener('keyup', handleKeyUp)
+    }
+  }, [currAction, handleKeyPress, handleKeyUp])
+
+  const controlsRef = useRef()
   const [updateCallback, setUpdateCallback] = useState(null)
 
   // Register the update event and clean up
   useEffect(() => {
-    const onControlsChange = (val: any) => {
+    const onControlsChange = (val) => {
       const { position, rotation } = val.target.object
       const { id } = socket
 
@@ -341,36 +337,20 @@ const Character = ({
     }
 
     if (character.current) {
+      // @ts-ignore
       setUpdateCallback(character.current.addEventListener('change', onControlsChange))
     }
 
     // Dispose
     return () => {
+      // @ts-ignore
       if (updateCallback && character.current) character.current.removeEventListener('change', onControlsChange)
     }
   }, [character, socket])
 
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyPress)
-    document.addEventListener('keyup', handleKeyUp)
-    currAction.play()
-    return () => {
-      document.removeEventListener('keydown', handleKeyPress)
-      document.removeEventListener('keyup', handleKeyUp)
-    }
-  }, [currAction, handleKeyPress, handleKeyUp])
-
   return (
     <group>
       <primitive ref={character} object={puffinChar.scene} scale={[0.005, 0.005, 0.005]} />
-      <Text
-        position={[camera.position.x, 10, camera.position.z]}
-        color='black'
-        anchorX='center'
-        anchorY='middle'
-        scale={[1, 1, 1]}>
-        {id}
-      </Text>
     </group>
   )
 }

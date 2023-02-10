@@ -2,7 +2,7 @@ import React, { useEffect, useState, Suspense, useRef } from 'react'
 
 import { Sky, Loader, softShadows, Stats } from '@react-three/drei'
 import BaseBox from '@/models/ui/BaseBox'
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import Lights from '@/models/ui/Lights'
 import { Physics } from '@react-three/cannon'
 import Character from '@/models/Character'
@@ -62,7 +62,7 @@ const Field = ({ enteredInput, socket, clients }: { enteredInput: boolean; socke
             <BaseBox text={false} position={[-5, 0.5, 0]} args={[2, 1, 2]} color='red' />
             <BaseBox text={false} position={[5, 1, 0]} args={[1.5, 2, 1.3]} color='orange' />
             <BaseBox text={false} position={[0, 0.5, 5]} args={[3, 1, 1.3]} color='green' />
-            <Tree args={[0.5, 2, 0.5]} scale={0.5} position={[10, 0, -5]} />
+            <Tree args={[0.5, 2, 0.5]} scale={0.5} position={[10, -5, 0]} />
             <Tree args={[0.5, 2, 0.5]} scale={0.5} position={[0, 0, 10]} />
             <Tree args={[0.5, 2, 0.5]} scale={0.5} position={[-10, 0, 5]} />
             <Tree args={[0.5, 2, 0.5]} scale={0.5} position={[-5, 0, -5]} />

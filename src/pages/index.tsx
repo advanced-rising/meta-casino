@@ -13,6 +13,9 @@ import Field from '@/models/Field'
 import { io } from 'socket.io-client'
 import Message from '@/components/dom/Message'
 import { useImmer } from 'use-immer'
+import { useAppDispatch, useAppSelector } from '@/redux/storeHooks'
+import Roulette from '@/components/games/Roulette'
+import { enterSpace } from '@/redux/slices/space'
 
 // Dynamic import is used to prevent a payload when the website starts, that includes threejs, r3f etc..
 // WARNING ! errors might get obfuscated by using dynamic import.
@@ -21,9 +24,12 @@ import { useImmer } from 'use-immer'
 const Logo = dynamic(() => import('@/components/canvas/Logo'), { ssr: false })
 
 // Dom components go here
-export default function Page(props) {
+export default function Home(props) {
+  const space = useAppSelector((state) => state.space)
+
   useJoinRoom(socket, 'wating-room')
   const router = useRouter()
+  const dispatch = useAppDispatch()
   const { rooms } = useWatingRoom(socket)
   const [enteredInput, setEnteredInput] = useImmer(true)
 
@@ -40,6 +46,8 @@ export default function Page(props) {
     }
   }, [])
 
+  console.log('space', space)
+
   useEffect(() => {
     if (socketClient) {
       socketClient.on('move', (clients) => {
@@ -48,10 +56,17 @@ export default function Page(props) {
     }
   }, [socketClient])
 
+  useEffect(() => {
+    setTimeout(() => {
+      dispatch(enterSpace())
+    }, 1000)
+  }, [])
+
   return (
     <>
       <Header title='META CASINO' />
-      <div className='w-full'>
+
+      <div className=' w-full'>
         {socketClient && (
           <div>
             <Message id={socketClient.id} setEnteredInput={setEnteredInput} socket={socketClient} />

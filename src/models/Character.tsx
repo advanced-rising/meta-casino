@@ -1,6 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { enterSpace } from '@/redux/slices/space'
+import { useAppDispatch, useAppSelector } from '@/redux/storeHooks'
 import { OrbitControls, Text } from '@react-three/drei'
 import { useFrame, useLoader, useThree } from '@react-three/fiber'
+import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Socket as SocketTypes } from 'socket.io-client'
 
@@ -45,7 +48,9 @@ const Character = ({
     dance: false,
     jump: false,
   }
-
+  const dispatch = useAppDispatch()
+  const { space } = useAppSelector((state) => state.space)
+  const router = useRouter()
   const character = useRef<Mesh>(null!)
   const animations: Animations = {}
 
@@ -62,6 +67,7 @@ const Character = ({
     f.receiveShadow = true
   })
 
+  console.log('camera', camera.position)
   const mixer = new THREE.AnimationMixer(puffinChar.scene)
 
   animations['idle'] = {
@@ -283,6 +289,7 @@ const Character = ({
       currAction = animations['idle'].clip
     }
 
+    // 10, -5, 0
     if (prevAction !== currAction) {
       prevAction.fadeOut(0.2)
 
@@ -303,6 +310,18 @@ const Character = ({
 
     character.current.getWorldPosition(camera.position)
     state.camera.updateProjectionMatrix()
+
+    if (Math.abs(10 - character.current.position.x) < 1.5 && Math.abs(0 - character.current.position.z) < 1.5) {
+      if (!space) {
+        const cameraPosition = new THREE.Vector3(0, 0, 0)
+        camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z)
+        console.log('camera !!!!!!!!!!!!', cameraPosition)
+        character.current?.getWorldPosition(camera.position)
+        state.camera.updateProjectionMatrix()
+      } else {
+        router.push('/space/roulette')
+      }
+    }
 
     mixer.update(delta)
   })

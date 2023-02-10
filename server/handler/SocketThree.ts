@@ -6,41 +6,37 @@ let clients = {}
 class SocketThree {
   private static io: Server
 
-  public static three(io: Server) {
+  public static listen(io: Server, socket: Socket) {
     this.io = io
-    this.inTheThreeChar()
+    this.connect(socket)
   }
 
-  public static inTheThreeChar() {
-    // Socket app msgs
-    this.io.on('connection', (client) => {
-      console.log(`User ${client.id} connected, there are currently ${this.io.engine.clientsCount} users connected`)
+  public static connect(socket: Socket) {
+    this.io.on('connection', (socket) => {
+      console.log(`User ${socket.id} connected, there are currently ${this.io.engine.clientsCount} users connected`)
+      this.inTheThreeChar(socket)
+    })
+  }
 
-      //Add a new client indexed by his id
-      clients[client.id] = {
-        position: [0, 0, 0],
-        rotation: [0, 0, 0],
-      }
+  public static inTheThreeChar(socket: Socket) {
+    // Socket app msgs
+
+    //Add a new client indexed by his id
+    clients[socket.id] = {
+      position: [0, 0, 0],
+    }
+    this.io.sockets.emit('move', clients)
+    socket.on('move', ({ id, position }) => {
+      clients[id].position = position
+      this.io.sockets.emit('move', clients)
+    })
+    socket.on('disconnect', () => {
+      console.log(`User ${socket.id} disconnected, there are currently ${this.io.engine.clientsCount} users connected`)
+
+      //Delete this client from the object
+      delete clients[socket.id]
 
       this.io.sockets.emit('move', clients)
-
-      client.on('move', ({ id, rotation, position }) => {
-        clients[id].position = position
-        clients[id].rotation = rotation
-
-        this.io.sockets.emit('move', clients)
-      })
-
-      client.on('disconnect', () => {
-        console.log(
-          `User ${client.id} disconnected, there are currently ${this.io.engine.clientsCount} users connected`,
-        )
-
-        //Delete this client from the object
-        delete clients[client.id]
-
-        this.io.sockets.emit('move', clients)
-      })
     })
   }
 }

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, Suspense, useRef } from 'react'
 
-import { Sky, Loader, softShadows, OrbitControls, Text } from '@react-three/drei'
-
+import { Sky, Loader, softShadows, Stats } from '@react-three/drei'
 import BaseBox from '@/models/ui/BaseBox'
 import { Canvas } from '@react-three/fiber'
 import Lights from '@/models/ui/Lights'
@@ -9,11 +8,9 @@ import { Physics } from '@react-three/cannon'
 import Character from '@/models/Character'
 import Floor from '@/models/ui/Floor'
 import Tree from '@/models/ui/Tree'
-import { useJoinNewUser } from '@/utils/hook'
-import { io } from 'socket.io-client'
 
 softShadows()
-const Field = ({ id, enteredInput, socket }: { id: any; enteredInput: boolean; socket: any }) => {
+const Field = ({ enteredInput, socket, clients }: { enteredInput: boolean; socket: any; clients: any }) => {
   const [isSet, setIsSet] = useState(false)
   useEffect(() => {
     if (window) {
@@ -21,29 +18,8 @@ const Field = ({ id, enteredInput, socket }: { id: any; enteredInput: boolean; s
     }
   }, [])
 
-  const [socketClient, setSocketClient] = useState(null)
-  const [clients, setClients] = useState({})
-
-  useEffect(() => {
-    // On mount initialize the socket connection
-    setSocketClient(io())
-
-    // Dispose gracefuly
-    return () => {
-      if (socketClient) socketClient.disconnect()
-    }
-  }, [])
-
-  useEffect(() => {
-    if (socketClient) {
-      socketClient.on('move', (clients) => {
-        setClients(clients)
-      })
-    }
-  }, [socketClient])
-
   return (
-    socketClient &&
+    socket &&
     isSet &&
     clients &&
     socket && (
@@ -61,23 +37,27 @@ const Field = ({ id, enteredInput, socket }: { id: any; enteredInput: boolean; s
             far: 1000,
           }}
           orthographic>
+          <Stats />
+          <Lights />
           <Physics gravity={[0, -9.8, 0]}>
-            <Lights />
             <Suspense fallback={null}>
-              {Object.keys(clients).map((client) => {
-                const { position, rotation } = clients[client]
-                return (
-                  <Character
-                    key={client}
-                    socket={socketClient}
-                    enteredInput={enteredInput}
-                    id={client}
-                    position={position}
-                    rotation={rotation}
-                  />
-                )
-              })}
+              {Object.keys(clients)
+                .filter((clientKey) => clientKey !== socket.id)
+                .map((client) => {
+                  const { position, rotation } = clients[client]
+                  return (
+                    <Character
+                      enteredInput={enteredInput}
+                      key={client}
+                      socket={socket}
+                      id={client}
+                      position={position}
+                      rotation={rotation}
+                    />
+                  )
+                })}
             </Suspense>
+
             <Floor rotation={[Math.PI / -2, 0, 0]} color='white' />
             <BaseBox text={false} position={[-5, 0.5, 0]} args={[2, 1, 2]} color='red' />
             <BaseBox text={false} position={[5, 1, 0]} args={[1.5, 2, 1.3]} color='orange' />

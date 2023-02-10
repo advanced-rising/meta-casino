@@ -12,12 +12,11 @@ import { useJoinNewUser, useJoinRoom, useNewMessage } from '@/utils/hook'
 
 const Message = ({ id, setEnteredInput, socket }: { id: any; setEnteredInput: any; socket: any }) => {
   const [chats, setChats] = useImmer<any>([])
-  useJoinRoom(socket, `/room/${id}`)
+  useJoinRoom(socket, `home`)
   const { message: newMessage } = useNewMessage()
   const { id: socketId, nickname } = useJoinNewUser(socket)
   const chatContainerRef = useRef<any>()
   const router = useRouter()
-  console.log('socketId', socketId)
   const [nick, setNick] = useImmer<string>('unknwon')
   const roomInEventEmitter = () => {
     socket.emit(IN_ROOM_USER, {
@@ -27,7 +26,7 @@ const Message = ({ id, setEnteredInput, socket }: { id: any; setEnteredInput: an
 
   const newUserJoinHandler = () => {
     if (!nick) return
-    setChats(chats.concat({ type: 'new', userId: socketId, chatId: socketId, nickname: nick || 'unknwon' }))
+    setChats(chats.concat({ type: 'new', userId: socket.id, chatId: socket.id, nickname: nick || 'unknwon' }))
   }
 
   console.log('chats#########', chats)
@@ -50,10 +49,6 @@ const Message = ({ id, setEnteredInput, socket }: { id: any; setEnteredInput: an
 
   useEffect(roomInEventEmitter, [nick])
 
-  useEffect(() => {
-    id && newUserJoinHandler()
-  }, [id])
-
   const formik = useFormik({
     initialValues: {
       message: '',
@@ -66,7 +61,7 @@ const Message = ({ id, setEnteredInput, socket }: { id: any; setEnteredInput: an
         socket.emit(SEND_MESSAEGE, {
           roomId: id,
           message: values.message,
-          chatId: socketId,
+          chatId: socket.id,
           nickname: nick || 'unknwon',
         })
         fn.resetForm()
@@ -89,10 +84,8 @@ const Message = ({ id, setEnteredInput, socket }: { id: any; setEnteredInput: an
   })
   return (
     <div className='fixed w-full h-[200px] z-[1000] '>
-      <div className='flex self-center justify-start bg-[#00000033] pt-[20px]'>
-        <h3 className='text-black  px-[40px]'>
-          CASINO Room <small>{id}</small>
-        </h3>
+      <div className='flex items-center justify-start bg-[#00000033] pt-[20px]'>
+        <h3 className='text-black  px-[20px]'>META CASINO</h3>
         {nick === 'unknwon' ? (
           <FormikProvider value={nickFormik}>
             <Form onSubmit={nickFormik.handleSubmit}>
@@ -100,7 +93,7 @@ const Message = ({ id, setEnteredInput, socket }: { id: any; setEnteredInput: an
                 onFocus={() => setEnteredInput(false)}
                 onBlur={() => setEnteredInput(true)}
                 placeholder='닉네임을 입력하세요.'
-                className='block  text-black h-[30px] px-20px'
+                className='block  text-black h-[30px] px-20px rounded-md w-[200px]'
                 name='nickname'
                 type='text'
                 onChange={nickFormik.handleChange}

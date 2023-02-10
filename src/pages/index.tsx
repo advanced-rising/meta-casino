@@ -9,6 +9,10 @@ import { useJoinRoom, useWatingRoom } from '@/utils/hook'
 import { IRoom } from 'server/repository/rooms'
 import { CREATE_ROOM_REQUEST } from 'server/handler/SocketRoom'
 import Header from '@/config'
+import Field from '@/models/Field'
+import { io } from 'socket.io-client'
+import Message from '@/components/dom/Message'
+import { useImmer } from 'use-immer'
 
 // Dynamic import is used to prevent a payload when the website starts, that includes threejs, r3f etc..
 // WARNING ! errors might get obfuscated by using dynamic import.
@@ -21,81 +25,39 @@ export default function Page(props) {
   useJoinRoom(socket, 'wating-room')
   const router = useRouter()
   const { rooms } = useWatingRoom(socket)
+  const [enteredInput, setEnteredInput] = useImmer(true)
 
-  const formik = useFormik({
-    initialValues: {
-      roomName: '',
-    },
-    validationSchema: Yup.object({
-      roomName: Yup.string().required(),
-    }),
-    onSubmit: async (values, fn) => {
-      if (values.roomName || values.roomName !== '') {
-        if (rooms.filter((room) => values.roomName === room.roomNm).length > 0) {
-          alert('해당 방 이름은 이미 존재합니다.')
-          return
-        }
-      }
-      if (values.roomName || values.roomName !== '') {
-        socket.emit(CREATE_ROOM_REQUEST, values.roomName)
-      }
+  const [socketClient, setSocketClient] = useState(null)
+  const [clients, setClients] = useState({})
 
-      fn.resetForm()
-      fn.setFieldValue('roomName', '')
-    },
-  })
+  useEffect(() => {
+    // On mount initialize the socket connection
+    setSocketClient(io())
 
-  const handleUserKeyPress = useCallback((event) => {
-    const { key, keyCode } = event
-
-    if (keyCode === 13 || key === 'Enter') {
-      if (formik.values.roomName.length > 0) {
-        return formik.handleSubmit()
-      }
+    // Dispose gracefuly
+    return () => {
+      if (socketClient) socketClient.disconnect()
     }
   }, [])
 
   useEffect(() => {
-    window.addEventListener('keydown', handleUserKeyPress)
-    return () => {
-      window.removeEventListener('keydown', handleUserKeyPress)
+    if (socketClient) {
+      socketClient.on('move', (clients) => {
+        setClients(clients)
+      })
     }
-  }, [handleUserKeyPress])
+  }, [socketClient])
 
   return (
     <>
       <Header title='META CASINO' />
       <div className='w-full'>
-        <FormikProvider value={formik}>
-          <Form onSubmit={formik.handleSubmit} className='w-full'>
-            <input
-              className='w-full text-[#000000] h-[40px] placeholder:text-[#dddddd] px-[20px]'
-              name='roomName'
-              type='text'
-              onChange={formik.handleChange}
-              value={formik.values.roomName}
-              placeholder='방 이름을 적어주세요'
-            />
-          </Form>
-        </FormikProvider>
-        <ul className='flex flex-col w-full p-[40px] gap-[20px]'>
-          {rooms.map((room: IRoom) => (
-            <li key={room.id} className='text-2xl text-white'>
-              <button
-                onClick={() => {
-                  router.push(
-                    {
-                      pathname: `/room/${room.roomNm}`,
-                      query: { roomNm: room.roomNm },
-                    },
-                    `/room/${room.roomNm}`,
-                  )
-                }}>
-                {room.roomNm}
-              </button>
-            </li>
-          ))}
-        </ul>
+        {socketClient && (
+          <div>
+            <Message id={socketClient.id} setEnteredInput={setEnteredInput} socket={socketClient} />
+            <Field enteredInput={enteredInput} socket={socketClient} clients={clients} />
+          </div>
+        )}
       </div>
     </>
   )

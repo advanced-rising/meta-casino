@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { OrbitControls, Text } from '@react-three/drei'
 import { useFrame, useLoader, useThree } from '@react-three/fiber'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Socket as SocketTypes } from 'socket.io-client'
@@ -294,10 +295,12 @@ const Character = ({
     } else {
       currAction.play()
     }
-
+    // onControlsChange(delta)
     characterState(delta)
+    // console.log('character.current', character.current.position)
+    // state.camera.position.copy(puffinChar.scene.children[0].position)
+    // state.camera.position.copy(position)
 
-    state.camera.position.copy(puffinChar.scene.children[0].position)
     character.current.getWorldPosition(camera.position)
     state.camera.updateProjectionMatrix()
 
@@ -307,6 +310,7 @@ const Character = ({
   useEffect(() => {
     document.addEventListener('keydown', handleKeyPress)
     document.addEventListener('keyup', handleKeyUp)
+
     currAction.play()
     return () => {
       document.removeEventListener('keydown', handleKeyPress)
@@ -314,45 +318,7 @@ const Character = ({
     }
   }, [currAction, handleKeyPress, handleKeyUp])
 
-  const controlsRef = useRef()
-  const [updateCallback, setUpdateCallback] = useState(null)
-
-  // Register the update event and clean up
-  useEffect(() => {
-    const onControlsChange = (val) => {
-      const { position, rotation } = val.target.object
-      const { id } = socket
-
-      const posArray = []
-      const rotArray = []
-
-      position.toArray(posArray)
-      rotation.toArray(rotArray)
-
-      socket.emit('move', {
-        id,
-        rotation: rotArray,
-        position: posArray,
-      })
-    }
-
-    if (character.current) {
-      // @ts-ignore
-      setUpdateCallback(character.current.addEventListener('change', onControlsChange))
-    }
-
-    // Dispose
-    return () => {
-      // @ts-ignore
-      if (updateCallback && character.current) character.current.removeEventListener('change', onControlsChange)
-    }
-  }, [character, socket])
-
-  return (
-    <group>
-      <primitive ref={character} object={puffinChar.scene} scale={[0.005, 0.005, 0.005]} />
-    </group>
-  )
+  return <primitive ref={character} object={puffinChar.scene} scale={[0.005, 0.005, 0.005]} />
 }
 
 export default Character

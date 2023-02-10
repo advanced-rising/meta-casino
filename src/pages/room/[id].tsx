@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useImmer } from 'use-immer'
 
 import Header from '@/config'
 import Field from '@/models/Field'
 import Message from '@/components/dom/Message'
-import { socket } from '@/utils/context'
+
+import { io } from 'socket.io-client'
 interface Props {
   id: any
 }
@@ -14,13 +15,34 @@ const RoomIn = (props: Props) => {
   const { id } = props
   const [enteredInput, setEnteredInput] = useImmer(true)
 
+  const [socketClient, setSocketClient] = useState(null)
+  const [clients, setClients] = useState({})
+
+  useEffect(() => {
+    // On mount initialize the socket connection
+    setSocketClient(io())
+
+    // Dispose gracefuly
+    return () => {
+      if (socketClient) socketClient.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (socketClient) {
+      socketClient.on('move', (clients) => {
+        setClients(clients)
+      })
+    }
+  }, [socketClient])
+
   return (
     <>
       <Header title={id || ''} />
-      {socket && (
+      {socketClient && (
         <div>
-          <Message id={id} setEnteredInput={setEnteredInput} socket={socket} />
-          <Field id={id} enteredInput={enteredInput} socket={socket} />
+          <Message id={id} setEnteredInput={setEnteredInput} socket={socketClient} />
+          <Field enteredInput={enteredInput} socket={socketClient} clients={clients} />
         </div>
       )}
     </>

@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { enterSpace } from '@/redux/slices/space'
 import { useAppDispatch, useAppSelector } from '@/redux/storeHooks'
+import { useBox, useRaycastVehicle } from '@react-three/cannon'
 import { OrbitControls, Text } from '@react-three/drei'
 import { useFrame, useLoader, useThree } from '@react-three/fiber'
 import { useRouter } from 'next/router'
@@ -18,19 +19,7 @@ interface Animations {
   }
 }
 
-const Character = ({
-  socket,
-  enteredInput,
-  position,
-  rotation,
-  id,
-}: {
-  socket: SocketTypes
-  enteredInput: boolean
-  position: any
-  rotation: any
-  id: any
-}) => {
+const Character = ({ socket, enteredInput }: { socket: SocketTypes; enteredInput: boolean }) => {
   const activeAnimation: {
     forward: boolean
     backward: boolean
@@ -48,6 +37,7 @@ const Character = ({
     dance: false,
     jump: false,
   }
+
   const dispatch = useAppDispatch()
   const { space } = useAppSelector((state) => state.space)
   const router = useRouter()
@@ -59,15 +49,13 @@ const Character = ({
   const decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0)
   const acceleration = new THREE.Vector3(1, 0.125, 100.0)
   const velocity = new THREE.Vector3(0, 0, 0)
-
-  const puffinChar = useLoader(GLTFLoader, '/assets/models/puffin.gltf')
+  const puffinChar = useLoader(GLTFLoader, '/assets/models/character/puffin.gltf')
   const { camera } = useThree()
   puffinChar.scene.traverse((f) => {
     f.castShadow = true
     f.receiveShadow = true
   })
 
-  console.log('camera', camera.position)
   const mixer = new THREE.AnimationMixer(puffinChar.scene)
 
   animations['idle'] = {
@@ -177,8 +165,7 @@ const Character = ({
     currentPosition.lerp(idealOffset, t)
     currentLookAt.lerp(idealLookat, t)
 
-    // camera.position.copy(currentPosition)
-    // camera.position.copy(currentPosition)
+    camera.position.copy(currentPosition)
   }
 
   // movement
@@ -210,6 +197,8 @@ const Character = ({
     }
 
     if (activeAnimation.forward) {
+      console.log(['acc.', acc.z])
+      console.log(['delta', delta])
       newVelocity.z += (acc.z * delta) / 5
     }
     if (activeAnimation.backward) {
@@ -289,7 +278,6 @@ const Character = ({
       currAction = animations['idle'].clip
     }
 
-    // 10, -5, 0
     if (prevAction !== currAction) {
       prevAction.fadeOut(0.2)
 
@@ -302,26 +290,13 @@ const Character = ({
     } else {
       currAction.play()
     }
-    // onControlsChange(delta)
+
     characterState(delta)
-    // console.log('character.current', character.current.position)
-    // state.camera.position.copy(puffinChar.scene.children[0].position)
-    // state.camera.position.copy(position)
+
+    state.camera.position.copy(puffinChar.scene.children[0].position)
 
     character.current.getWorldPosition(camera.position)
     state.camera.updateProjectionMatrix()
-
-    if (Math.abs(10 - character.current.position.x) < 1.5 && Math.abs(0 - character.current.position.z) < 1.5) {
-      if (!space) {
-        const cameraPosition = new THREE.Vector3(0, 0, 0)
-        camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z)
-        console.log('camera !!!!!!!!!!!!', cameraPosition)
-        character.current?.getWorldPosition(camera.position)
-        state.camera.updateProjectionMatrix()
-      } else {
-        router.push('/space/roulette')
-      }
-    }
 
     mixer.update(delta)
   })
@@ -337,7 +312,11 @@ const Character = ({
     }
   }, [currAction, handleKeyPress, handleKeyUp])
 
-  return <primitive ref={character} object={puffinChar.scene} scale={[0.005, 0.005, 0.005]} />
+  return (
+    <group>
+      <primitive ref={character} object={puffinChar.scene} scale={[0.005, 0.005, 0.005]} />
+    </group>
+  )
 }
 
 export default Character

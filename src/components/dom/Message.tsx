@@ -9,6 +9,9 @@ import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 
 import { useJoinNewUser, useJoinRoom, useNewMessage } from '@/utils/hook'
+import useModals from '@/hooks/useModals'
+
+import EnterSpace from '@/components/modal/EnterSpace'
 
 const Message = ({ id, setEnteredInput, socket }: { id: any; setEnteredInput: any; socket: any }) => {
   const [chats, setChats] = useImmer<any>([])
@@ -28,8 +31,6 @@ const Message = ({ id, setEnteredInput, socket }: { id: any; setEnteredInput: an
     if (!nick) return
     setChats(chats.concat({ type: 'new', userId: socket.id, chatId: socket.id, nickname: nick || 'unknwon' }))
   }
-
-  console.log('chats#########', chats)
 
   useEffect(() => {
     if (newMessage) {
@@ -82,10 +83,12 @@ const Message = ({ id, setEnteredInput, socket }: { id: any; setEnteredInput: an
       fn.setFieldValue('nickname', '')
     },
   })
+
   return (
-    <div className='fixed w-full h-[200px] z-[1000] '>
+    <div className='fixed top-0 w-full h-[200px] z-[100] '>
       <div className='flex items-center justify-start bg-[#00000033] pt-[20px]'>
         <h3 className='text-black  px-[20px]'>META CASINO</h3>
+
         {nick === 'unknwon' ? (
           <FormikProvider value={nickFormik}>
             <Form onSubmit={nickFormik.handleSubmit}>

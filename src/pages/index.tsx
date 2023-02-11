@@ -66,14 +66,12 @@ export default function Home(props) {
     <>
       <Header title='META CASINO' />
 
-      <div className=' w-full'>
-        {socketClient && (
-          <div>
-            <Message id={socketClient.id} setEnteredInput={setEnteredInput} socket={socketClient} />
-            <Field enteredInput={enteredInput} socket={socketClient} clients={clients} />
-          </div>
-        )}
-      </div>
+      {socketClient && (
+        <div className='fixed top-0 w-full h-full z-[1000]'>
+          <Message id={socketClient.id} setEnteredInput={setEnteredInput} socket={socketClient} />
+          <Field enteredInput={enteredInput} socket={socketClient} clients={clients} />
+        </div>
+      )}
     </>
   )
 }

@@ -18,8 +18,7 @@ class SocketThree {
       console.log(`User ${socket.id} connected, there are currently ${this.io.engine.clientsCount} users connected`)
 
       //Add a new client indexed by his id
-      socket[socket.id] = {
-        id: socket.id,
+      clients[socket.id] = {
         position: [0, 0, 0],
         rotation: [0, 0, 0],
       }
@@ -27,7 +26,6 @@ class SocketThree {
       this.io.sockets.emit('move', clients)
 
       socket.on('move', ({ id, rotation, position }) => {
-        clients[socket.id].id = socket.id
         clients[socket.id].position = position
         clients[socket.id].rotation = rotation
 

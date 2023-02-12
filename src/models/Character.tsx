@@ -1,14 +1,11 @@
 import { useFrame, useLoader, useThree } from '@react-three/fiber'
-import React, { Suspense, useCallback, useEffect, useRef } from 'react'
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
-import { useFBX, useGLTF } from '@react-three/drei'
+import React, { useCallback, useEffect, useRef } from 'react'
+import { Socket } from 'socket.io-client'
+
 import * as THREE from 'three'
 
 import { Mesh } from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { useBox, usePlane } from '@react-three/cannon'
-import socket from 'socket.io-client'
-import usePlayerControls from '@/templates/hooks/usePlayerControls'
 
 interface Animations {
   [name: string]: {
@@ -16,11 +13,7 @@ interface Animations {
   }
 }
 
-interface CharacterProps {
-  camera: THREE.OrthographicCamera
-}
-
-const Character = ({ camera }: CharacterProps) => {
+const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boolean }) => {
   const activeAnimation: {
     forward: boolean
     backward: boolean
@@ -46,15 +39,9 @@ const Character = ({ camera }: CharacterProps) => {
   const decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0)
   const acceleration = new THREE.Vector3(1, 0.125, 100.0)
   const velocity = new THREE.Vector3(0, 0, 0)
-  const direction = new THREE.Vector3()
-  const frontVector = new THREE.Vector3()
-  const sideVector = new THREE.Vector3()
-  const speed = new THREE.Vector3()
-
-  const SPEED = 5
 
   const puffinChar = useLoader(GLTFLoader, '/assets/models/puffin.gltf')
-
+  const { camera } = useThree()
   puffinChar.scene.traverse((f) => {
     f.castShadow = true
     f.receiveShadow = true
@@ -88,68 +75,73 @@ const Character = ({ camera }: CharacterProps) => {
   let prevAction: THREE.AnimationAction
 
   // Controll Input
-  const handleKeyPress = useCallback((event) => {
-    console.log('event', event.keyCode)
-    switch (event.keyCode) {
-      case 87: //w
-        activeAnimation.forward = true
-        break
-      case 65: //a
-        activeAnimation.left = true
-        break
-      case 83: //s
-        activeAnimation.backward = true
-        break
-      case 68: // d
-        activeAnimation.right = true
-        break
-      case 69: //e dance
-        activeAnimation.dance = true
-        break
-      case 16: // shift
-        activeAnimation.run = true
-        break
-      case 32: // space
-        activeAnimation.jump = true
-        break
-    }
-  }, [])
+  const handleKeyPress = useCallback(
+    (event) => {
+      switch (event.keyCode) {
+        case 87: //w
+          activeAnimation.forward = true
+          break
+        case 65: //a
+          activeAnimation.left = true
+          break
+        case 83: //s
+          activeAnimation.backward = true
+          break
+        case 68: // d
+          activeAnimation.right = true
+          break
+        case 69: //e dance
+          activeAnimation.dance = true
+          break
+        case 16: // shift
+          activeAnimation.run = true
+          break
+        case 32: // space
+          activeAnimation.jump = true
+          break
+      }
+    },
+    [activeAnimation],
+  )
 
-  const handleKeyUp = useCallback((event) => {
-    switch (event.keyCode) {
-      case 87: //w
-        activeAnimation.forward = false
-        break
-      case 65: //a
-        activeAnimation.left = false
-        break
-      case 83: //s
-        activeAnimation.backward = false
-        break
-      case 68: // d
-        activeAnimation.right = false
-        break
-      case 69: //e dance
-        activeAnimation.dance = false
-        break
-      case 16: // shift
-        activeAnimation.run = false
-        break
-      case 32: // space
-        activeAnimation.jump = false
-        break
-    }
-  }, [])
+  const handleKeyUp = useCallback(
+    (event) => {
+      switch (event.keyCode) {
+        case 87: //w
+          activeAnimation.forward = false
+          break
+        case 65: //a
+          activeAnimation.left = false
+          break
+        case 83: //s
+          activeAnimation.backward = false
+          break
+        case 68: // d
+          activeAnimation.right = false
+          break
+        case 69: //e dance
+          activeAnimation.dance = false
+          break
+        case 16: // shift
+          activeAnimation.run = false
+          break
+        case 32: // space
+          activeAnimation.jump = false
+          break
+      }
+    },
+    [activeAnimation],
+  )
 
   const calculateIdealOffset = () => {
-    const idealOffset = new THREE.Vector3(0, 20, -30)
+    const idealOffset = new THREE.Vector3(0, 20, -10)
     idealOffset.applyQuaternion(character.current.quaternion)
     idealOffset.add(character.current.position)
     return idealOffset
   }
 
   const calculateIdealLookat = () => {
-    const idealLookat = new THREE.Vector3(1, -2, 5)
+    const idealLookat = new THREE.Vector3(0, 10, 10)
     idealLookat.applyQuaternion(character.current.quaternion)
     idealLookat.add(character.current.position)
     return idealLookat
@@ -164,14 +156,13 @@ const Character = ({ camera }: CharacterProps) => {
     currentPosition.lerp(idealOffset, t)
     currentLookAt.lerp(idealLookat, t)
 
-    camera.position.copy(currentPosition)
+    // camera.position.copy(currentPosition)
+    // camera.position.copy(currentPosition)
   }
 
   // movement
   const characterState = (delta: number) => {
     const newVelocity = velocity
-    // console.log('newVelocity', newVelocity)
-    // console.log('delta####', delta)
     const frameDecceleration = new THREE.Vector3(
       newVelocity.x * decceleration.x,
       newVelocity.y * decceleration.y,
@@ -204,14 +195,13 @@ const Character = ({ camera }: CharacterProps) => {
       newVelocity.z -= (acc.z * delta) / 5
     }
     if (activeAnimation.left) {
-      _A.set(0, 3, 0)
-      _Q.set(0, 3, 0, 0)
-      _Q.setFromAxisAngle(_A, 2.0 * Math.PI * delta * acceleration.y)
+      _A.set(0, 1, 0)
+      _Q.setFromAxisAngle(_A, 12.0 * Math.PI * delta * acceleration.y)
       _R.multiply(_Q)
     }
     if (activeAnimation.right) {
-      _A.set(0, 3, 0)
-      _Q.setFromAxisAngle(_A, 2.0 * -Math.PI * delta * acceleration.y)
+      _A.set(0, 1, 0)
+      _Q.setFromAxisAngle(_A, 12.0 * -Math.PI * delta * acceleration.y)
       _R.multiply(_Q)
     }
 
@@ -235,12 +225,11 @@ const Character = ({ camera }: CharacterProps) => {
     controlObject.position.add(sideways)
 
     character.current.position.copy(controlObject.position)
-    // character.current.getWorldPosition(camera.position)
-    // puffinChar.scene.lookAt(forward)
     updateCameraTarget(delta)
   }
 
   useFrame((state, delta) => {
+    if (!enteredInput) return
     prevAction = currAction
 
     if (activeAnimation.forward) {
@@ -294,27 +283,22 @@ const Character = ({ camera }: CharacterProps) => {
 
     characterState(delta)
 
-    const idealLookat = calculateIdealLookat()
-
-    state.camera.lookAt(puffinChar.scene.position)
-
-    // state.camera.lookAt(puffinChar.scene.children[0].position)
-
+    state.camera.position.copy(puffinChar.scene.children[0].position)
+    character.current.getWorldPosition(camera.position)
     state.camera.updateProjectionMatrix()
-    mixer?.update(delta)
+
+    mixer.update(delta)
   })
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyPress)
-
     document.addEventListener('keyup', handleKeyUp)
     currAction.play()
     return () => {
       document.removeEventListener('keydown', handleKeyPress)
-
       document.removeEventListener('keyup', handleKeyUp)
     }
-  })
+  }, [currAction, handleKeyPress, handleKeyUp])
 
   return <primitive ref={character} object={puffinChar.scene} scale={[0.005, 0.005, 0.005]} />
 }

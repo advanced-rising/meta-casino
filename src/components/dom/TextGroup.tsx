@@ -43,7 +43,7 @@ export default function TextGroup() {
   }, [state, setState])
 
   return (
-    <div className='fixed w-full text-red-900 z-[1000] pt-[300px]'>
+    <div className='fixed w-full text-red-900 z-[1000] mt-[300px]'>
       <div className='flex flex-col items-center justify-center w-full overflow-hidden'>
         <ul
           style={{

@@ -12,21 +12,21 @@ export default function TextGroup() {
     current: 2,
     needTransition: true,
     direction: '',
-    translate: 1000,
+    translate: 100,
     visible: true,
   })
 
   const intervalRef = useRef<any>()
 
   useEffect(() => {
-    if (state.translate === -2000) {
+    if (state.translate === -(100 * state.nums.length)) {
       setState((draft) => {
         draft.visible = false
-        draft.translate = 1200
+        draft.translate = 150
         draft.needTransition = false
       })
     }
-    if (state.translate > 1000) {
+    if (-state.translate > -150 && state.translate > 110) {
       setState((draft) => {
         draft.visible = true
         draft.needTransition = true
@@ -37,7 +37,7 @@ export default function TextGroup() {
       setState((draft) => {
         draft.translate -= 1
       })
-    }, 10)
+    }, 100)
 
     return () => clearInterval(intervalRef.current)
   }, [state, setState])
@@ -47,11 +47,11 @@ export default function TextGroup() {
       <div className='flex flex-col items-center justify-center w-full overflow-hidden'>
         <ul
           style={{
-            transform: `translateX(${state.translate}px)`,
+            transform: `translateX(${state.translate}%)`,
             visibility: state.visible ? 'visible' : 'hidden',
-            transition: state.needTransition ? 'all' : 'none',
+            transition: state.needTransition ? 'all 0.2s ease 0s' : 'none',
           }}
-          className={`flex w-full p-0 m-0 text-red-400 stroke-custom font-bold text-lg stroke-black gap-[20px] `}>
+          className={cls(`flex w-full p-0 m-0 text-red-400 stroke-custom font-bold text-lg stroke-black gap-[20px] `)}>
           {state.nums.map((item, i) => (
             <li className='flex items-center justify-center flex-shrink-0 ' key={i}>
               {item}

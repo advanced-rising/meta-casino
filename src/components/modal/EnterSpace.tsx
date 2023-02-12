@@ -32,14 +32,14 @@ export default function EnterSpace({ modalOpen, onClose, props }: ModalProps) {
     <div className='fixed inset-0 top-0 left-0 flex items-center justify-center w-screen h-screen z-[9999] bg-[#00000011]'>
       {/* Full-screen container to center the panel */}
       <div className='flex items-center justify-center w-full p-4'>
-        <div className=' bg-white rounded-lg w-[300px] h-[180px] px-[20px]'>
+        <div className=' bg-white rounded-lg w-[300px] h-[180px] px-[8px]'>
           <div className='flex items-center justify-center w-full text-xl font-bold pt-[20px]'>
             <p className='flex items-center justify-center w-full'>게임장에 입장하시겠습니까?</p>
           </div>
           <div className='flex items-center justify-center pt-[20px]'>
             <p className=''>게임이름 : {spaceName}</p>
           </div>
-          <div className='flex w-full pt-[40px] gap-[16px]'>
+          <div className='flex w-full pt-[40px] gap-[8px]'>
             <button
               className='w-1/2 px-4 font-bold text-white bg-blue-400 rounded-md py-[8px] hover:bg-blue-300'
               onClick={onClose}>

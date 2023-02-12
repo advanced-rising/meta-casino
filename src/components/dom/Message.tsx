@@ -86,7 +86,7 @@ const Message = ({ id, setEnteredInput, socket }: { id: any; setEnteredInput: an
 
   return (
     <div className='fixed top-0 w-full h-[200px] z-[100] '>
-      <div className='flex items-center justify-start bg-[#00000033] pt-[20px]'>
+      <div className='flex items-center justify-start bg-[#00000033] pt-[20px] h-[50px]'>
         <h3 className='text-black  px-[20px]'>META CASINO</h3>
 
         {nick === 'unknwon' ? (
@@ -105,7 +105,7 @@ const Message = ({ id, setEnteredInput, socket }: { id: any; setEnteredInput: an
             </Form>
           </FormikProvider>
         ) : (
-          <p>Your Nick : {nick}</p>
+          <p>Your Nickname : {nick}</p>
         )}
       </div>
       <ul className='flex flex-col self-end h-full overflow-y-scroll bg-[#00000033] px-[40px] pb-[40px] pt-[60px]'>

@@ -35,6 +35,10 @@
     width: 1px !important;
     white-space: nowrap !important;
   }
+
+  .stroke-custom {
+    -webkit-text-stroke: 0.2px white;
+  }
  
 
   #app {

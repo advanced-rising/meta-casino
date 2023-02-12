@@ -16,6 +16,7 @@ import { useImmer } from 'use-immer'
 import { useAppDispatch, useAppSelector } from '@/redux/storeHooks'
 import Roulette from '@/components/games/Roulette'
 import { enterSpace } from '@/redux/slices/space'
+import TextGroup from '@/components/dom/TextGroup'
 
 // Dynamic import is used to prevent a payload when the website starts, that includes threejs, r3f etc..
 // WARNING ! errors might get obfuscated by using dynamic import.
@@ -69,6 +70,7 @@ export default function Home(props) {
       {socketClient && (
         <div className='fixed top-0 w-full h-full z-[1000]'>
           <Message id={socketClient.id} setEnteredInput={setEnteredInput} socket={socketClient} />
+          <TextGroup />
           <Field enteredInput={enteredInput} socket={socketClient} clients={clients} />
         </div>
       )}

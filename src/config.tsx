@@ -1,6 +1,6 @@
 import Head from 'next/head'
 
-const titleDefault = 'React Three Next Starter'
+const titleDefault = 'META CASINO'
 const url = 'http://bet-metacasino.live'
 const defaultDescription = 'The create a 3D website using React Three Fiber + NextJS + Socket.io'
 const author = 'risingcore'

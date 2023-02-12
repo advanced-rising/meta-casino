@@ -1,11 +1,11 @@
 import * as THREE from 'three'
 
 function Lights() {
-  const hemiLight = new THREE.HemisphereLight(0xffffff, 0xfffffff, 0.6)
+  const hemiLight: any = new THREE.HemisphereLight(0xffffff, 0xfffffff, 0.6)
   hemiLight.color.setHSL(0.6, 1, 0.6)
   hemiLight.groundColor.setHSL(0.095, 1, 0.75)
 
-  const light = new THREE.DirectionalLight(0xffffff, 1.0)
+  const light: any = new THREE.DirectionalLight(0xffffff, 1.0)
   light.position.set(-100, 100, 100)
   light.target.position.set(0, 0, 0)
   light.castShadow = true
@@ -23,7 +23,6 @@ function Lights() {
       <hemisphereLight {...hemiLight} />
       <directionalLight {...light} />
       <ambientLight intensity={1} />
-      <spotLight position={[10, 10, 5]} castShadow={true} penumbra={0.5} />
     </>
   )
 }

@@ -1,6 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { enterSpace } from '@/redux/slices/space'
+import { useAppDispatch, useAppSelector } from '@/redux/storeHooks'
+import { useBox, useRaycastVehicle } from '@react-three/cannon'
+import { OrbitControls, Text } from '@react-three/drei'
 import { useFrame, useLoader, useThree } from '@react-three/fiber'
-import React, { useCallback, useEffect, useRef } from 'react'
-import { Socket } from 'socket.io-client'
+import { useRouter } from 'next/router'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Socket as SocketTypes } from 'socket.io-client'
 
 import * as THREE from 'three'
 
@@ -13,7 +19,7 @@ interface Animations {
   }
 }
 
-const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boolean }) => {
+const Character = ({ socket, enteredInput }: { socket: SocketTypes; enteredInput: boolean }) => {
   const activeAnimation: {
     forward: boolean
     backward: boolean
@@ -31,6 +37,10 @@ const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boo
     dance: false,
     jump: false,
   }
+
+  const dispatch = useAppDispatch()
+  const { space } = useAppSelector((state) => state.space)
+  const router = useRouter()
   const character = useRef<Mesh>(null!)
   const animations: Animations = {}
 
@@ -39,8 +49,7 @@ const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boo
   const decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0)
   const acceleration = new THREE.Vector3(1, 0.125, 100.0)
   const velocity = new THREE.Vector3(0, 0, 0)
-
-  const puffinChar = useLoader(GLTFLoader, '/assets/models/puffin.gltf')
+  const puffinChar = useLoader(GLTFLoader, '/assets/models/character/puffin.gltf')
   const { camera } = useThree()
   puffinChar.scene.traverse((f) => {
     f.castShadow = true
@@ -156,8 +165,7 @@ const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boo
     currentPosition.lerp(idealOffset, t)
     currentLookAt.lerp(idealLookat, t)
 
-    // camera.position.copy(currentPosition)
-    // camera.position.copy(currentPosition)
+    camera.position.copy(currentPosition)
   }
 
   // movement
@@ -189,6 +197,8 @@ const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boo
     }
 
     if (activeAnimation.forward) {
+      console.log(['acc.', acc.z])
+      console.log(['delta', delta])
       newVelocity.z += (acc.z * delta) / 5
     }
     if (activeAnimation.backward) {
@@ -196,12 +206,12 @@ const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boo
     }
     if (activeAnimation.left) {
       _A.set(0, 1, 0)
-      _Q.setFromAxisAngle(_A, 12.0 * Math.PI * delta * acceleration.y)
+      _Q.setFromAxisAngle(_A, 6.0 * Math.PI * delta * acceleration.y)
       _R.multiply(_Q)
     }
     if (activeAnimation.right) {
       _A.set(0, 1, 0)
-      _Q.setFromAxisAngle(_A, 12.0 * -Math.PI * delta * acceleration.y)
+      _Q.setFromAxisAngle(_A, 6.0 * -Math.PI * delta * acceleration.y)
       _R.multiply(_Q)
     }
 
@@ -284,6 +294,7 @@ const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boo
     characterState(delta)
 
     state.camera.position.copy(puffinChar.scene.children[0].position)
+
     character.current.getWorldPosition(camera.position)
     state.camera.updateProjectionMatrix()
 
@@ -293,6 +304,7 @@ const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boo
   useEffect(() => {
     document.addEventListener('keydown', handleKeyPress)
     document.addEventListener('keyup', handleKeyUp)
+
     currAction.play()
     return () => {
       document.removeEventListener('keydown', handleKeyPress)
@@ -300,7 +312,11 @@ const Character = ({ socket, enteredInput }: { socket: Socket; enteredInput: boo
     }
   }, [currAction, handleKeyPress, handleKeyUp])
 
-  return <primitive ref={character} object={puffinChar.scene} scale={[0.005, 0.005, 0.005]} />
+  return (
+    <group>
+      <primitive ref={character} object={puffinChar.scene} scale={[0.005, 0.005, 0.005]} />
+    </group>
+  )
 }
 
 export default Character

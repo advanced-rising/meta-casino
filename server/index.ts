@@ -11,22 +11,21 @@ const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 const koa = new Koa()
+
 const server = http.createServer(koa.callback())
 
 const io = new Server(server)
 
-const link = () => {
-  io.on('connection', (socket) => {
-    SocketRoom.listen(io, socket)
-    socket.on('disconnect', socket.removeAllListeners)
-  })
-}
-SocketThree.three(io)
+io.on('connection', (socket) => {
+  SocketRoom.listen(io, socket)
+  SocketThree.listen(io, socket)
+  socket.on('disconnect', socket.removeAllListeners)
+})
 
 const main = async () => {
   await app.prepare()
 
-  // koa.use(logger());
+  // koa.use(logger())
 
   koa.use((ctx) => {
     return handle(ctx.req, ctx.res)
@@ -38,4 +37,3 @@ const main = async () => {
 }
 
 main()
-link()

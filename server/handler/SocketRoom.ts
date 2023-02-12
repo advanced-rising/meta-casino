@@ -1,6 +1,7 @@
 import { RoomsRepository } from '../repository/rooms'
 import { v4 as uuid } from 'uuid'
 import { Socket, Server } from 'socket.io'
+import { removeAllListeners } from 'process'
 
 export const CONNECT_EVENT = 'room/connect'
 export const CREATE_ROOM_REQUEST = 'room/create'
@@ -17,20 +18,19 @@ class SocketRoom {
 
   public static listen(io: Server, socket: Socket) {
     this.io = io
-
     this.connect(socket)
-    this.inRoomUserListener(socket)
   }
 
   /**
    * 최초 접속시
    */
-  public static connect(socket) {
+  public static connect(socket: Socket) {
     socket.emit(CONNECT_EVENT, RoomsRepository.getRooms)
     this.creatRoomRequestListener(socket)
     this.joinRoomRequestListener(socket)
     this.leaveRoomRequestListener(socket)
     this.listRoomDataRequestListener(socket)
+    this.inRoomUserListener(socket)
   }
 
   public static listRoomDataRequestListener(socket: Socket) {
@@ -73,6 +73,7 @@ class SocketRoom {
         nickname: message.nickname,
       })
     })
+
     socket.on('disconnect', socket.removeAllListeners)
     return () => {
       socket.off(SEND_MESSAEGE, socket.removeAllListeners)

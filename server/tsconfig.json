@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "outDir": "./dist/",
+    "noImplicitAny": false,
+    "lib": ["es2015", "DOM"],
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true, // resolve json module
+    "baseUrl": "./src",
+    "paths": {
+      "@domain/*": ["domain/*"],
+      "@application/*": ["application/*"],
+      "@lib/*": ["lib/*"],
+      "@common/*": ["common/*"],
+      "@utils/*": ["utils/*"],
+      "@infra/*": ["infra/*"],
+      "@api/*": ["api/*"],
+      "@interfaces/*": ["interfaces/*"],
+      "@modules/*": ["modules/*"],
+      "@shared/*": ["shared/*"],
+      "@root/*": ["*"]
+    }
+  },
+  "include": ["./src/**/*", "./src/**/*.json"],
+  "exclude": ["node_modules", "dist"]
+}

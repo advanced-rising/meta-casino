@@ -4,9 +4,57 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest -i",
+    "test:dev": "jest -i --no-cache --watch",
+    "test:unit": "node ./src/test/setup.js && jest -i --no-cache -t ",
+    "start": "node ./dist/index.js",
+    "start:dev": "node ./dist/index.js",
+    "start:local": "NODE_ENV=local node ./dist/index.js",
+    "build": "mkdir -p ./dist/misc/email-templates && mkdir -p ./dist/public && cp -r ./src/misc/email-templates/* ./dist/misc/email-templates/ && cp -r ./src/public/* ./dist/public/ && tsc",
+    "build:dev": "mkdir -p ./dist/misc/email-templates && mkdir -p ./dist/public && cp -r ./src/misc/email-templates/* ./dist/misc/email-templates/ && cp -r ./src/public/* ./dist/public/ && tsc --watch"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "dayjs": "^1.11.10",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "loadash": "^1.0.0",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/compression": "^1.7.5",
+    "@types/cookie-parser": "^1.4.6",
+    "@types/crypto-js": "^4.2.1",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.10",
+    "@types/lodash": "^4.14.202",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.3.2"
+  },
+  "_moduleAliases": {
+    "@domain": "dist/domain",
+    "@infra": "dist/infra",
+    "@util": "dist/util",
+    "@common": "dist/common",
+    "@interfaces": "dist/interfaces",
+    "@utils": "dist/utils",
+    "@application": "dist/application",
+    "@lib": "dist/lib",
+    "@shared": "dist/shared",
+    "@modules": "dist/modules",
+    "@root": "dist"
+  }
 }

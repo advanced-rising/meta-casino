@@ -1,0 +1,41 @@
+{
+  "extends": ["tslint-config-standard"],
+  "rules": {
+    "trailing-comma": [
+      false,
+      {
+        "multiline": "never",
+        "singleline": "never"
+      }
+    ],
+    "max-len": [
+      "error",
+      {
+        "code": 100,
+        "ignoreComments": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true
+      }
+    ],
+    "radix": false,
+    "no-console": false,
+    "curly": [false],
+    "newline-per-chained-call": false,
+    "max-classes-per-file": false,
+    "triple-equals": true,
+    "prefer-const": false,
+    "object-literal-sort-keys": false,
+    "no-var-requires": false,
+    "newline-before-return": true,
+    "no-var-keyword": true,
+    "no-empty": false,
+    "one-variable-per-declaration": false,
+    "quotemark": false,
+    "semicolon": [true, "never"],
+    "no-conditional-assignment": false,
+    "space-before-function-paren": false,
+    "await-promise": [true, "Bluebird"],
+    "no-consecutive-blank-lines": true,
+    "eofline": true
+  }
+}

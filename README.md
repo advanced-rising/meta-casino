@@ -20,5 +20,5 @@ Socket.io 을 활용한 방 생성 및 접속으로 실시간 대화, 생성된 
 메타로 즐기는 실시간 카지노 게임
 
 
-<img width="528" height="431" alt="image" src="https://github.com/user-attachments/assets/4b1bf919-2460-4263-aeb0-38521db564aa" />
+<img width="100%" height="100%" alt="image" src="https://github.com/user-attachments/assets/b20fefce-5100-414c-b3a3-d1afee54c470" />
 

@@ -1,6 +1,5 @@
 {
-  "buildCommand": "cd web && yarn build",
-  "installCommand": "cd web && yarn install --ignore-engines",
-  "outputDirectory": "web/.next",
+  "buildCommand": "yarn build",
+  "installCommand": "yarn install --ignore-engines",
   "framework": "nextjs"
 }

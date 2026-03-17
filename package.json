@@ -6,7 +6,7 @@
   },
   "scripts": {
     "dev": "cd web && yarn dev",
-    "build": "cd web && yarn install --ignore-engines && cd web && yarn build",
+    "build": "cd web && yarn install --ignore-engines && yarn build",
     "install": "cd web && yarn install --ignore-engines"
   }
 }

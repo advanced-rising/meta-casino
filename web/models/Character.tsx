@@ -71,9 +71,11 @@ const Character = ({
     } catch {}
   }, [])
 
-  // 카메라 추적
-  const cameraOffset = new THREE.Vector3(10, 10, 10)
-  const currentCameraPos = useRef(new THREE.Vector3(10, 10, 10))
+  // 카메라 추적 (캐릭터 뒤쪽에서 따라감)
+  const cameraDistance = 12
+  const cameraHeight = 8
+  const currentCameraPos = useRef(new THREE.Vector3(0, cameraHeight, cameraDistance))
+  const currentLookAt = useRef(new THREE.Vector3())
 
   const puffinChar = useLoader(GLTFLoader, '/assets/models/character/puffin.gltf')
   const { camera } = useThree()
@@ -184,30 +186,30 @@ const Character = ({
       isMoving = true
       anim.run = mobile.magnitude > 0.7
     } else {
-      // 키보드 입력: 화면 방향 기준 이동 (아이소메트릭 카메라 보정)
-      // 카메라가 (10,10,10)에서 보므로:
-      // 화면 위(W) = 월드 (-x, -z), 화면 아래(S) = 월드 (+x, +z)
-      // 화면 왼쪽(A) = 월드 (-x, +z), 화면 오른쪽(D) = 월드 (+x, -z)
-      const SIN45 = 0.7071
-      let dirX = 0
-      let dirZ = 0
-
+      // 키보드: W=앞, S=뒤, A=좌회전, D=우회전 (MMORPG 스타일)
       if (currActionRef.current !== animations['dance'].clip) {
-        if (anim.forward) { dirX -= SIN45; dirZ -= SIN45 }  // W: 화면 위
-        if (anim.backward) { dirX += SIN45; dirZ += SIN45 }  // S: 화면 아래
-        if (anim.left) { dirX -= SIN45; dirZ += SIN45 }      // A: 화면 왼쪽
-        if (anim.right) { dirX += SIN45; dirZ -= SIN45 }     // D: 화면 오른쪽
-      }
+        // A/D로 캐릭터 회전
+        if (anim.left) rotationY.current += 3.0 * delta
+        if (anim.right) rotationY.current -= 3.0 * delta
 
-      const dirLen = Math.sqrt(dirX * dirX + dirZ * dirZ)
-      if (dirLen > 0.01) {
-        const normX = dirX / dirLen
-        const normZ = dirZ / dirLen
-        moveX = normX * speed * delta
-        moveZ = normZ * speed * delta
-        // 캐릭터가 이동 방향을 바라보도록
-        rotationY.current = Math.atan2(normX, normZ)
-        isMoving = true
+        // 캐릭터가 바라보는 방향 기준 이동
+        const fwd = new THREE.Vector3(Math.sin(rotationY.current), 0, Math.cos(rotationY.current))
+        if (anim.forward) {
+          moveX += fwd.x * speed * delta
+          moveZ += fwd.z * speed * delta
+          isMoving = true
+        }
+        if (anim.backward) {
+          moveX -= fwd.x * speed * 0.6 * delta
+          moveZ -= fwd.z * speed * 0.6 * delta
+          isMoving = true
+        }
+        // A/D만 누르면 좌우 스트레이프
+        if ((anim.left || anim.right) && !anim.forward && !anim.backward) {
+          moveX += fwd.x * speed * 0.4 * delta
+          moveZ += fwd.z * speed * 0.4 * delta
+          isMoving = true
+        }
       }
     }
 
@@ -283,11 +285,24 @@ const Character = ({
     }
     onNearSpace(nearSpace)
 
-    // --- Camera follow ---
-    const targetCameraPos = new THREE.Vector3().copy(obj.position).add(cameraOffset)
-    currentCameraPos.current.lerp(targetCameraPos, 0.08)
+    // --- Camera follow (MMORPG 스타일: 캐릭터 뒤쪽에서 따라감) ---
+    // 캐릭터가 바라보는 방향의 반대쪽(뒤) + 위에서
+    const behindOffset = new THREE.Vector3(
+      -Math.sin(rotationY.current) * cameraDistance,
+      cameraHeight,
+      -Math.cos(rotationY.current) * cameraDistance,
+    )
+    const targetCameraPos = new THREE.Vector3().copy(obj.position).add(behindOffset)
+    const targetLookAt = new THREE.Vector3(
+      obj.position.x + Math.sin(rotationY.current) * 3,
+      obj.position.y + 1,
+      obj.position.z + Math.cos(rotationY.current) * 3,
+    )
+
+    currentCameraPos.current.lerp(targetCameraPos, 0.05)
+    currentLookAt.current.lerp(targetLookAt, 0.05)
     camera.position.copy(currentCameraPos.current)
-    camera.lookAt(obj.position)
+    camera.lookAt(currentLookAt.current)
 
     // --- Socket emit ---
     emitCounter.current++

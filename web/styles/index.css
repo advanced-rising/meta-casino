@@ -37,46 +37,145 @@
   50% { transform: translateY(-1px); }
 }
 
-/* Modern base styles */
+/* Game UI styles */
 .arcade-title {
   font-family: 'Pretendard', -apple-system, sans-serif;
-  letter-spacing: 0.5px;
-  font-weight: 700;
+  font-weight: 800;
 }
 .arcade-box {
-  background: rgba(255,255,255,0.04);
-  backdrop-filter: blur(10px);
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.05);
 }
 .arcade-btn {
   font-family: 'Pretendard', -apple-system, sans-serif;
-  letter-spacing: 0.3px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600;
+  transition: all 0.15s ease;
   border-radius: 10px;
+  cursor: pointer;
 }
 .arcade-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  filter: brightness(1.15);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  filter: brightness(1.2);
+  box-shadow: 0 0 16px rgba(255,255,255,0.08);
 }
 .arcade-btn:active:not(:disabled) {
-  transform: translateY(0);
+  transform: scale(0.97);
 }
-.neon-text {
-  text-shadow: 0 0 12px currentColor;
+.arcade-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
-.glass {
+
+/* Game button variants */
+.game-btn-primary {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  padding: 10px 28px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  border: none;
+  box-shadow: 0 4px 16px rgba(34,197,94,0.3);
+  transition: all 0.15s;
+}
+.game-btn-primary:hover:not(:disabled) { box-shadow: 0 6px 24px rgba(34,197,94,0.4); }
+.game-btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+  padding: 10px 28px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  border: none;
+  box-shadow: 0 4px 16px rgba(239,68,68,0.3);
+}
+.game-btn-gold {
+  background: linear-gradient(135deg, #eab308, #ca8a04);
+  color: #000;
+  padding: 10px 28px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  border: none;
+  box-shadow: 0 4px 16px rgba(234,179,8,0.3);
+}
+
+/* Chip / bet selector */
+.game-chip {
   background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 14px;
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  transition: all 0.15s;
+  cursor: pointer;
+}
+.game-chip:hover { background: rgba(255,255,255,0.1); color: #ccc; }
+.game-chip-active {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+/* Score display (game HUD) */
+.game-score {
+  font-family: 'Pretendard', monospace;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Panel */
+.glass {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
 }
 .glass-dark {
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 14px;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+}
+
+/* Win animation */
+.game-win {
+  animation: gameWinPop 0.5s ease;
+  text-shadow: 0 0 20px rgba(34,197,94,0.6);
+}
+@keyframes gameWinPop {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.game-lose {
+  animation: gameLoseShake 0.4s ease;
+}
+@keyframes gameLoseShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Side panel section */
+.game-panel-section {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 10px;
+  padding: 10px;
+}
+.game-panel-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.neon-text {
+  text-shadow: 0 0 12px currentColor;
 }
 
 @layer base {

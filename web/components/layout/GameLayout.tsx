@@ -11,60 +11,59 @@ interface GameLayoutProps {
   money?: number
 }
 
-const THEME_COLORS = {
-  green: { bg: '#0c1a0c', accent: '#22c55e' },
-  purple: { bg: '#140a1e', accent: '#a855f7' },
-  blue: { bg: '#0a1225', accent: '#3b82f6' },
-  red: { bg: '#1a0808', accent: '#ef4444' },
-  gold: { bg: '#1a1408', accent: '#eab308' },
-  dark: { bg: '#0a0a0a', accent: '#a3a3a3' },
+const THEMES: Record<string, { bg: string; accent: string; glow: string }> = {
+  green: { bg: '#080e08', accent: '#22c55e', glow: 'rgba(34,197,94,0.15)' },
+  purple: { bg: '#0c0812', accent: '#a855f7', glow: 'rgba(168,85,247,0.15)' },
+  blue: { bg: '#080a12', accent: '#3b82f6', glow: 'rgba(59,130,246,0.15)' },
+  red: { bg: '#0e0808', accent: '#ef4444', glow: 'rgba(239,68,68,0.15)' },
+  gold: { bg: '#0e0c08', accent: '#eab308', glow: 'rgba(234,179,8,0.15)' },
+  dark: { bg: '#0a0a0a', accent: '#a3a3a3', glow: 'rgba(163,163,163,0.1)' },
 }
 
 const GameLayout = ({ children, title, theme, onMoneyChange, money: propMoney }: GameLayoutProps) => {
   const router = useRouter()
   const [money, setMoney] = useState(propMoney ?? 0)
-  const colors = THEME_COLORS[theme]
+  const t = THEMES[theme]
 
   useEffect(() => { if (propMoney !== undefined) setMoney(propMoney) }, [propMoney])
   useEffect(() => { if (propMoney === undefined) setMoney(getMoney()) }, [])
 
   return (
-    <div className='fixed top-0 w-screen h-screen z-[9000] overflow-hidden' style={{ background: colors.bg }}>
+    <div className='fixed top-0 w-screen h-screen z-[9000] overflow-hidden' style={{ background: t.bg }}>
+      {/* 배경 글로우 */}
+      <div className='absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] pointer-events-none'
+        style={{ background: `radial-gradient(ellipse, ${t.glow} 0%, transparent 70%)` }} />
 
-      {/* 상단 바 - 글래스모피즘 */}
-      <div className='relative flex items-center justify-between px-[16px] h-[48px] z-10'
-        style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+      {/* 게임 HUD 상단바 */}
+      <div className='relative flex items-center justify-between px-[12px] h-[48px] z-10'
+        style={{ background: 'rgba(0,0,0,0.6)', borderBottom: `1px solid rgba(255,255,255,0.04)` }}>
 
         <button onClick={() => router.push('/')}
-          className='flex items-center gap-[6px] px-[12px] py-[6px] rounded-[8px] text-[12px] font-medium transition-all hover:bg-white/10'
-          style={{ color: '#aaa' }}>
+          className='flex items-center gap-[4px] px-[10px] py-[6px] rounded-[8px] text-[12px] transition-all hover:bg-white/5'
+          style={{ color: '#666' }}>
           <ArrowLeft size={14} />
-          <span>나가기</span>
         </button>
 
-        <span className='absolute left-1/2 -translate-x-1/2 text-[15px] font-bold tracking-wide' style={{ color: '#fff' }}>
-          {title}
-        </span>
+        {/* 타이틀 */}
+        <div className='absolute left-1/2 -translate-x-1/2'>
+          <span className='text-[14px] font-bold tracking-wider' style={{ color: t.accent }}>{title}</span>
+        </div>
 
-        <div className='flex items-center gap-[6px] px-[12px] py-[5px] rounded-[8px]'
-          style={{ background: 'rgba(255,255,255,0.06)' }}>
-          <span className='text-[11px]' style={{ color: '#888' }}>$</span>
-          <span className='text-[14px] font-bold' style={{ color: colors.accent }}>{money.toLocaleString()}</span>
+        {/* 스코어 (잔액) */}
+        <div className='flex items-center gap-[4px] px-[10px] py-[4px] rounded-[8px]'
+          style={{ background: 'rgba(255,255,255,0.04)' }}>
+          <span className='text-[10px]' style={{ color: '#555' }}>$</span>
+          <span className='game-score text-[15px]' style={{ color: '#fff' }}>{money.toLocaleString()}</span>
         </div>
       </div>
 
-      {/* 게임 콘텐츠 */}
-      <div className='relative z-10'>
-        {children}
-      </div>
+      {/* 게임 */}
+      <div className='relative z-10'>{children}</div>
 
-      {/* 하단 광고 영역 */}
-      <div className='fixed bottom-0 left-0 right-0 z-20 flex items-center justify-center'
-        style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-        <div id='game-ad-slot' className='w-full max-w-[728px] h-[50px] sm:h-[50px] flex items-center justify-center'
-          style={{ color: '#333', fontSize: '11px' }}>
-          {/* 광고 스크립트가 이 영역을 채움 */}
-        </div>
+      {/* 하단 광고 */}
+      <div className='fixed bottom-0 left-0 right-0 z-20 flex items-center justify-center h-[50px]'
+        style={{ background: 'rgba(0,0,0,0.7)', borderTop: '1px solid rgba(255,255,255,0.03)' }}>
+        <div id='game-ad-slot' className='w-full max-w-[728px] h-[50px] flex items-center justify-center' />
       </div>
     </div>
   )

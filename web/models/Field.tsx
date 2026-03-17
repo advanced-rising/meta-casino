@@ -25,6 +25,101 @@ const Floor = ({ onClick }: { onClick?: (e: any) => void }) => (
   </mesh>
 )
 
+// 가로등
+const Lamp = ({ position }: { position: [number, number, number] }) => (
+  <group position={position}>
+    <mesh castShadow position={[0, 1.5, 0]}>
+      <cylinderGeometry args={[0.05, 0.06, 3, 6]} />
+      <meshStandardMaterial color='#444' metalness={0.7} />
+    </mesh>
+    <mesh castShadow position={[0, 3.1, 0]}>
+      <sphereGeometry args={[0.2, 8, 8]} />
+      <meshStandardMaterial color='#ffeaa7' emissive='#ffd700' emissiveIntensity={0.8} />
+    </mesh>
+    <mesh position={[0, 0.05, 0]}>
+      <cylinderGeometry args={[0.15, 0.2, 0.1, 8]} />
+      <meshStandardMaterial color='#333' />
+    </mesh>
+  </group>
+)
+
+// 벤치
+const Bench = ({ position, rotation = 0 }: { position: [number, number, number]; rotation?: number }) => (
+  <group position={position} rotation={[0, rotation, 0]}>
+    <mesh castShadow receiveShadow position={[0, 0.35, 0]}>
+      <boxGeometry args={[1.2, 0.06, 0.4]} />
+      <meshStandardMaterial color='#8B4513' />
+    </mesh>
+    <mesh castShadow position={[0, 0.6, -0.18]}>
+      <boxGeometry args={[1.2, 0.5, 0.06]} />
+      <meshStandardMaterial color='#8B4513' />
+    </mesh>
+    {[-0.5, 0.5].map((x, i) => (
+      <mesh key={i} castShadow position={[x, 0.17, 0]}>
+        <boxGeometry args={[0.06, 0.34, 0.36]} />
+        <meshStandardMaterial color='#333' metalness={0.5} />
+      </mesh>
+    ))}
+  </group>
+)
+
+// 분수
+const Fountain = ({ position }: { position: [number, number, number] }) => (
+  <group position={position}>
+    <mesh castShadow receiveShadow position={[0, 0.2, 0]}>
+      <cylinderGeometry args={[1.5, 1.8, 0.4, 16]} />
+      <meshStandardMaterial color='#888' roughness={0.5} />
+    </mesh>
+    <mesh position={[0, 0.15, 0]}>
+      <cylinderGeometry args={[1.3, 1.3, 0.2, 16]} />
+      <meshStandardMaterial color='#4a90d9' transparent opacity={0.6} />
+    </mesh>
+    <mesh castShadow position={[0, 0.7, 0]}>
+      <cylinderGeometry args={[0.15, 0.2, 0.8, 8]} />
+      <meshStandardMaterial color='#999' />
+    </mesh>
+    <mesh castShadow position={[0, 1.2, 0]}>
+      <cylinderGeometry args={[0.6, 0.6, 0.1, 12]} />
+      <meshStandardMaterial color='#888' />
+    </mesh>
+    <mesh position={[0, 1.15, 0]}>
+      <cylinderGeometry args={[0.5, 0.5, 0.08, 12]} />
+      <meshStandardMaterial color='#4a90d9' transparent opacity={0.5} />
+    </mesh>
+  </group>
+)
+
+// 도로 (직선)
+const Road = ({ position, length, horizontal = false }: { position: [number, number, number]; length: number; horizontal?: boolean }) => (
+  <group position={position}>
+    <mesh receiveShadow rotation={[-Math.PI / 2, 0, horizontal ? Math.PI / 2 : 0]} position={[0, 0.01, 0]}>
+      <planeGeometry args={[2, length]} />
+      <meshStandardMaterial color='#555' />
+    </mesh>
+    {/* 중앙선 */}
+    <mesh rotation={[-Math.PI / 2, 0, horizontal ? Math.PI / 2 : 0]} position={[0, 0.02, 0]}>
+      <planeGeometry args={[0.1, length]} />
+      <meshStandardMaterial color='#ffd700' />
+    </mesh>
+  </group>
+)
+
+// 화단
+const FlowerBed = ({ position }: { position: [number, number, number] }) => (
+  <group position={position}>
+    <mesh castShadow receiveShadow position={[0, 0.15, 0]}>
+      <boxGeometry args={[2, 0.3, 1]} />
+      <meshStandardMaterial color='#5d3a1a' />
+    </mesh>
+    {[[-0.6, 0, 0.2], [0, 0, -0.2], [0.6, 0, 0.1], [-0.3, 0, 0], [0.3, 0, -0.1]].map(([x, , z], i) => (
+      <mesh key={i} castShadow position={[x, 0.45, z]}>
+        <sphereGeometry args={[0.18, 6, 6]} />
+        <meshStandardMaterial color={['#e74c3c', '#f39c12', '#e91e63', '#9b59b6', '#2ecc71'][i]} />
+      </mesh>
+    ))}
+  </group>
+)
+
 const SimpleTree = ({ position }: { position: [number, number, number] }) => (
   <group position={position}>
     <mesh castShadow position={[0, 0.75, 0]}>
@@ -192,6 +287,7 @@ const Field = ({
             return <SimpleBox key={i} position={[x, y, z]} args={[w, h, d]} color={colors[i % colors.length]} />
           })}
 
+          {/* 나무 */}
           <SimpleTree position={[25, 0, 10]} />
           <SimpleTree position={[0, 0, 30]} />
           <SimpleTree position={[-25, 0, 10]} />
@@ -204,6 +300,40 @@ const Field = ({
           <SimpleTree position={[40, 0, 15]} />
           <SimpleTree position={[-10, 0, -40]} />
           <SimpleTree position={[30, 0, -35]} />
+          <SimpleTree position={[-40, 0, 0]} />
+          <SimpleTree position={[0, 0, 40]} />
+          <SimpleTree position={[42, 0, -5]} />
+
+          {/* 도로 (십자형) */}
+          <Road position={[0, 0, 0]} length={80} />
+          <Road position={[0, 0, 0]} length={80} horizontal />
+
+          {/* 중앙 분수 */}
+          <Fountain position={[0, 0, 0]} />
+
+          {/* 가로등 (도로변) */}
+          <Lamp position={[2, 0, 8]} />
+          <Lamp position={[-2, 0, -8]} />
+          <Lamp position={[8, 0, 2]} />
+          <Lamp position={[-8, 0, -2]} />
+          <Lamp position={[2, 0, 20]} />
+          <Lamp position={[-2, 0, -20]} />
+          <Lamp position={[20, 0, 2]} />
+          <Lamp position={[-20, 0, -2]} />
+
+          {/* 벤치 */}
+          <Bench position={[5, 0, 8]} rotation={0} />
+          <Bench position={[-5, 0, -8]} rotation={Math.PI} />
+          <Bench position={[8, 0, -5]} rotation={Math.PI / 2} />
+          <Bench position={[-8, 0, 5]} rotation={-Math.PI / 2} />
+          <Bench position={[25, 0, -5]} rotation={0.5} />
+          <Bench position={[-25, 0, -15]} rotation={1.2} />
+
+          {/* 화단 */}
+          <FlowerBed position={[3, 0, 3]} />
+          <FlowerBed position={[-3, 0, -3]} />
+          <FlowerBed position={[12, 0, 8]} />
+          <FlowerBed position={[-12, 0, -8]} />
 
           {/* 맵 경계 벽 */}
           {[

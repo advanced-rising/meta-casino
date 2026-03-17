@@ -6,18 +6,32 @@ const SYMBOLS = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '7️⃣', '⭐
 const COLS = 5
 const ROWS = 5
 const CELL = 56
-const EXTRA = 30 // 스크롤용 추가 심볼
+const EXTRA = 30
 
 const LINE_DEFS = [
   [0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24],
   [0,6,12,18,24],[4,8,12,16,20],
   [0,6,12,8,4],[20,16,12,6,0],
 ]
+
+// 배당: 3매치 기본, 4매치 x3, 5매치 x10
 const SYMBOL_MULT: Record<string, number> = {
-  '7️⃣':50,'💎':25,'⭐':15,'🔔':10,'🍇':8,'🍊':5,'🍋':3,'🍒':2,
+  '7️⃣':50,'💎':25,'⭐':15,'🔔':10,'🍇':6,'🍊':4,'🍋':3,'🍒':2,
 }
+
+// 심볼 가중치: 낮은 심볼이 더 자주 나옴 → 당첨 확률 UP
+const WEIGHTED_POOL: string[] = [
+  ...'🍒🍒🍒🍒🍒🍒'.split(''),     // 6
+  ...'🍋🍋🍋🍋🍋'.split(''),        // 5
+  ...'🍊🍊🍊🍊🍊'.split(''),        // 5
+  ...'🍇🍇🍇🍇'.split(''),          // 4
+  ...'🔔🔔🔔'.split(''),             // 3
+  ...'⭐⭐'.split(''),                // 2
+  '💎',                               // 1
+].concat(['7️⃣'])                      // 1 (총 27개, 🍒 확률 ~22%, 7️⃣ ~3.7%)
+
 const BET_OPTIONS = [100, 500, 1000, 2000]
-const randSym = () => SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]
+const randSym = () => WEIGHTED_POOL[Math.floor(Math.random() * WEIGHTED_POOL.length)]
 
 /**
  * 열 컴포넌트: framer-motion animate로 세로 스크롤
@@ -117,7 +131,9 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
       let mc = 1
       for (let i = 1; i < syms.length; i++) { if (syms[i] === syms[0]) mc++; else break }
       if (mc >= 3) {
-        total += bet * (SYMBOL_MULT[syms[0]] || 2) * (mc - 2)
+        // 3매치=x1, 4매치=x3, 5매치=x10
+        const matchBonus = mc === 3 ? 1 : mc === 4 ? 3 : 10
+        total += bet * (SYMBOL_MULT[syms[0]] || 2) * matchBonus
         line.slice(0, mc).forEach((i) => cells.add(i))
         lineCount++
       }
@@ -289,7 +305,12 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
             <span style={{ color: '#c9a84c', fontSize: '10px' }}>x{SYMBOL_MULT[s]}</span>
           </div>
         ))}
-        <span style={{ color: '#555', fontSize: '10px' }}>{LINE_DEFS.length} lines / 3+ match</span>
+        <div className='w-full flex justify-center gap-[12px] mt-[4px]'>
+          <span style={{ color: '#888', fontSize: '10px' }}>3매치=x1</span>
+          <span style={{ color: '#c9a84c', fontSize: '10px' }}>4매치=x3</span>
+          <span style={{ color: '#ffd700', fontSize: '10px' }}>5매치=x10</span>
+          <span style={{ color: '#555', fontSize: '10px' }}>{LINE_DEFS.length}라인</span>
+        </div>
       </div>
     </div>
   )

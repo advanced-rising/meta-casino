@@ -196,7 +196,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
   const isWin = (row: number, col: number) => winCells.has(row * COLS + col)
 
   return (
-    <div className='h-[calc(100vh-52px)] flex flex-col items-center justify-center gap-[12px]'>
+    <div className='h-[calc(100vh-52px)] flex flex-col items-center gap-[12px] overflow-y-auto py-[16px]'>
       <div className='rounded-[20px] p-[20px] flex flex-col items-center gap-[10px]'
         style={{
           background: 'linear-gradient(180deg, #4a1068 0%, #220840 40%, #3a1058 100%)',

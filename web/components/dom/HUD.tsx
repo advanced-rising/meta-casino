@@ -100,8 +100,13 @@ const HUD = () => {
             </div>
             <div>
               <span style={{ color: '#ffd700' }}>점프</span>
-              <p>PC: Space</p>
+              <p>PC: Space (짧게)</p>
               <p>모바일: ⬆ 버튼</p>
+            </div>
+            <div>
+              <span style={{ color: '#ffd700' }}>비행 (3초)</span>
+              <p>PC: Space 꾹 0.5초 이상 누르기</p>
+              <p>높은 전망대에 올라갈 수 있음</p>
             </div>
             <div>
               <span style={{ color: '#ffd700' }}>게임장 입장</span>

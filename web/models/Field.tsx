@@ -345,6 +345,59 @@ const Field = ({
           <FlowerBed position={[12, 0, 8]} />
           <FlowerBed position={[-12, 0, -8]} />
 
+          {/* 높은 전망대 (비행으로 올라감) */}
+          <group position={[30, 0, 30]}>
+            {[0, 1, 2, 3].map((i) => (
+              <mesh key={i} castShadow position={[i < 2 ? -2 : 2, 1.5, i % 2 === 0 ? -2 : 2]}>
+                <cylinderGeometry args={[0.15, 0.2, 3, 6]} />
+                <meshStandardMaterial color='#8B6914' metalness={0.4} />
+              </mesh>
+            ))}
+            <mesh castShadow receiveShadow position={[0, 3, 0]}>
+              <boxGeometry args={[5, 0.3, 5]} />
+              <meshStandardMaterial color='#5a4a3a' />
+            </mesh>
+            <mesh position={[0, 3.2, 0]}>
+              <boxGeometry args={[4.5, 0.05, 4.5]} />
+              <meshStandardMaterial color='#c9a84c' metalness={0.3} />
+            </mesh>
+          </group>
+
+          <group position={[-30, 0, -30]}>
+            {[0, 1, 2, 3].map((i) => (
+              <mesh key={i} castShadow position={[i < 2 ? -2 : 2, 1.5, i % 2 === 0 ? -2 : 2]}>
+                <cylinderGeometry args={[0.15, 0.2, 3, 6]} />
+                <meshStandardMaterial color='#8B6914' metalness={0.4} />
+              </mesh>
+            ))}
+            <mesh castShadow receiveShadow position={[0, 3, 0]}>
+              <boxGeometry args={[5, 0.3, 5]} />
+              <meshStandardMaterial color='#5a4a3a' />
+            </mesh>
+          </group>
+
+          {/* 중간 플랫폼 */}
+          <group position={[35, 0, -10]}>
+            <mesh castShadow position={[0, 0.75, 0]}>
+              <cylinderGeometry args={[0.2, 0.25, 1.5, 6]} />
+              <meshStandardMaterial color='#666' metalness={0.5} />
+            </mesh>
+            <mesh castShadow receiveShadow position={[0, 1.5, 0]}>
+              <boxGeometry args={[3, 0.3, 3]} />
+              <meshStandardMaterial color='#4a4a5a' />
+            </mesh>
+          </group>
+          <group position={[-35, 0, 10]}>
+            <mesh castShadow position={[0, 0.75, 0]}>
+              <cylinderGeometry args={[0.2, 0.25, 1.5, 6]} />
+              <meshStandardMaterial color='#666' metalness={0.5} />
+            </mesh>
+            <mesh castShadow receiveShadow position={[0, 1.5, 0]}>
+              <boxGeometry args={[3, 0.3, 3]} />
+              <meshStandardMaterial color='#4a4a5a' />
+            </mesh>
+          </group>
+
           {/* 맵 경계 벽 */}
           {[
             { pos: [MAP_SIZE, 1, 0] as [number, number, number], args: [0.3, 2, MAP_SIZE * 2] as [number, number, number] },

@@ -41,12 +41,12 @@ function Lights() {
         color={0xfff5e6}
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
-        shadow-camera-left={-30}
-        shadow-camera-right={30}
-        shadow-camera-top={30}
-        shadow-camera-bottom={-30}
+        shadow-camera-left={-50}
+        shadow-camera-right={50}
+        shadow-camera-top={50}
+        shadow-camera-bottom={-50}
         shadow-camera-near={0.5}
-        shadow-camera-far={150}
+        shadow-camera-far={200}
         shadow-bias={-0.001}
       >
         <object3D attach='target' position={[0, 0, 0]} />

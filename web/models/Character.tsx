@@ -59,6 +59,14 @@ const Character = ({
   const isGrounded = useRef(true)
   const positionSaved = useRef(false)
 
+  // 비행 시스템
+  const isFlying = useRef(false)
+  const flyTimer = useRef(0)
+  const spaceHoldTime = useRef(0)
+  const FLY_HOLD_THRESHOLD = 0.5 // 0.5초 꾹 누르면 비행
+  const FLY_DURATION = 3 // 3초 비행
+  const FLY_HEIGHT = 5
+
   // 초기 위치 복원
   useEffect(() => {
     if (typeof window === 'undefined' || !characterGroup.current) return
@@ -242,13 +250,43 @@ const Character = ({
     obj.position.x += moveX
     obj.position.z += moveZ
 
-    // 중력 + 점프
-    if (anim.jump && isGrounded.current) {
-      velocityY.current = 6
+    // 비행 시스템: Space 꾹 누르기 감지
+    if (anim.jump) {
+      spaceHoldTime.current += delta
+    } else {
+      spaceHoldTime.current = 0
+    }
+
+    // 비행 시작 (Space 0.5초 이상 꾹 + 지상에서)
+    if (spaceHoldTime.current >= FLY_HOLD_THRESHOLD && !isFlying.current && isGrounded.current) {
+      isFlying.current = true
+      flyTimer.current = FLY_DURATION
+      velocityY.current = 4
       isGrounded.current = false
     }
 
-    velocityY.current -= 15 * delta // 중력
+    if (isFlying.current) {
+      flyTimer.current -= delta
+      // 비행 중: 높이 유지 + 서서히 하강
+      if (flyTimer.current > 0) {
+        if (obj.position.y < FLY_HEIGHT) {
+          velocityY.current = 3
+        } else {
+          velocityY.current = Math.sin(flyTimer.current * 3) * 0.5 // 살짝 흔들림
+        }
+      } else {
+        // 비행 종료 → 자연 낙하
+        isFlying.current = false
+      }
+    } else {
+      // 일반 점프 (짧게 누르기)
+      if (anim.jump && isGrounded.current && spaceHoldTime.current < FLY_HOLD_THRESHOLD) {
+        velocityY.current = 6
+        isGrounded.current = false
+      }
+    }
+
+    velocityY.current -= (isFlying.current ? 5 : 15) * delta // 비행 중 약한 중력
     obj.position.y += velocityY.current * delta
 
     // 블럭 충돌 체크
@@ -262,10 +300,12 @@ const Character = ({
       obj.position.y = resolved.y
       velocityY.current = 0
       isGrounded.current = true
+      isFlying.current = false
     } else if (obj.position.y <= 0) {
       obj.position.y = 0
       velocityY.current = 0
       isGrounded.current = true
+      isFlying.current = false
     }
 
     // 맵 경계

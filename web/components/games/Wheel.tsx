@@ -71,7 +71,7 @@ const FortuneWheel = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
         <div className='flex flex-col items-center gap-[10px] p-[10px]'
-          style={{ background: 'linear-gradient(180deg, #2a0a2a 0%, #1a0520 50%, #2a0a2a 100%)' }}>
+          >
 
           <span className='arcade-title neon-text' style={{ '--neon-color': '#e91e63', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>
             🎡 FORTUNE WHEEL

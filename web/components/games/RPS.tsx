@@ -65,7 +65,7 @@ const RPS = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
         <div className='flex flex-col items-center gap-[12px] p-[12px]'
-          style={{ background: 'linear-gradient(180deg, #2a1a00, #1a0f00)' }}>
+          >
 
           <span className='arcade-title neon-text' style={{ '--neon-color': '#f39c12', color: '#ffd700', fontSize: '20px', fontWeight: 900 } as any}>
             ✊✋✌️ ROCK PAPER SCISSORS
@@ -119,7 +119,7 @@ const RPS = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
           {/* 캐시아웃 */}
           {playing && streak > 0 && (
             <button onClick={cashOut} className='arcade-btn px-[20px] py-[8px] rounded-full text-[14px] font-bold'
-              style={{ background: 'linear-gradient(180deg, #f39c12, #d68910)', color: '#fff' }}>
+              >
               💰 CASH OUT ${potentialWin.toLocaleString()}
             </button>
           )}

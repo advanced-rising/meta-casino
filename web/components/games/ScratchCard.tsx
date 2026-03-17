@@ -73,7 +73,7 @@ const ScratchCard = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[10px] px-[8px]'>
         <div className='rounded-[12px] p-[20px] flex flex-col items-center gap-[10px]'
-          style={{ background: 'linear-gradient(180deg, #2a1a00, #1a0f00)' }}>
+          >
           <span className='arcade-title neon-text' style={{ '--neon-color': '#f39c12', color: '#ffd700', fontSize: '20px', fontWeight: 900 } as any}>🎫 SCRATCH CARD</span>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 70px)', gap: '4px' }}>

@@ -68,7 +68,7 @@ const HiLo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[14px] px-[8px]'>
         <div className='flex flex-col items-center gap-[12px] p-[12px]'
-          style={{ background: 'linear-gradient(180deg, #0a3a0a 0%, #061a06 50%, #0a3a0a 100%)' }}>
+          >
 
           <span className='arcade-title neon-text' style={{ '--neon-color': '#2ecc71', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>
             🃏 HI-LO
@@ -147,7 +147,7 @@ const HiLo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
               </div>
               <button onClick={start} disabled={money < bet}
                 className='arcade-btn w-[180px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
-                style={{ background: 'linear-gradient(180deg, #2ecc71, #1e8449)', color: 'white', border: '3px solid #c9a84c' }}>
+                >
                 DEAL
               </button>
             </>
@@ -155,19 +155,19 @@ const HiLo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             <div className='flex items-center gap-[10px]'>
               <button onClick={() => guess(true)} disabled={showNext}
                 className='arcade-btn w-[100px] h-[48px] rounded-[10px] text-[14px] font-bold disabled:opacity-30'
-                style={{ background: 'linear-gradient(180deg, #3498db, #2471a3)', color: 'white', border: '3px solid #c9a84c' }}>
+                >
                 ⬆ HIGH
               </button>
               {streak > 0 && (
                 <button onClick={cashOut} disabled={showNext}
                   className='arcade-btn w-[100px] h-[48px] rounded-[10px] text-[13px] font-bold disabled:opacity-30'
-                  style={{ background: 'linear-gradient(180deg, #f39c12, #d68910)', color: 'white', border: '3px solid #c9a84c' }}>
+                  >
                   💰 x{multiplier.toFixed(1)}
                 </button>
               )}
               <button onClick={() => guess(false)} disabled={showNext}
                 className='arcade-btn w-[100px] h-[48px] rounded-[10px] text-[14px] font-bold disabled:opacity-30'
-                style={{ background: 'linear-gradient(180deg, #e74c3c, #c0392b)', color: 'white', border: '3px solid #c9a84c' }}>
+                >
                 ⬇ LOW
               </button>
             </div>

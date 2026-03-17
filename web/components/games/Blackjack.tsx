@@ -125,7 +125,7 @@ const Blackjack = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
         <div className='flex flex-col items-center gap-[12px] p-[12px]'
-          style={{ background: 'linear-gradient(180deg, #0a3a0a 0%, #061a06 50%, #0a3a0a 100%)' }}>
+          >
 
           <span className='arcade-title neon-text' style={{ '--neon-color': '#2ecc71', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>
             🃏 BLACKJACK
@@ -174,16 +174,16 @@ const Blackjack = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
           {playing ? (
             <div className='flex items-center gap-[8px]'>
               <button onClick={hit} className='arcade-btn px-[20px] py-[8px] rounded-[8px] text-[14px] font-bold'
-                style={{ background: 'linear-gradient(180deg, #3498db, #2471a3)', color: 'white', border: '2px solid #c9a84c' }}>
+                >
                 HIT
               </button>
               <button onClick={stand} className='arcade-btn px-[20px] py-[8px] rounded-[8px] text-[14px] font-bold'
-                style={{ background: 'linear-gradient(180deg, #e74c3c, #c0392b)', color: 'white', border: '2px solid #c9a84c' }}>
+                >
                 STAND
               </button>
               {playerCards.length === 2 && money >= bet && (
                 <button onClick={doubleDown} className='arcade-btn px-[16px] py-[8px] rounded-[8px] text-[12px] font-bold'
-                  style={{ background: 'linear-gradient(180deg, #f39c12, #d68910)', color: 'white', border: '2px solid #c9a84c' }}>
+                  >
                   x2
                 </button>
               )}
@@ -206,7 +206,7 @@ const Blackjack = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
               </div>
               <button onClick={deal} disabled={money < bet}
                 className='arcade-btn w-[180px] h-[46px] rounded-full text-[16px] font-bold disabled:opacity-30'
-                style={{ background: 'linear-gradient(180deg, #2ecc71, #1e8449)', color: 'white', border: '3px solid #c9a84c' }}>
+                >
                 DEAL
               </button>
             </>

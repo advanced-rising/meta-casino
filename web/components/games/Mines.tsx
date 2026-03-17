@@ -83,7 +83,7 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
       {/* 좌측: 게임 */}
       <div className='flex-1 flex flex-col items-center justify-center gap-[10px] overflow-y-auto py-[12px] px-[8px]'>
         <div className='flex flex-col items-center gap-[10px] p-[10px]'
-          style={{ background: 'linear-gradient(180deg, #0a2540 0%, #061a2e 50%, #0a2540 100%)' }}>
+          >
 
           <span className='arcade-title neon-text' style={{ '--neon-color': '#3498db', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>
             💎 MINES 💣
@@ -168,7 +168,7 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             {!playing ? (
               <button onClick={startGame} disabled={money < bet}
                 className='arcade-btn w-[180px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
-                style={{ background: 'linear-gradient(180deg, #2ecc71, #1e8449)', color: 'white', border: '3px solid #c9a84c' }}>
+                >
                 START
               </button>
             ) : (

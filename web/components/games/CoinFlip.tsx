@@ -51,7 +51,7 @@ const CoinFlip = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[14px] px-[8px]'>
         <div className='arcade-box p-[24px] flex flex-col items-center gap-[14px]'
-          style={{ background: 'linear-gradient(180deg, #2a1a00 0%, #1a0f00 50%, #2a1a00 100%)' }}>
+          >
 
           <span className='arcade-title neon-text' style={{ '--neon-color': '#f39c12', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>
             🪙 COIN FLIP
@@ -128,12 +128,12 @@ const CoinFlip = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
           <div className='flex items-center gap-[16px]'>
             <button onClick={() => flip('heads')} disabled={flipping || money < bet}
               className='arcade-btn w-[120px] h-[50px] rounded-[12px] text-[15px] font-bold disabled:opacity-30'
-              style={{ background: 'linear-gradient(180deg, #f39c12, #d68910)', color: 'white', border: '3px solid #c9a84c' }}>
+              >
               👑 HEAD
             </button>
             <button onClick={() => flip('tails')} disabled={flipping || money < bet}
               className='arcade-btn w-[120px] h-[50px] rounded-[12px] text-[15px] font-bold disabled:opacity-30'
-              style={{ background: 'linear-gradient(180deg, #95a5a6, #7f8c8d)', color: 'white', border: '3px solid #c9a84c' }}>
+              >
               🌙 TAIL
             </button>
           </div>

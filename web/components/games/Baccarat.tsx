@@ -78,7 +78,7 @@ const Baccarat = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[10px] px-[8px]'>
         <div className='rounded-[12px] p-[20px] flex flex-col items-center gap-[10px]'
-          style={{ background: 'linear-gradient(180deg, #0a2a0a, #051505)' }}>
+          >
 
           <span className='arcade-title neon-text' style={{ '--neon-color': '#c9a84c', color: '#ffd700', fontSize: '20px', fontWeight: 900 } as any}>
             🃏 BACCARAT
@@ -145,7 +145,7 @@ const Baccarat = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
 
           <button onClick={deal} disabled={playing || money < bet}
             className='arcade-btn w-[180px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
-            style={{ background: 'linear-gradient(180deg, #c9a84c, #8B6914)', color: '#000', border: 'none' }}>
+            >
             {playing ? '...' : 'DEAL'}
           </button>
 

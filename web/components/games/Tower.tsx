@@ -71,7 +71,7 @@ const Tower = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[10px] px-[8px]'>
         <div className='rounded-[12px] p-[20px] flex flex-col items-center gap-[8px]'
-          style={{ background: 'linear-gradient(180deg, #1a1a2e, #0d0d1a)' }}>
+          >
           <span className='arcade-title neon-text' style={{ '--neon-color': '#9b59b6', color: '#ffd700', fontSize: '20px', fontWeight: 900 } as any}>🏗️ TOWER</span>
 
           {/* 타워 */}
@@ -111,7 +111,7 @@ const Tower = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
 
           {playing && floor > 0 ? (
             <button onClick={cashOut} className='arcade-btn px-[20px] py-[8px] rounded-full text-[14px] font-bold'
-              style={{ background: 'linear-gradient(180deg, #f39c12, #d68910)', color: '#fff' }}>
+              >
               💰 CASH OUT x{currentMult}
             </button>
           ) : !playing ? (
@@ -127,7 +127,7 @@ const Tower = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                   style={{ background: '#0d0d1a', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>
               <button onClick={start} disabled={money < bet} className='arcade-btn w-[160px] h-[40px] rounded-full text-[14px] font-bold disabled:opacity-30'
-                style={{ background: 'linear-gradient(180deg, #9b59b6, #7d3c98)', color: 'white' }}>CLIMB</button>
+                >CLIMB</button>
             </>
           ) : null}
 

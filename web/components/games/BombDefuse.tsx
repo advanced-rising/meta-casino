@@ -91,7 +91,7 @@ const BombDefuse = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) 
 
           {playing && cutCount > 0 ? (
             <button onClick={cashOut} className='arcade-btn px-[20px] py-[8px] rounded-full text-[14px] font-bold'
-              style={{ background: 'linear-gradient(180deg, #f39c12, #d68910)', color: '#fff' }}>💰 CASH OUT x{currentMult}</button>
+              >💰 CASH OUT x{currentMult}</button>
           ) : !playing ? (
             <>
               <div className='flex items-center gap-[6px]'>
@@ -101,7 +101,7 @@ const BombDefuse = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) 
                   className='w-[60px] h-[24px] rounded-[4px] text-[10px] text-center font-bold outline-none' style={{ background: '#1a0505', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>
               <button onClick={start} disabled={money < bet} className='arcade-btn w-[160px] h-[40px] rounded-full text-[14px] font-bold disabled:opacity-30'
-                style={{ background: 'linear-gradient(180deg, #e74c3c, #c0392b)', color: 'white' }}>START</button>
+                >START</button>
             </>
           ) : null}
 

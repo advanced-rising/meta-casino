@@ -233,7 +233,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
         )}
 
         <div className='flex flex-col items-center gap-[8px] p-[8px]'
-          style={{ background: 'linear-gradient(180deg, #4a1068 0%, #220840 40%, #3a1058 100%)' }}>
+          >
 
           <div className='flex items-center gap-[6px]'>
             <span className='text-[16px]'>⭐</span>

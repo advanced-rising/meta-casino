@@ -37,9 +37,10 @@ export function getDayProgress() {
   const celestialY = Math.sin(sunAngle) * 100   // 최고점 100
   const celestialZ = 30
 
-  // 조명 강도
-  const intensity = isDay ? Math.sin(sunAngle) * 2.0 : 0.12
-  const ambientIntensity = isDay ? 0.15 + Math.sin(sunAngle) * 0.35 : 0.06
+  // 조명 강도 (밤에도 달빛으로 어느 정도 밝음)
+  const moonBrightness = Math.sin(sunAngle) * 0.3 // 달이 높을수록 밝음
+  const intensity = isDay ? Math.sin(sunAngle) * 2.0 : 0.15 + moonBrightness
+  const ambientIntensity = isDay ? 0.15 + Math.sin(sunAngle) * 0.35 : 0.08 + moonBrightness * 0.5
 
   // 하늘 색상
   const noon = isDay ? Math.sin(sunAngle) : 0

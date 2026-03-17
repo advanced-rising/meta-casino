@@ -114,9 +114,17 @@ const Column = ({ symbols, colIdx, spinSignal, finalSymbols, onDone, speed = 1 }
   )
 }
 
+// 잭팟: 5x5 전체 같은 심볼이면 잭팟
+const JACKPOT_MULT = 500
+const isJackpot = (g: string[][]) => {
+  const first = g[0][0]
+  return g.every((col) => col.every((s) => s === first))
+}
+
 const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const [money, setMoneyLocal] = useState(0)
   const [bet, setBet] = useState(100)
+  const [jackpotHit, setJackpotHit] = useState(false)
   const [spinning, setSpinning] = useState(false)
   const [grid, setGrid] = useState<string[][]>(
     () => Array.from({ length: COLS }, () => Array.from({ length: ROWS }, () => randSym()))
@@ -165,7 +173,19 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
     if (stoppedCols.current >= COLS) {
       const fg = nextGrid.current
       setGrid(fg.map((c) => [...c]))
-      const { total, cells, lineCount } = checkWins(fg)
+      let { total, cells, lineCount } = checkWins(fg)
+
+      // 잭팟 체크
+      if (isJackpot(fg)) {
+        total = bet * JACKPOT_MULT
+        lineCount = 9
+        for (let i = 0; i < 25; i++) cells.add(i)
+        setJackpotHit(true)
+        setTimeout(() => setJackpotHit(false), 6000)
+      } else {
+        setJackpotHit(false)
+      }
+
       setWinCells(cells); setWinLineCount(lineCount)
       if (total > 0) { setMoney(addMoney(total)); setWinAmount(total); setLastResult('win') }
       else { setMoney(getMoney()); setWinAmount(0); setLastResult('lose') }
@@ -195,166 +215,223 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
 
   const isWin = (row: number, col: number) => winCells.has(row * COLS + col)
 
+  // 총 수익/손실 계산
+  const totalProfit = gameHistory.reduce((sum, h) => sum + (h.win > 0 ? h.win - h.bet : -h.bet), 0)
+
   return (
-    <div className='h-[calc(100vh-52px)] flex flex-col items-center gap-[12px] overflow-y-auto py-[16px]'>
-      <div className='rounded-[20px] p-[20px] flex flex-col items-center gap-[10px]'
-        style={{
-          background: 'linear-gradient(180deg, #4a1068 0%, #220840 40%, #3a1058 100%)',
-          border: '4px solid #c9a84c',
-          boxShadow: '0 0 60px rgba(201,168,76,0.15), inset 0 0 40px rgba(0,0,0,0.5)',
-        }}>
+    <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
+      {/* 좌측: 슬롯 머신 */}
+      <div className='flex-1 flex flex-col items-center gap-[10px] overflow-y-auto py-[12px] px-[8px]'>
+        {/* 잭팟 배너 */}
+        {jackpotHit && (
+          <motion.div initial={{ scale: 0 }} animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 0.5, repeat: Infinity }}
+            className='arcade-title text-center'
+            style={{ color: '#ffd700', fontSize: '32px', fontWeight: 900, textShadow: '0 0 30px rgba(255,215,0,0.8), 0 0 60px rgba(255,215,0,0.4)' }}>
+            🎰 JACKPOT!! 🎰
+          </motion.div>
+        )}
 
-        <div className='flex items-center gap-[8px]'>
-          <span className='text-[20px]'>⭐</span>
-          <span style={{ color: '#ffd700', fontSize: '26px', fontWeight: 900, textShadow: '0 0 20px rgba(255,215,0,0.5)', letterSpacing: '4px' }}>
-            PACHISLOT 777
-          </span>
-          <span className='text-[20px]'>⭐</span>
-        </div>
+        <div className='arcade-box p-[16px] flex flex-col items-center gap-[8px]'
+          style={{ background: 'linear-gradient(180deg, #4a1068 0%, #220840 40%, #3a1058 100%)' }}>
 
-        {/* 릴 - 항상 같은 5열 구조 */}
-        <div className='p-[8px] rounded-[12px] relative'
-          style={{ background: '#111', border: '3px solid #c9a84c', boxShadow: 'inset 0 4px 20px rgba(0,0,0,0.8)' }}>
-
-          <div className='flex gap-[2px]'>
-            {Array.from({ length: COLS }, (_, c) => (
-              <Column key={c}
-                symbols={grid[c]}
-                colIdx={c}
-                spinSignal={spinSignal}
-                finalSymbols={nextGrid.current[c] || grid[c]}
-                onDone={onColDone}
-                speed={autoSpin ? speed : 1}
-              />
-            ))}
+          <div className='flex items-center gap-[6px]'>
+            <span className='text-[16px]'>⭐</span>
+            <span className='arcade-title neon-text' style={{ '--neon-color': '#c9a84c', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>
+              PACHISLOT 777
+            </span>
+            <span className='text-[16px]'>⭐</span>
           </div>
 
-          {/* 당첨 셀 오버레이 */}
-          {!spinning && winCells.size > 0 && (
-            <div className='absolute inset-[8px] pointer-events-none'
-              style={{ display: 'grid', gridTemplateColumns: `repeat(${COLS}, ${CELL}px)`, gap: '2px' }}>
-              {Array.from({ length: ROWS * COLS }, (_, idx) => {
-                const r = Math.floor(idx / COLS); const c = idx % COLS; const w = isWin(r, c)
-                return <div key={idx} style={{
-                  width: CELL, height: CELL, borderRadius: 4,
-                  background: w ? 'rgba(255,215,0,0.2)' : 'transparent',
-                  boxShadow: w ? '0 0 16px rgba(255,215,0,0.6)' : 'none',
-                  animation: w ? 'winGlow 0.8s ease infinite alternate' : 'none',
-                }} />
-              })}
-            </div>
-          )}
-
-          {lastResult === 'win' && !spinning && (
-            <div className='absolute inset-0 rounded-[12px] pointer-events-none'
-              style={{ background: 'radial-gradient(circle, rgba(255,215,0,0.12) 0%, transparent 70%)', animation: 'winFlash 1.5s ease infinite' }} />
-          )}
-        </div>
-
-        {/* 결과 */}
-        <div className='h-[40px] flex items-center justify-center'>
-          {lastResult === 'win' && winAmount > 0 && (
-            <motion.div className='flex items-center gap-[8px]'
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: [1, 1.1, 1], opacity: 1 }}
-              transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}>
-              <span className='text-[22px]'>🎰</span>
-              <span className='text-[22px]'>🎉</span>
-              <span style={{ color: '#ffd700', fontSize: '26px', fontWeight: 900, textShadow: '0 0 20px rgba(255,215,0,0.7), 0 0 40px rgba(255,215,0,0.3)' }}>
-                +${winAmount.toLocaleString()}
-              </span>
-              <span className='text-[12px] px-[6px] py-[2px] rounded-[4px]' style={{ background: '#ffd70033', color: '#ffd700' }}>
-                {winLineCount}LINE{winLineCount > 1 ? 'S' : ''}
-              </span>
-              <span className='text-[22px]'>🎉</span>
-              <span className='text-[22px]'>🎰</span>
-            </motion.div>
-          )}
-          {lastResult === 'lose' && (
-            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ color: '#444', fontSize: '13px' }}>MISS</motion.span>
-          )}
-        </div>
-
-        {/* 배팅 */}
-        <div className='flex items-center gap-[8px]'>
-          <span style={{ color: '#c9a84c', fontSize: '11px', fontWeight: 700 }}>BET</span>
-          {BET_OPTIONS.map((v) => (
-            <button key={v} onClick={() => !spinning && setBet(v)}
-              className='px-[12px] py-[5px] rounded-[4px] text-[12px] font-bold'
-              style={{
-                background: bet === v ? 'linear-gradient(180deg, #c9a84c, #8B6914)' : '#222',
-                color: bet === v ? '#1a0f08' : '#666',
-                border: bet === v ? '2px solid #ffd700' : '1px solid #444',
-              }}>
-              ${v >= 1000 ? `${v / 1000}K` : v}
-            </button>
-          ))}
-          <input
-            type='number'
-            min={1}
-            disabled={spinning}
-            value={bet}
-            onChange={(e) => {
-              const v = parseInt(e.target.value) || 0
-              if (v >= 0) setBet(v)
-            }}
-            className='w-[80px] h-[28px] rounded-[4px] text-[12px] text-center font-bold outline-none'
-            style={{ background: '#111', color: '#ffd700', border: '1px solid #c9a84c' }}
-          />
-        </div>
-
-        <div className='flex items-center gap-[10px]'>
-          <button onClick={spin} disabled={spinning || money < bet || autoSpin}
-            className='w-[160px] h-[48px] rounded-full text-[17px] font-bold disabled:opacity-30'
-            style={{
-              background: spinning ? '#333' : 'linear-gradient(180deg, #e74c3c, #a93226)',
-              color: 'white', border: '3px solid #c9a84c', letterSpacing: '2px',
-              boxShadow: spinning ? 'none' : '0 4px 15px rgba(231,76,60,0.4)',
-            }}>
-            {spinning ? '⏳' : '🎰 SPIN'}
-          </button>
-          <button onClick={toggleAuto} disabled={spinning && !autoSpin}
-            className='w-[100px] h-[48px] rounded-full text-[13px] font-bold disabled:opacity-30'
-            style={{
-              background: autoSpin ? 'linear-gradient(180deg, #27ae60, #1e8449)' : '#333',
-              color: autoSpin ? 'white' : '#888',
-              border: autoSpin ? '3px solid #2ecc71' : '2px solid #555',
-              boxShadow: autoSpin ? '0 0 12px rgba(46,204,113,0.4)' : 'none',
-            }}>
-            {autoSpin ? `AUTO (${autoCount})` : 'AUTO'}
-          </button>
-
-          {/* 배속 (AUTO 중에만 활성) */}
-          {autoSpin && (
-            <div className='flex gap-[4px]'>
-              {[1, 2, 3, 5].map((s) => (
-                <button key={s} onClick={() => setSpeed(s)}
-                  className='w-[36px] h-[36px] rounded-[6px] text-[11px] font-bold'
-                  style={{
-                    background: speed === s ? '#c9a84c' : '#333',
-                    color: speed === s ? '#1a0f08' : '#666',
-                    border: speed === s ? '2px solid #ffd700' : '1px solid #555',
-                  }}>
-                  x{s}
-                </button>
+          {/* 릴 */}
+          <div className='p-[6px] rounded-[10px] relative'
+            style={{ background: '#111', border: '3px solid #c9a84c', boxShadow: 'inset 0 4px 20px rgba(0,0,0,0.8)' }}>
+            <div className='flex gap-[2px]'>
+              {Array.from({ length: COLS }, (_, c) => (
+                <Column key={c} symbols={grid[c]} colIdx={c} spinSignal={spinSignal}
+                  finalSymbols={nextGrid.current[c] || grid[c]} onDone={onColDone} speed={autoSpin ? speed : 1} />
               ))}
             </div>
-          )}
-        </div>
+            {!spinning && winCells.size > 0 && (
+              <div className='absolute inset-[6px] pointer-events-none'
+                style={{ display: 'grid', gridTemplateColumns: `repeat(${COLS}, ${CELL}px)`, gap: '2px' }}>
+                {Array.from({ length: ROWS * COLS }, (_, idx) => {
+                  const w = isWin(Math.floor(idx / COLS), idx % COLS)
+                  return <div key={idx} style={{ width: CELL, height: CELL, borderRadius: 4,
+                    background: w ? 'rgba(255,215,0,0.2)' : 'transparent',
+                    boxShadow: w ? '0 0 16px rgba(255,215,0,0.6)' : 'none',
+                    animation: w ? 'winGlow 0.8s ease infinite alternate' : 'none',
+                  }} />
+                })}
+              </div>
+            )}
+            {lastResult === 'win' && !spinning && (
+              <div className='absolute inset-0 rounded-[10px] pointer-events-none'
+                style={{ background: 'radial-gradient(circle, rgba(255,215,0,0.12) 0%, transparent 70%)', animation: 'winFlash 1.5s ease infinite' }} />
+            )}
+          </div>
 
-        <div className='text-[12px]' style={{ color: '#888' }}>
-          BALANCE <span style={{ color: '#4ade80', fontWeight: 700, fontSize: '15px' }}>${money.toLocaleString()}</span>
+          {/* 결과 */}
+          <div className='h-[32px] flex items-center justify-center'>
+            {lastResult === 'win' && winAmount > 0 && (
+              <motion.div className='flex items-center gap-[6px]'
+                animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}>
+                <span className='text-[18px]'>🎉</span>
+                <span className='arcade-title' style={{ color: '#ffd700', fontSize: '22px', fontWeight: 900, textShadow: '0 0 15px rgba(255,215,0,0.5)' }}>
+                  +${winAmount.toLocaleString()}
+                </span>
+                <span className='text-[10px] px-[4px] py-[1px] rounded-[3px]' style={{ background: '#ffd70033', color: '#ffd700' }}>
+                  {winLineCount}L
+                </span>
+                <span className='text-[18px]'>🎉</span>
+              </motion.div>
+            )}
+            {lastResult === 'lose' && <span className='arcade-title' style={{ color: '#444', fontSize: '12px' }}>MISS</span>}
+          </div>
+
+          {/* 컨트롤 */}
+          <div className='flex items-center gap-[6px] flex-wrap justify-center'>
+            <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
+            {BET_OPTIONS.map((v) => (
+              <button key={v} onClick={() => !spinning && setBet(v)}
+                className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
+                style={{ background: bet === v ? '#c9a84c' : '#222', color: bet === v ? '#000' : '#666', border: bet === v ? '2px solid #ffd700' : '1px solid #444' }}>
+                ${v >= 1000 ? `${v / 1000}K` : v}
+              </button>
+            ))}
+            <input type='number' min={1} disabled={spinning} value={bet}
+              onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+              className='w-[70px] h-[26px] rounded-[4px] text-[11px] text-center font-bold outline-none'
+              style={{ background: '#111', color: '#ffd700', border: '1px solid #c9a84c' }} />
+          </div>
+
+          <div className='flex items-center gap-[8px]'>
+            <button onClick={spin} disabled={spinning || money < bet || autoSpin}
+              className='arcade-btn w-[140px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
+              style={{ background: spinning ? '#333' : 'linear-gradient(180deg, #e74c3c, #a93226)',
+                color: 'white', border: '3px solid #c9a84c', letterSpacing: '2px' }}>
+              {spinning ? '⏳' : '🎰 SPIN'}
+            </button>
+            <button onClick={toggleAuto} disabled={spinning && !autoSpin}
+              className='arcade-btn w-[80px] h-[44px] rounded-full text-[12px] font-bold disabled:opacity-30'
+              style={{ background: autoSpin ? '#27ae60' : '#333', color: autoSpin ? '#fff' : '#888',
+                border: autoSpin ? '3px solid #2ecc71' : '2px solid #555' }}>
+              {autoSpin ? `x${speed} (${autoCount})` : 'AUTO'}
+            </button>
+            {autoSpin && (
+              <div className='flex gap-[3px]'>
+                {[1, 2, 3, 5].map((s) => (
+                  <button key={s} onClick={() => setSpeed(s)}
+                    className='arcade-btn w-[30px] h-[30px] rounded-[4px] text-[10px] font-bold'
+                    style={{ background: speed === s ? '#c9a84c' : '#222', color: speed === s ? '#000' : '#555',
+                      border: speed === s ? '1px solid #ffd700' : '1px solid #444' }}>
+                    {s}x
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className='arcade-title text-[11px]' style={{ color: '#888' }}>
+            BAL <span style={{ color: '#4ade80', fontWeight: 700, fontSize: '14px' }}>${money.toLocaleString()}</span>
+          </div>
         </div>
       </div>
 
-      {/* INFO 토글 */}
+      {/* 우측: 정보 패널 (데스크탑) */}
+      <div className='hidden lg:flex flex-col w-[300px] overflow-y-auto py-[12px] px-[10px] gap-[10px]'
+        style={{ background: '#0d0518', borderLeft: '2px solid #c9a84c33' }}>
+
+        {/* 잭팟 정보 */}
+        <div className='arcade-box p-[10px] text-center' style={{ background: '#1a0a2e' }}>
+          <div className='arcade-title text-[10px]' style={{ color: '#c9a84c' }}>JACKPOT (25매치)</div>
+          <div className='arcade-title text-[20px] font-bold neon-text' style={{ '--neon-color': '#e74c3c', color: '#ffd700' } as any}>
+            x{JACKPOT_MULT}
+          </div>
+          <div className='text-[10px]' style={{ color: '#666' }}>전체 5x5 동일 심볼</div>
+        </div>
+
+        {/* 통계 */}
+        <div className='arcade-box p-[10px]' style={{ background: '#1a0a2e' }}>
+          <div className='arcade-title text-[10px] mb-[6px]' style={{ color: '#c9a84c' }}>STATS</div>
+          <div className='flex justify-between text-[11px] mb-[2px]'>
+            <span style={{ color: '#888' }}>SPINS</span>
+            <span style={{ color: '#fff' }}>{gameHistory.length}</span>
+          </div>
+          <div className='flex justify-between text-[11px] mb-[2px]'>
+            <span style={{ color: '#888' }}>WINS</span>
+            <span style={{ color: '#2ecc71' }}>{gameHistory.filter((h) => h.win > 0).length}</span>
+          </div>
+          <div className='flex justify-between text-[11px]'>
+            <span style={{ color: '#888' }}>PROFIT</span>
+            <span style={{ color: totalProfit >= 0 ? '#ffd700' : '#e74c3c' }}>
+              {totalProfit >= 0 ? '+' : ''}${totalProfit.toLocaleString()}
+            </span>
+          </div>
+        </div>
+
+        {/* 심볼 배당 */}
+        <div className='arcade-box p-[10px]' style={{ background: '#1a0a2e' }}>
+          <div className='arcade-title text-[10px] mb-[6px]' style={{ color: '#c9a84c' }}>PAYOUTS</div>
+          {SYMBOLS.map((s) => (
+            <div key={s} className='flex justify-between items-center text-[11px] mb-[1px]'>
+              <span className='text-[16px]'>{s}</span>
+              <div className='flex gap-[8px]'>
+                <span style={{ color: '#888' }}>3x{SYMBOL_MULT[s]}</span>
+                <span style={{ color: '#c9a84c' }}>4x{SYMBOL_MULT[s] * 3}</span>
+                <span style={{ color: '#ffd700' }}>5x{SYMBOL_MULT[s] * 10}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 라인 패턴 */}
+        <div className='arcade-box p-[10px]' style={{ background: '#1a0a2e' }}>
+          <div className='arcade-title text-[10px] mb-[6px]' style={{ color: '#c9a84c' }}>LINES ({LINE_DEFS.length})</div>
+          <div className='grid grid-cols-3 gap-[4px]'>
+            {LINE_DEFS.map((line, li) => (
+              <div key={li} className='flex items-center gap-[4px]'>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 6px)', gap: '1px' }}>
+                  {Array.from({ length: 25 }, (_, idx) => (
+                    <div key={idx} style={{ width: 6, height: 6, borderRadius: 1,
+                      background: line.includes(idx) ? LINE_COLORS[li] : '#1a1a1a' }} />
+                  ))}
+                </div>
+                <span style={{ color: LINE_COLORS[li], fontSize: '8px' }}>{LINE_NAMES[li]}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 히스토리 */}
+        <div className='arcade-box p-[10px] flex-1' style={{ background: '#1a0a2e' }}>
+          <div className='arcade-title text-[10px] mb-[6px]' style={{ color: '#c9a84c' }}>HISTORY</div>
+          <div className='flex flex-col gap-[2px] max-h-[200px] overflow-y-auto'>
+            {gameHistory.length === 0 && <span style={{ color: '#333', fontSize: '10px' }}>No spins yet</span>}
+            {gameHistory.map((h, i) => (
+              <div key={i} className='flex items-center gap-[6px] px-[4px] py-[1px] rounded-[2px]'
+                style={{ background: h.win > 0 ? '#1a3a1a' : 'transparent' }}>
+                <span style={{ color: '#444', fontSize: '9px', minWidth: '16px' }}>#{i + 1}</span>
+                <span style={{ color: '#666', fontSize: '10px' }}>${h.bet}</span>
+                {h.win > 0 ? (
+                  <span style={{ color: '#ffd700', fontSize: '10px', fontWeight: 700 }}>+${h.win.toLocaleString()} ({h.lines}L)</span>
+                ) : (
+                  <span style={{ color: '#333', fontSize: '9px' }}>-</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* INFO 토글 (모바일만) */}
       <button onClick={() => setShowInfo(!showInfo)}
-        className='text-[11px] px-[12px] py-[4px] rounded-[4px]'
+        className='lg:hidden text-[11px] px-[12px] py-[4px] rounded-[4px]'
         style={{ background: showInfo ? '#c9a84c' : '#222', color: showInfo ? '#1a0f08' : '#888', border: '1px solid #c9a84c44' }}>
         {showInfo ? '닫기' : '📋 배당 & 라인 & 기록'}
       </button>
 
-      {showInfo && (
+      {showInfo && (<div className='lg:hidden'>
         <div className='rounded-[10px] p-[14px] max-w-[600px] w-full flex flex-col gap-[10px]'
           style={{ background: '#150825', border: '1px solid #c9a84c33' }}>
 
@@ -421,7 +498,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
             </div>
           )}
         </div>
-      )}
+      </div>)}
     </div>
   )
 }

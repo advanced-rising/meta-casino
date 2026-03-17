@@ -1,14 +1,18 @@
-// 맵 내 충돌 블럭: [x, y(바닥), z, width, height, depth]
-export const MAP_BLOCKS: [number, number, number, number, number, number][] = [
-  // 중앙 근처 장애물
+// 시각적으로 보이는 장애물 블럭 (SimpleBox로 렌더링)
+export const VISIBLE_BLOCKS: [number, number, number, number, number, number][] = [
   [-4, 0, 4, 2, 1, 2],
   [4, 0, 5, 1.5, 1.5, 1.3],
   [6, 0, -6, 1.5, 1, 1.3],
   [-6, 0, -4, 2, 0.8, 2],
-  // 계단식
   [-18, 0, 18, 2, 0.5, 2],
   [-18, 0.5, 16, 2, 0.5, 2],
   [-18, 1, 14, 2, 0.5, 2],
+]
+
+// 전체 충돌 블럭 (보이는 블럭 + 보이지 않는 충돌용)
+export const MAP_BLOCKS: [number, number, number, number, number, number][] = [
+  // 보이는 장애물
+  ...VISIBLE_BLOCKS,
   // 높은 전망대
   [30, 3, 30, 5, 0.3, 5],
   [-30, 3, -30, 5, 0.3, 5],
@@ -33,6 +37,8 @@ export const MAP_BLOCKS: [number, number, number, number, number, number][] = [
   [15, 0, 18, 1.4, 1.5, 1.4],    // 코인플립
   [-20, 0, 20, 1.6, 1.5, 1.6],   // 다이스
   [20, 0, 20, 0.6, 3, 0.6],      // 포춘휠
+  [30, 0, -20, 2, 2.5, 0.5],     // 플링코
+  [-30, 0, 0, 2.4, 1.5, 2.4],    // 블랙잭
 
   // 동상 (교차로 4개)
   [20, 0, 20, 1.2, 2.5, 1.2],
@@ -79,6 +85,8 @@ export const GAME_SPACES = [
   { id: 'coinflip', name: 'Coin Flip 🪙', position: [15, 0, 18] as [number, number, number], route: '/space/coinflip', radius: 3 },
   { id: 'dice', name: 'Dice 🎲', position: [-20, 0, 20] as [number, number, number], route: '/space/dice', radius: 3 },
   { id: 'wheel', name: 'Fortune Wheel 🎡', position: [20, 0, 20] as [number, number, number], route: '/space/wheel', radius: 3 },
+  { id: 'plinko', name: 'Plinko 📐', position: [30, 0, -20] as [number, number, number], route: '/space/plinko', radius: 3 },
+  { id: 'blackjack', name: 'Blackjack 🃏', position: [-30, 0, 0] as [number, number, number], route: '/space/blackjack', radius: 3 },
 ]
 
 // AABB 충돌 체크

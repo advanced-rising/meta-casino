@@ -157,9 +157,16 @@ const Character = ({
     let moveZ = 0
     let isMoving = false
 
+    // 키보드/모바일 입력 시 클릭 이동 취소
+    const hasKeyInput = anim.forward || anim.backward || anim.left || anim.right
+    const hasMobileInput = mobileInputRef?.current?.active
+    if ((hasKeyInput || hasMobileInput) && clickTarget?.current) {
+      clickTarget.current = null
+    }
+
     // 클릭 이동
     const ct = clickTarget?.current
-    if (ct && !anim.forward && !anim.backward && !anim.left && !anim.right) {
+    if (ct && !hasKeyInput && !hasMobileInput) {
       const dx = ct.x - obj.position.x
       const dz = ct.z - obj.position.z
       const dist = Math.sqrt(dx * dx + dz * dz)
@@ -167,7 +174,11 @@ const Character = ({
         const spd = dist > 3 ? 10 : 5
         moveX = (dx / dist) * spd * delta
         moveZ = (dz / dist) * spd * delta
-        rotationY.current = Math.atan2(dx, dz)
+        // 부드러운 회전 (급회전 방지)
+        const targetRot = Math.atan2(dx, dz)
+        const diff = targetRot - rotationY.current
+        const wrapped = ((diff + Math.PI) % (Math.PI * 2)) - Math.PI
+        rotationY.current += wrapped * 5 * delta
         isMoving = true
         anim.run = dist > 3
       } else {
@@ -339,8 +350,8 @@ const Character = ({
       obj.position.z + Math.cos(rotationY.current) * 3,
     )
 
-    currentCameraPos.current.lerp(targetCameraPos, 0.05)
-    currentLookAt.current.lerp(targetLookAt, 0.05)
+    currentCameraPos.current.lerp(targetCameraPos, 0.03)
+    currentLookAt.current.lerp(targetLookAt, 0.03)
     camera.position.copy(currentCameraPos.current)
     camera.lookAt(currentLookAt.current)
 

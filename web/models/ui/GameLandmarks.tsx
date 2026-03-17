@@ -289,3 +289,73 @@ export const WheelStand = (props: any) => {
     </group>
   )
 }
+
+// Plinko: 피라미드 구조
+export const PlinkoBoard = (props: any) => {
+  const ballRef = useRef<THREE.Mesh>(null!)
+  useFrame((state) => {
+    if (ballRef.current) {
+      ballRef.current.position.y = 2 + Math.sin(state.clock.elapsedTime * 3) * 0.3
+      ballRef.current.position.x = Math.sin(state.clock.elapsedTime * 1.5) * 0.3
+    }
+  })
+  return (
+    <group {...props}>
+      {/* 보드 (삼각형 프리즘) */}
+      <mesh castShadow receiveShadow position={[0, 1.2, 0]} rotation={[0.2, 0, 0]}>
+        <boxGeometry args={[1.8, 2.2, 0.15]} />
+        <meshStandardMaterial color='#0a1a3a' />
+      </mesh>
+      {/* 금색 프레임 */}
+      <mesh castShadow position={[0, 2.4, 0]}>
+        <boxGeometry args={[2, 0.15, 0.2]} />
+        <meshStandardMaterial color='#c9a84c' metalness={0.5} />
+      </mesh>
+      {/* 핀들 */}
+      {Array.from({length: 5}, (_, row) =>
+        Array.from({length: row + 2}, (_, col) => (
+          <mesh key={`${row}-${col}`} castShadow
+            position={[-0.5 + col * (1/(row+2)), 0.5 + row * 0.35, 0.1]}>
+            <sphereGeometry args={[0.04, 6, 6]} />
+            <meshStandardMaterial color='#c9a84c' />
+          </mesh>
+        ))
+      )}
+      {/* 떨어지는 공 */}
+      <mesh ref={ballRef} castShadow>
+        <sphereGeometry args={[0.1, 8, 8]} />
+        <meshStandardMaterial color='#e74c3c' emissive='#e74c3c' emissiveIntensity={0.3} />
+      </mesh>
+    </group>
+  )
+}
+
+// Blackjack: 카드 테이블
+export const BlackjackTable = (props: any) => {
+  const cardsRef = useRef<THREE.Group>(null!)
+  useFrame((state) => {
+    if (cardsRef.current) cardsRef.current.rotation.y = state.clock.elapsedTime * 0.2
+  })
+  return (
+    <group {...props}>
+      {/* 반원 테이블 */}
+      <mesh castShadow receiveShadow position={[0, 0.4, 0]}>
+        <cylinderGeometry args={[1.2, 1.2, 0.1, 16, 1, false, 0, Math.PI]} />
+        <meshStandardMaterial color='#0a5a0a' />
+      </mesh>
+      <mesh castShadow position={[0, 0.2, 0]}>
+        <cylinderGeometry args={[0.1, 0.15, 0.4, 8]} />
+        <meshStandardMaterial color='#5d3a1a' />
+      </mesh>
+      {/* 회전 카드 */}
+      <group ref={cardsRef} position={[0, 0.8, 0]}>
+        {[-0.2, 0, 0.2].map((x, i) => (
+          <mesh key={i} castShadow position={[x, 0.3 + i * 0.05, 0]} rotation={[0, i * 0.3, 0]}>
+            <boxGeometry args={[0.3, 0.42, 0.01]} />
+            <meshStandardMaterial color={i === 1 ? '#e74c3c' : '#fff'} />
+          </mesh>
+        ))}
+      </group>
+    </group>
+  )
+}

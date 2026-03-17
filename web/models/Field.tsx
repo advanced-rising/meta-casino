@@ -6,8 +6,8 @@ import Lights from '@/models/ui/Lights'
 import Character, { OtherCharacter, CharacterInput } from '@/models/Character'
 import MobileControls, { MobileInput } from '@/components/dom/MobileControls'
 import { useRouter } from 'next/router'
-import { RouletteTable, SlotCabinet, MineRock, RocketPad, CardTable, GiantCoin, GiantDice, WheelStand } from './ui/GameLandmarks'
-import { MAP_BLOCKS } from '@/utils/mapData'
+import { RouletteTable, SlotCabinet, MineRock, RocketPad, CardTable, GiantCoin, GiantDice, WheelStand, PlinkoBoard, BlackjackTable } from './ui/GameLandmarks'
+import { VISIBLE_BLOCKS } from '@/utils/mapData'
 
 const MAP_SIZE = 50
 
@@ -286,13 +286,23 @@ const Field = ({
             {nearSpace?.id === 'wheel' && (
               <Sparkles count={60} size={6} position={[20, 1.5, 20]} scale={[3, 3, 3]} speed={5} color='#e91e63' />
             )}
+
+            <PlinkoBoard position={[30, 0, -20]} />
+            {nearSpace?.id === 'plinko' && (
+              <Sparkles count={60} size={6} position={[30, 1.5, -20]} scale={[3, 3, 3]} speed={5} color='#f39c12' />
+            )}
+
+            <BlackjackTable position={[-30, 0, 0]} />
+            {nearSpace?.id === 'blackjack' && (
+              <Sparkles count={60} size={6} position={[-30, 1, 0]} scale={[3, 2, 3]} speed={5} color='#2ecc71' />
+            )}
           </Suspense>
 
           <Floor onClick={(e: any) => {
             if (e.point) clickTargetRef.current = { x: e.point.x, z: e.point.z }
           }} />
 
-          {MAP_BLOCKS.map(([x, y, z, w, h, d], i) => {
+          {VISIBLE_BLOCKS.map(([x, y, z, w, h, d], i) => {
             const colors = ['#e74c3c', '#e67e22', '#9b59b6', '#27ae60', '#3498db', '#2980b9', '#1abc9c']
             return <SimpleBox key={i} position={[x, y, z]} args={[w, h, d]} color={colors[i % colors.length]} />
           })}

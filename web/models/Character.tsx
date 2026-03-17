@@ -239,7 +239,7 @@ const Character = ({
 
     if (anim.dance) {
       currActionRef.current = animations['dance'].clip
-    } else if (anim.jump && !isGrounded.current) {
+    } else if (isFlying.current || (!isGrounded.current && obj.position.y > 0.3)) {
       currActionRef.current = animations['jump'].clip
     } else if (isMoving || anim.forward || anim.backward || anim.left || anim.right) {
       currActionRef.current = anim.run ? animations['run'].clip : animations['walk'].clip
@@ -261,43 +261,33 @@ const Character = ({
     obj.position.x += moveX
     obj.position.z += moveZ
 
-    // 비행 시스템: Space 꾹 누르기 감지
+    // 비행: Space 누르고 있는 동안만 비행, 떼면 즉시 낙하
     if (anim.jump) {
       spaceHoldTime.current += delta
-    } else {
-      spaceHoldTime.current = 0
-    }
-
-    // 비행 시작 (Space 0.5초 이상 꾹 + 지상에서)
-    if (spaceHoldTime.current >= FLY_HOLD_THRESHOLD && !isFlying.current && isGrounded.current) {
-      isFlying.current = true
-      flyTimer.current = FLY_DURATION
-      velocityY.current = 4
-      isGrounded.current = false
-    }
-
-    if (isFlying.current) {
-      flyTimer.current -= delta
-      // 비행 중: 높이 유지 + 서서히 하강
-      if (flyTimer.current > 0) {
-        if (obj.position.y < FLY_HEIGHT) {
-          velocityY.current = 3
-        } else {
-          velocityY.current = Math.sin(flyTimer.current * 3) * 0.5 // 살짝 흔들림
+      if (spaceHoldTime.current >= FLY_HOLD_THRESHOLD) {
+        // 비행 모드
+        if (!isFlying.current) {
+          isFlying.current = true
+          isGrounded.current = false
         }
-      } else {
-        // 비행 종료 → 자연 낙하
-        isFlying.current = false
-      }
-    } else {
-      // 일반 점프 (짧게 누르기)
-      if (anim.jump && isGrounded.current && spaceHoldTime.current < FLY_HOLD_THRESHOLD) {
+        // 높이 유지/상승
+        if (obj.position.y < FLY_HEIGHT) {
+          velocityY.current = 4
+        } else {
+          velocityY.current = Math.sin(spaceHoldTime.current * 3) * 0.3
+        }
+      } else if (isGrounded.current) {
+        // 짧게 누르기 = 점프
         velocityY.current = 6
         isGrounded.current = false
       }
+    } else {
+      // Space 뗌 → 비행 해제, 낙하
+      if (isFlying.current) isFlying.current = false
+      spaceHoldTime.current = 0
     }
 
-    velocityY.current -= (isFlying.current ? 5 : 15) * delta // 비행 중 약한 중력
+    velocityY.current -= (isFlying.current ? 3 : 15) * delta
     obj.position.y += velocityY.current * delta
 
     // 블럭 충돌 체크

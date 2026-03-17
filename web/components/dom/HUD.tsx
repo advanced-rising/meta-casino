@@ -61,41 +61,42 @@ const HUD = () => {
   }
 
   return (
-    <div className='fixed top-[10px] right-[10px] z-[200] flex flex-col items-end gap-[8px]'>
-      {/* Money display */}
-      <div className='flex items-center gap-[8px] bg-[#000000aa] rounded-[8px] px-[12px] py-[6px]'>
-        <span className='text-[16px]'>💰</span>
-        <span className='text-white text-[14px] font-bold'>{money.toLocaleString()}</span>
+    <div className='fixed top-[48px] right-[10px] z-[200] flex flex-col items-end gap-[6px]'>
+      {/* Money */}
+      <div className='arcade-box flex items-center gap-[8px] px-[14px] py-[6px]' style={{ background: '#000000cc' }}>
+        <span className='text-[14px]' style={{ animation: 'coinBounce 1.5s ease infinite' }}>💰</span>
+        <span className='arcade-title text-[14px] font-bold' style={{ color: '#ffd700' }}>{money.toLocaleString()}</span>
       </div>
 
-      {/* Next charge timer */}
-      <div className='flex items-center gap-[6px] bg-[#000000aa] rounded-[8px] px-[12px] py-[4px]'>
-        <span className='text-[12px]'>⏰</span>
-        <span className='text-[#aaa] text-[11px]'>
-          {nextChargeMs <= 0 ? '충전 가능!' : `다음 충전: ${formatTime(nextChargeMs)}`}
+      {/* Timer */}
+      <div className='flex items-center gap-[6px] px-[12px] py-[3px] rounded-[6px]' style={{ background: '#000000aa', border: '1px solid #333' }}>
+        <span className='text-[10px]'>⏰</span>
+        <span className='arcade-title text-[10px]' style={{ color: nextChargeMs <= 0 ? '#2ecc71' : '#888' }}>
+          {nextChargeMs <= 0 ? 'READY!' : formatTime(nextChargeMs)}
         </span>
       </div>
 
-      {/* Settings button */}
+      {/* Settings */}
       <button
-        className='bg-[#000000aa] rounded-[8px] px-[12px] py-[4px] text-white text-[14px] hover:bg-[#000000cc]'
+        className='arcade-btn px-[10px] py-[3px] rounded-[6px] text-[12px]'
+        style={{ background: '#000000aa', border: '1px solid #333', color: '#888' }}
         onClick={() => setShowSettings(!showSettings)}>
-        ⚙️
+        ⚙
       </button>
 
-      {/* Settings dropdown */}
       {showSettings && (
-        <div className='bg-[#000000dd] rounded-[8px] px-[16px] py-[12px] flex flex-col gap-[8px] min-w-[180px]'>
-          <p className='text-[#ccc] text-[12px]'>설정</p>
+        <div className='arcade-box p-[12px] flex flex-col gap-[6px] min-w-[180px]' style={{ background: '#000000ee' }}>
+          <p className='arcade-title text-[10px]' style={{ color: '#c9a84c' }}>SETTINGS</p>
           <button
-            className='bg-[#333] text-white text-[12px] px-[8px] py-[4px] rounded hover:bg-[#555]'
+            className='arcade-btn text-[11px] px-[8px] py-[4px] rounded-[4px]'
+            style={{ background: '#333', color: '#ffd700', border: '1px solid #c9a84c44' }}
             onClick={handleReset}>
-            머니 초기화 (10,000)
+            RESET $10,000
           </button>
-          <div className='text-[#888] text-[10px]'>
-            <p>충전: {CHARGE_CONFIG.amount.toLocaleString()} / 1시간</p>
-            <p>조작: WASD 이동, Shift 달리기</p>
-            <p>Space 점프, E 춤</p>
+          <div className='text-[9px]' style={{ color: '#666', fontFamily: 'Courier New, monospace' }}>
+            <p>CHARGE: ${CHARGE_CONFIG.amount.toLocaleString()} / 1HR</p>
+            <p>MOVE: WASD | RUN: SHIFT</p>
+            <p>JUMP: SPACE | ENTER: E</p>
           </div>
         </div>
       )}

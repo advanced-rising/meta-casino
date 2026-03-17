@@ -231,14 +231,16 @@ const Field = ({
           <Sky sunPosition={[100, 50, 100]} />
         </Canvas>
 
-        {/* 게임장 입장 UI (DOM 오버레이) */}
+        {/* 게임장 입장 UI */}
         {nearSpace && (
           <div className='fixed left-1/2 bottom-[120px] -translate-x-1/2 z-[200] animate-bounce'>
-            <div className='bg-[#000000cc] text-white px-[24px] py-[12px] rounded-[12px] flex flex-col items-center gap-[4px]'>
-              <span className='text-[15px] font-bold'>{nearSpace.name}</span>
+            <div className='arcade-box flex flex-col items-center gap-[6px] px-[28px] py-[14px]'
+              style={{ background: '#000000ee', boxShadow: '0 0 30px rgba(201,168,76,0.3)' }}>
+              <span className='arcade-title text-[14px] font-bold' style={{ color: '#ffd700' }}>{nearSpace.name}</span>
               <div className='flex items-center gap-[8px]'>
-                <span className='bg-yellow-400 text-black text-[13px] font-bold w-[28px] h-[28px] rounded-[6px] flex items-center justify-center'>E</span>
-                <span className='text-[13px] text-gray-300'>를 눌러 입장</span>
+                <span className='arcade-btn text-[13px] font-bold w-[30px] h-[30px] rounded-[6px] flex items-center justify-center arcade-border'
+                  style={{ background: '#c9a84c', color: '#000' }}>E</span>
+                <span className='arcade-title text-[11px]' style={{ color: '#aaa' }}>PRESS TO ENTER</span>
               </div>
             </div>
           </div>

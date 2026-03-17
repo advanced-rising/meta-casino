@@ -101,8 +101,9 @@ const Message = ({
   return (
     <>
       {/* 상단 바 */}
-      <div className='fixed top-0 left-0 right-0 z-[150] flex items-center h-[40px] bg-[#000000aa] px-[16px]'>
-        <span className='text-white text-[14px] font-bold'>META CASINO</span>
+      <div className='fixed top-0 left-0 right-0 z-[150] flex items-center h-[40px] px-[16px]'
+        style={{ background: 'linear-gradient(180deg, #1a0a2e, #0d0518)', borderBottom: '2px solid #c9a84c44' }}>
+        <span className='arcade-title text-[14px] font-bold neon-text' style={{ '--neon-color': '#c9a84c', color: '#ffd700' } as any}>META CASINO</span>
         <div className='ml-[16px]'>
           {nickname === 'unknown' ? (
             <FormikProvider value={nickFormik}>
@@ -129,16 +130,17 @@ const Message = ({
       <div className='fixed bottom-[10px] left-[10px] z-[150] w-[320px]'>
         {/* 채팅 토글 버튼 */}
         <button
-          className='mb-[4px] text-[11px] text-gray-300 bg-[#00000077] px-[8px] py-[2px] rounded hover:text-white'
+          className='arcade-btn mb-[4px] text-[10px] px-[8px] py-[2px] rounded-[4px]'
+          style={{ background: '#000000aa', color: chatOpen ? '#c9a84c' : '#666', border: '1px solid #c9a84c33' }}
           onClick={() => {
             setChatOpen(!chatOpen)
             if (!chatOpen) setUnread(0)
           }}>
-          {chatOpen ? '채팅 닫기' : `채팅 열기${unread > 0 ? ` (${unread})` : ''}`}
+          {chatOpen ? 'CHAT ▼' : `CHAT ▲${unread > 0 ? ` (${unread})` : ''}`}
         </button>
 
         {chatOpen && (
-          <div className='bg-[#000000aa] rounded-[8px] overflow-hidden'>
+          <div className='arcade-box overflow-hidden' style={{ background: '#000000dd' }}>
             {/* 메시지 목록 */}
             <ul className='h-[160px] overflow-y-auto px-[10px] py-[6px] flex flex-col gap-[2px]'>
               {chats.length === 0 && (

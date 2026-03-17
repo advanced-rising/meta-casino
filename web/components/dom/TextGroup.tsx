@@ -41,7 +41,8 @@ export default function TextGroup() {
   }, [state, setState])
 
   return (
-    <div className='fixed top-[44px] left-0 right-0 z-[140] overflow-hidden h-[24px] bg-[#000000aa]'>
+    <div className='fixed top-[42px] left-0 right-0 z-[140] overflow-hidden h-[22px]'
+      style={{ background: 'linear-gradient(90deg, #0d0518, #1a0a2e, #0d0518)', borderBottom: '1px solid #c9a84c22' }}>
       <ul
         style={{
           transform: `translateX(${state.translate}%)`,
@@ -50,7 +51,7 @@ export default function TextGroup() {
         }}
         className='flex gap-[40px] whitespace-nowrap m-0 p-0 list-none'>
         {messages.map((msg, i) => (
-          <li key={i} className='text-yellow-300 text-[12px] leading-[24px]'>
+          <li key={i} className='arcade-title text-[10px] leading-[22px]' style={{ color: '#c9a84c' }}>
             {msg}
           </li>
         ))}

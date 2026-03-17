@@ -184,31 +184,30 @@ const Character = ({
       isMoving = true
       anim.run = mobile.magnitude > 0.7
     } else {
-      // 키보드 입력
+      // 키보드 입력: 화면 방향 기준 이동 (아이소메트릭 카메라 보정)
+      // 카메라가 (10,10,10)에서 보므로:
+      // 화면 위(W) = 월드 (-x, -z), 화면 아래(S) = 월드 (+x, +z)
+      // 화면 왼쪽(A) = 월드 (-x, +z), 화면 오른쪽(D) = 월드 (+x, -z)
+      const SIN45 = 0.7071
+      let dirX = 0
+      let dirZ = 0
+
       if (currActionRef.current !== animations['dance'].clip) {
-        if (anim.left) rotationY.current += rotSpeed * delta
-        if (anim.right) rotationY.current -= rotSpeed * delta
+        if (anim.forward) { dirX -= SIN45; dirZ -= SIN45 }  // W: 화면 위
+        if (anim.backward) { dirX += SIN45; dirZ += SIN45 }  // S: 화면 아래
+        if (anim.left) { dirX -= SIN45; dirZ += SIN45 }      // A: 화면 왼쪽
+        if (anim.right) { dirX += SIN45; dirZ -= SIN45 }     // D: 화면 오른쪽
       }
 
-      const forward = new THREE.Vector3(0, 0, 1)
-      forward.applyAxisAngle(new THREE.Vector3(0, 1, 0), rotationY.current)
-
-      if (currActionRef.current !== animations['dance'].clip) {
-        if (anim.forward) {
-          moveX += forward.x * speed * delta
-          moveZ += forward.z * speed * delta
-          isMoving = true
-        }
-        if (anim.backward) {
-          moveX -= forward.x * speed * 0.6 * delta
-          moveZ -= forward.z * speed * 0.6 * delta
-          isMoving = true
-        }
-        if ((anim.left || anim.right) && !anim.forward && !anim.backward) {
-          moveX += forward.x * speed * 0.5 * delta
-          moveZ += forward.z * speed * 0.5 * delta
-          isMoving = true
-        }
+      const dirLen = Math.sqrt(dirX * dirX + dirZ * dirZ)
+      if (dirLen > 0.01) {
+        const normX = dirX / dirLen
+        const normZ = dirZ / dirLen
+        moveX = normX * speed * delta
+        moveZ = normZ * speed * delta
+        // 캐릭터가 이동 방향을 바라보도록
+        rotationY.current = Math.atan2(normX, normZ)
+        isMoving = true
       }
     }
 

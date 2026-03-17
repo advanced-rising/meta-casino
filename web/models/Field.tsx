@@ -551,15 +551,14 @@ const Field = ({
 
         {/* 게임장 입장 UI (클릭 또는 E키) */}
         {nearSpace && (
-          <div className='fixed left-1/2 bottom-[120px] -translate-x-1/2 z-[200]'>
+          <div className='fixed left-1/2 bottom-[100px] -translate-x-1/2 z-[200]'>
             <button onClick={enterGame}
-              className='arcade-box arcade-btn flex flex-col items-center gap-[6px] px-[28px] py-[14px] cursor-pointer hover:scale-105 transition-transform'
-              style={{ background: '#000000ee', boxShadow: '0 0 30px rgba(201,168,76,0.3)' }}>
-              <span className='arcade-title text-[14px] font-bold' style={{ color: '#ffd700' }}>{nearSpace.name}</span>
-              <div className='flex items-center gap-[8px]'>
-                <span className='text-[12px] font-bold w-[26px] h-[26px] rounded-[5px] flex items-center justify-center'
-                  style={{ background: '#c9a84c', color: '#000' }}>E</span>
-                <span className='arcade-title text-[11px]' style={{ color: '#aaa' }}>CLICK OR PRESS E</span>
+              className='glass-dark flex flex-col items-center gap-[6px] px-[24px] py-[12px] cursor-pointer transition-all hover:scale-105 hover:bg-white/10'>
+              <span className='text-[14px] font-bold' style={{ color: '#fff' }}>{nearSpace.name}</span>
+              <div className='flex items-center gap-[6px]'>
+                <span className='text-[11px] font-bold w-[22px] h-[22px] rounded-[5px] flex items-center justify-center'
+                  style={{ background: 'rgba(255,255,255,0.15)', color: '#fff' }}>E</span>
+                <span className='text-[10px]' style={{ color: '#888' }}>클릭 또는 E키</span>
               </div>
             </button>
           </div>

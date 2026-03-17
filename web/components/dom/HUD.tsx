@@ -48,49 +48,44 @@ const HUD = () => {
 
   return (
     <>
-      {/* 우측 상단 일자 배열 */}
-      <div className='fixed top-[6px] right-[10px] z-[200] flex items-center gap-[6px]'>
-        {/* 머니 */}
-        <div className='arcade-box flex items-center gap-[6px] px-[12px] py-[5px]' style={{ background: '#000000cc' }}>
-          <Coins size={14} color='#ffd700' style={{ animation: 'coinBounce 1.5s ease infinite' }} />
-          <span className='arcade-title text-[13px] font-bold' style={{ color: '#ffd700' }}>{money.toLocaleString()}</span>
+      {/* 우측 상단 */}
+      <div className='fixed top-[8px] right-[10px] z-[200] flex items-center gap-[4px]'>
+        <div className='glass-dark flex items-center gap-[6px] px-[12px] py-[6px]'>
+          <Coins size={13} color='#22c55e' />
+          <span className='text-[13px] font-bold' style={{ color: '#fff' }}>${money.toLocaleString()}</span>
           {nextChargeMs <= 0
-            ? <Zap size={12} color='#2ecc71' />
-            : <span className='arcade-title text-[9px]' style={{ color: '#555' }}>{formatTime(nextChargeMs)}</span>
+            ? <Zap size={11} color='#22c55e' />
+            : <span className='text-[9px]' style={{ color: '#555' }}>{formatTime(nextChargeMs)}</span>
           }
         </div>
 
-        {/* 정보 */}
         <button onClick={() => { setShowInfo(!showInfo); setShowSettings(false) }}
-          className='arcade-btn flex items-center gap-[4px] px-[10px] py-[5px] rounded-[8px] text-[11px]'
-          style={{ background: showInfo ? '#c9a84c' : '#000000cc', color: showInfo ? '#000' : '#888', border: '2px solid #c9a84c44' }}>
+          className='glass-dark flex items-center px-[8px] py-[6px] transition-all hover:bg-white/10'
+          style={{ color: showInfo ? '#fff' : '#666' }}>
           <Info size={14} />
         </button>
 
-        {/* 설정 */}
         <button onClick={() => { setShowSettings(!showSettings); setShowInfo(false) }}
-          className='arcade-btn flex items-center gap-[4px] px-[10px] py-[5px] rounded-[8px] text-[11px]'
-          style={{ background: showSettings ? '#c9a84c' : '#000000cc', color: showSettings ? '#000' : '#888', border: '2px solid #c9a84c44' }}>
+          className='glass-dark flex items-center px-[8px] py-[6px] transition-all hover:bg-white/10'
+          style={{ color: showSettings ? '#fff' : '#666' }}>
           <Settings size={14} />
         </button>
       </div>
 
-      {/* 충전 알림 */}
       {chargeNotif && (
-        <div className='fixed top-[42px] right-[10px] z-[200] arcade-box px-[12px] py-[4px]'
-          style={{ background: '#ffd70022', animation: 'winPulse 0.5s ease infinite' }}>
-          <span className='arcade-title text-[12px]' style={{ color: '#ffd700' }}>⚡ {chargeNotif} CHARGED!</span>
+        <div className='fixed top-[44px] right-[10px] z-[200] glass-dark px-[12px] py-[5px]'>
+          <span className='text-[12px] font-medium' style={{ color: '#22c55e' }}>⚡ {chargeNotif} 충전됨</span>
         </div>
       )}
 
       {/* 정보 패널 */}
       {showInfo && (
-        <div className='fixed top-[42px] right-[10px] z-[200] rounded-[12px] p-[14px] w-[300px] max-h-[80vh] overflow-y-auto' style={{ background: '#000000ee' }}>
-          <div className='arcade-title text-[11px] mb-[8px]' style={{ color: '#c9a84c' }}>GUIDE</div>
-          <div className='flex flex-col gap-[8px] text-[10px]' style={{ fontFamily: 'Pretendard, sans-serif', color: '#aaa' }}>
+        <div className='fixed top-[44px] right-[10px] z-[200] glass-dark p-[14px] w-[300px] max-h-[80vh] overflow-y-auto'>
+          <div className='text-[12px] font-bold mb-[8px]' style={{ color: '#fff' }}>가이드</div>
+          <div className='flex flex-col gap-[8px] text-[10px]' style={{ color: '#aaa' }}>
 
-            <div className='rounded-[6px] p-[8px]' style={{ background: '#ffffff08' }}>
-              <span className='arcade-title text-[10px]' style={{ color: '#ffd700' }}>조작법</span>
+            <div className='glass p-[8px]'>
+              <span className='text-[10px] font-semibold' style={{ color: '#fff' }}>조작법</span>
               <div className='grid grid-cols-2 gap-x-[8px] gap-y-[2px] mt-[4px]'>
                 <span style={{ color: '#888' }}>이동</span><span>W/A/S/D 또는 조이스틱</span>
                 <span style={{ color: '#888' }}>달리기</span><span>Shift 또는 조이스틱 끝까지</span>
@@ -101,13 +96,13 @@ const HUD = () => {
               </div>
             </div>
 
-            <div className='rounded-[6px] p-[8px]' style={{ background: '#ffffff08' }}>
-              <span className='arcade-title text-[10px]' style={{ color: '#ffd700' }}>머니</span>
+            <div className='glass p-[8px]'>
+              <span className='text-[10px] font-semibold' style={{ color: '#fff' }}>머니</span>
               <p>초기 $10,000 / 1시간마다 $5,000 자동 충전</p>
             </div>
 
-            <div className='rounded-[6px] p-[8px]' style={{ background: '#ffffff08' }}>
-              <span className='arcade-title text-[10px]' style={{ color: '#ffd700' }}>카지노 게임 (11)</span>
+            <div className='glass p-[8px]'>
+              <span className='text-[10px] font-semibold' style={{ color: '#fff' }}>카지노 게임 (11)</span>
               <div className='flex flex-col gap-[3px] mt-[4px]'>
                 {[
                   ['🎰', 'Roulette', '숫자/색상 배팅, 최대 x36'],
@@ -131,8 +126,8 @@ const HUD = () => {
               </div>
             </div>
 
-            <div className='rounded-[6px] p-[8px]' style={{ background: '#ffffff08' }}>
-              <span className='arcade-title text-[10px]' style={{ color: '#ffd700' }}>아케이드 게임 (7)</span>
+            <div className='glass p-[8px]'>
+              <span className='text-[10px] font-semibold' style={{ color: '#fff' }}>아케이드 게임 (7)</span>
               <div className='flex flex-col gap-[3px] mt-[4px]'>
                 {[
                   ['✊', 'RPS', '가위바위보 연승 도전, 캐시아웃'],
@@ -158,16 +153,16 @@ const HUD = () => {
 
       {/* 설정 패널 */}
       {showSettings && (
-        <div className='fixed top-[42px] right-[10px] z-[200] arcade-box p-[14px] w-[200px]' style={{ background: '#000000ee' }}>
-          <div className='arcade-title text-[10px] mb-[6px]' style={{ color: '#c9a84c' }}>SETTINGS</div>
+        <div className='fixed top-[44px] right-[10px] z-[200] glass-dark p-[14px] w-[200px]'>
+          <div className='text-[12px] font-bold mb-[8px]' style={{ color: '#fff' }}>설정</div>
           <button onClick={() => { resetMoney(); setMoneyState(getMoney()) }}
-            className='arcade-btn w-full text-[11px] px-[8px] py-[5px] rounded-[4px] mb-[6px]'
-            style={{ background: '#333', color: '#ffd700', border: '1px solid #c9a84c44' }}>
-            RESET $10,000
+            className='w-full text-[11px] px-[8px] py-[6px] rounded-[8px] mb-[6px] font-medium transition-all hover:bg-white/10'
+            style={{ background: 'rgba(255,255,255,0.06)', color: '#ef4444' }}>
+            머니 초기화 ($10,000)
           </button>
-          <div className='arcade-title text-[9px]' style={{ color: '#555' }}>
-            <p>CHARGE: ${CHARGE_CONFIG.amount.toLocaleString()} / 1HR</p>
-          </div>
+          <p className='text-[9px]' style={{ color: '#555' }}>
+            충전: ${CHARGE_CONFIG.amount.toLocaleString()} / 1시간
+          </p>
         </div>
       )}
     </>

@@ -6,8 +6,8 @@
 export const GAME_CONFIG = {
   // === 전역 설정 ===
   global: {
-    WIN_RATE: 0.49,           // 유저 기본 승률 49%
-    HOUSE_EDGE: 0.02,         // 하우스 엣지 2%
+    WIN_RATE: 0.49, // 유저 기본 승률 49%
+    HOUSE_EDGE: 0.02, // 하우스 엣지 2%
     DEFAULT_BET_OPTIONS: [100, 500, 1000, 2000],
     MIN_BET: 1,
     MAX_BET: 100000,
@@ -15,9 +15,9 @@ export const GAME_CONFIG = {
 
   // === 카지노 게임 ===
   roulette: {
-    numbers: 37,              // 0~36
-    straightUp: 36,           // 숫자 직접 배당
-    outsideBet: 2,            // 레드/블랙/홀짝 배당
+    numbers: 37, // 0~36
+    straightUp: 36, // 숫자 직접 배당
+    outsideBet: 2, // 레드/블랙/홀짝 배당
   },
 
   slot: {
@@ -28,7 +28,7 @@ export const GAME_CONFIG = {
     matchBonus: { 3: 1, 4: 3, 5: 10 },
     autoSpeedOptions: [1, 2, 3, 5],
     symbols: ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '7️⃣', '⭐'],
-    symbolWeights: [6, 5, 5, 4, 3, 2, 1, 1],  // 총 27
+    symbolWeights: [6, 5, 5, 4, 3, 2, 1, 1], // 총 27
     symbolMult: { '🍒': 2, '🍋': 3, '🍊': 4, '🍇': 6, '🔔': 10, '⭐': 15, '💎': 25, '7️⃣': 50 },
   },
 
@@ -38,13 +38,13 @@ export const GAME_CONFIG = {
   },
 
   crash: {
-    instantCrashRate: 0.04,   // 4% 즉사
+    instantCrashRate: 0.04, // 4% 즉사
     maxMult: 1000,
     autoCashOutOptions: [0, 1.5, 2, 3, 5, 10],
   },
 
   hilo: {
-    streakMultBase: 0.8,      // 연승당 +0.8x
+    streakMultBase: 0.8, // 연승당 +0.8x
   },
 
   coinFlip: {
@@ -60,7 +60,7 @@ export const GAME_CONFIG = {
     segments: 16,
     minSpins: 7,
     maxSpins: 10,
-    spinDurationBase: 5,      // 초
+    spinDurationBase: 5, // 초
     mults: [1, 2, 1, 3, 1, 2, 1, 5, 1, 2, 1, 10, 1, 2, 1, 20],
   },
 
@@ -77,7 +77,7 @@ export const GAME_CONFIG = {
 
   baccarat: {
     playerMult: 2,
-    bankerMult: 1.95,         // 5% 커미션
+    bankerMult: 1.95, // 5% 커미션
     tieMult: 9,
   },
 
@@ -104,7 +104,7 @@ export const GAME_CONFIG = {
 
   scratchCard: {
     gridSize: 9,
-    winRate: 0.25,            // 25% 3매치 보장
+    winRate: 0.25, // 25% 3매치 보장
     symbols: ['🍒', '💎', '7️⃣', '⭐', '🔔', '👑'],
     symbolMult: { '🍒': 2, '💎': 10, '7️⃣': 25, '⭐': 5, '🔔': 3, '👑': 50 },
   },
@@ -142,7 +142,7 @@ export const GAME_CONFIG = {
   numberGuess: {
     range: [1, 100],
     maxAttempts: 10,
-    payouts: { 3: 5, 5: 3, 7: 2, 10: 1.2 } as Record<number, number>,  // 3회 이내=x5, 5회=x3...
+    payouts: { 3: 5, 5: 3, 7: 2, 10: 1.2 } as Record<number, number>, // 3회 이내=x5, 5회=x3...
   },
 
   wheelOfDeath: {

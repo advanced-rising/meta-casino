@@ -1,6 +1,7 @@
 {
-  "name": "R3F Next Starter",
-  "short_name": "R3F Next Starter",
+  "name": "META CASINO - 3D 메타버스 카지노 아케이드",
+  "short_name": "META CASINO",
+  "description": "22개의 카지노·아케이드 게임을 3D 가상 공간에서 즐기세요",
   "icons": [
     {
       "src": "/icons/favicon.ico",
@@ -24,6 +25,8 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "orientation": "any",
+  "theme_color": "#0a0a0a",
+  "background_color": "#0a0a0a",
+  "categories": ["games", "entertainment"]
 }

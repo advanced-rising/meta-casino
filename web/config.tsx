@@ -1,66 +1,74 @@
 import Head from 'next/head'
 
-const titleDefault = 'META CASINO'
-const url = 'http://bet-metacasino.live'
-const defaultDescription = 'The create a 3D website using React Three Fiber + NextJS + Socket.io'
-const author = 'risingcore'
+const SITE_NAME = 'META CASINO'
+const SITE_URL = 'https://meta-casino.vercel.app'
+const DEFAULT_DESC = '3D 메타버스 카지노 아케이드. 22개의 다양한 카지노·아케이드 게임을 3D 가상 공간에서 즐기세요. 룰렛, 슬롯, 블랙잭, 크래시 등.'
+const AUTHOR = 'risingcore'
+const KEYWORDS = 'meta casino, 메타 카지노, 3D casino, metaverse game, 온라인 카지노, 아케이드 게임, roulette, slot machine, blackjack, crash game, plinko, three.js, react'
 
 interface Props {
-  title: string
+  title?: string
   description?: string
+  path?: string
 }
 
-export default function Header({ title = titleDefault, description = defaultDescription }: Props) {
+export default function Header({ title, description = DEFAULT_DESC, path = '' }: Props) {
+  const pageTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME
+  const pageUrl = `${SITE_URL}${path}`
+
   return (
     <Head>
-      {/* Recommended Meta Tags */}
       <meta charSet='utf-8' />
-      <meta name='language' content='english' />
-      <meta httpEquiv='content-type' content='text/html' />
-      <meta name='author' content={author} />
-      <meta name='designer' content={author} />
-      <meta name='publisher' content={author} />
+      <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=5' />
 
-      {/* Search Engine Optimization Meta Tags */}
-      <title>{title}</title>
+      {/* 기본 SEO */}
+      <title>{pageTitle}</title>
       <meta name='description' content={description} />
-      <meta
-        name='keywords'
-        content='Software Engineer,Product Manager,Project Manager,Data Scientist,Computer Scientist'
-      />
-      <meta name='robots' content='index,follow' />
-      <meta name='distribution' content='web' />
-      {/* 
-      Facebook Open Graph meta tags
-        documentation: https://developers.facebook.com/docs/sharing/opengraph */}
-      <meta name='og:title' content={title} />
-      <meta name='og:type' content='site' />
-      <meta name='og:url' content={url} />
-      <meta name='og:image' content={'/icons/share.png'} />
-      <meta name='og:site_name' content={title} />
-      <meta name='og:description' content={description} />
+      <meta name='keywords' content={KEYWORDS} />
+      <meta name='author' content={AUTHOR} />
+      <meta name='robots' content='index, follow' />
+      <link rel='canonical' href={pageUrl} />
 
-      <link rel='apple-touch-icon' href='/icons/apple-touch-icon.png' />
-      <link rel='apple-touch-icon' sizes='16x16' href='/icons/favicon-16x16.png' />
-      <link rel='apple-touch-icon' sizes='32x32' href='/icons/favicon-32x32.png' />
+      {/* Open Graph */}
+      <meta property='og:type' content='website' />
+      <meta property='og:site_name' content={SITE_NAME} />
+      <meta property='og:title' content={pageTitle} />
+      <meta property='og:description' content={description} />
+      <meta property='og:url' content={pageUrl} />
+      <meta property='og:image' content={`${SITE_URL}/icons/share.png`} />
+      <meta property='og:locale' content='ko_KR' />
+
+      {/* Twitter */}
+      <meta name='twitter:card' content='summary_large_image' />
+      <meta name='twitter:title' content={pageTitle} />
+      <meta name='twitter:description' content={description} />
+      <meta name='twitter:image' content={`${SITE_URL}/icons/share.png`} />
+
+      {/* 모바일 */}
+      <meta name='theme-color' content='#0a0a0a' />
+      <meta name='apple-mobile-web-app-capable' content='yes' />
+      <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent' />
+      <meta name='apple-mobile-web-app-title' content={SITE_NAME} />
+
+      {/* 파비콘 */}
+      <link rel='icon' href='/favicon.ico' />
+      <link rel='icon' type='image/png' sizes='32x32' href='/icons/favicon-32x32.png' />
+      <link rel='icon' type='image/png' sizes='16x16' href='/icons/favicon-16x16.png' />
       <link rel='apple-touch-icon' sizes='180x180' href='/icons/apple-touch-icon.png' />
       <link rel='manifest' href='/manifest.json' />
-      <link rel='mask-icon' color='#000000' href='/icons/safari-pinned-tab.svg' />
-      <link rel='apple-touch-startup-image' href='/startup.png' />
 
-      {/* Meta Tags for HTML pages on Mobile */}
-      {/* <meta name="format-detection" content="telephone=yes"/>
-        <meta name="HandheldFriendly" content="true"/>  */}
-      <meta name='viewport' content='width=device-width, minimum-scale=1, initial-scale=1.0' />
-      <meta name='theme-color' content='#000' />
-      <link rel='shortcut icon' href='/icons/favicon.ico' />
-
-      {/* 
-      Twitter Summary card
-        documentation: https://dev.twitter.com/cards/getting-started
-        Be sure validate your Twitter card markup on the documentation site. */}
-      <meta name='twitter:card' content='summary' />
-      <meta name='twitter:site' content='@onirenaud' />
+      {/* 구조화 데이터 */}
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
+        name: SITE_NAME,
+        url: SITE_URL,
+        description: DEFAULT_DESC,
+        applicationCategory: 'Game',
+        operatingSystem: 'Web',
+        author: { '@type': 'Person', name: AUTHOR },
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'KRW' },
+      })}} />
     </Head>
   )
 }

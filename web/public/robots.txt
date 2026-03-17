@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://meta-casino.vercel.app/sitemap.xml

@@ -113,24 +113,29 @@ export function resolveCollisions(
 
     if (!inX || !inZ) continue
 
-    // 위에서 착지
-    if (prevPos.y >= blockTop - 0.1 && pos.y <= blockTop) {
+    // 캐릭터 바닥~상단이 블럭과 겹치는지
+    const charBottom = pos.y
+    const charTop = pos.y + charHeight
+    const overlapsY = charBottom < blockTop && charTop > by
+
+    if (!overlapsY) continue
+
+    // 위에서 착지 (이전 프레임에서 블럭 위에 있었고, 내려오는 중)
+    if (prevPos.y >= blockTop - 0.15 && pos.y <= blockTop) {
       resultY = Math.max(resultY, blockTop)
       onBlock = true
       continue
     }
 
-    // 옆면 충돌
-    if (pos.y < blockTop && pos.y + charHeight > by) {
-      const prevInX = prevPos.x + charRadius > blockMinX && prevPos.x - charRadius < blockMaxX
-      const prevInZ = prevPos.z + charRadius > blockMinZ && prevPos.z - charRadius < blockMaxZ
+    // 옆면 충돌 (점프 중이든 걸어가든)
+    const prevInX = prevPos.x + charRadius > blockMinX && prevPos.x - charRadius < blockMaxX
+    const prevInZ = prevPos.z + charRadius > blockMinZ && prevPos.z - charRadius < blockMaxZ
 
-      if (!prevInX) {
-        pos.x = pos.x > bx ? blockMaxX + charRadius : blockMinX - charRadius
-      }
-      if (!prevInZ) {
-        pos.z = pos.z > bz ? blockMaxZ + charRadius : blockMinZ - charRadius
-      }
+    if (!prevInX) {
+      pos.x = pos.x > bx ? blockMaxX + charRadius : blockMinX - charRadius
+    }
+    if (!prevInZ) {
+      pos.z = pos.z > bx ? blockMaxZ + charRadius : blockMinZ - charRadius
     }
   }
 

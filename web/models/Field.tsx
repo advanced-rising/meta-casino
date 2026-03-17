@@ -6,7 +6,7 @@ import Lights from '@/models/ui/Lights'
 import Character, { OtherCharacter, CharacterInput } from '@/models/Character'
 import MobileControls, { MobileInput } from '@/components/dom/MobileControls'
 import { useRouter } from 'next/router'
-import { RouletteTable, SlotCabinet, MineRock, RocketPad } from './ui/GameLandmarks'
+import { RouletteTable, SlotCabinet, MineRock, RocketPad, CardTable, GiantCoin } from './ui/GameLandmarks'
 import { MAP_BLOCKS } from '@/utils/mapData'
 
 const MAP_SIZE = 50
@@ -148,27 +148,34 @@ const Field = ({
             />
 
             {/* 게임장: 룰렛 테이블 */}
-            <RouletteTable position={[10, 0, 0]} />
+            <RouletteTable position={[15, 0, 0]} />
             {nearSpace?.id === 'roulette' && (
-              <Sparkles count={60} size={6} position={[10, 1, 0]} scale={[3, 2, 3]} speed={5} color='#2ecc71' />
+              <Sparkles count={60} size={6} position={[15, 1, 0]} scale={[3, 2, 3]} speed={5} color='#2ecc71' />
             )}
 
-            {/* 게임장: 슬롯머신 캐비넷 */}
-            <SlotCabinet position={[-10, 0, 10]} />
+            <SlotCabinet position={[-15, 0, 15]} />
             {nearSpace?.id === 'slot' && (
-              <Sparkles count={60} size={6} position={[-10, 1.5, 10]} scale={[3, 3, 3]} speed={5} color='#da70d6' />
+              <Sparkles count={60} size={6} position={[-15, 1.5, 15]} scale={[3, 3, 3]} speed={5} color='#da70d6' />
             )}
 
-            {/* 게임장: 지뢰찾기 보석 바위 */}
-            <MineRock position={[0, 0, -12]} />
+            <MineRock position={[0, 0, -18]} />
             {nearSpace?.id === 'mines' && (
-              <Sparkles count={60} size={6} position={[0, 1, -12]} scale={[3, 2, 3]} speed={5} color='#3498db' />
+              <Sparkles count={60} size={6} position={[0, 1, -18]} scale={[3, 2, 3]} speed={5} color='#3498db' />
             )}
 
-            {/* 게임장: 크래시 로켓 */}
-            <RocketPad position={[-12, 0, -5]} />
+            <RocketPad position={[-18, 0, -12]} />
             {nearSpace?.id === 'crash' && (
-              <Sparkles count={60} size={6} position={[-12, 1, -5]} scale={[3, 2, 3]} speed={5} color='#e74c3c' />
+              <Sparkles count={60} size={6} position={[-18, 1, -12]} scale={[3, 2, 3]} speed={5} color='#e74c3c' />
+            )}
+
+            <CardTable position={[18, 0, -15]} />
+            {nearSpace?.id === 'hilo' && (
+              <Sparkles count={60} size={6} position={[18, 1, -15]} scale={[3, 2, 3]} speed={5} color='#2ecc71' />
+            )}
+
+            <GiantCoin position={[15, 0, 18]} />
+            {nearSpace?.id === 'coinflip' && (
+              <Sparkles count={60} size={6} position={[15, 1, 18]} scale={[3, 2, 3]} speed={5} color='#ffd700' />
             )}
           </Suspense>
 

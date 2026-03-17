@@ -117,6 +117,8 @@ const HUD = () => {
               <p>🎰 Slot Machine - 보라색 캐비넷</p>
               <p>💎 Mines - 보석 바위</p>
               <p>🚀 Crash - 로켓 발사대</p>
+              <p>🃏 Hi-Lo - 카드 테이블</p>
+              <p>🪙 Coin Flip - 거대 동전</p>
             </div>
             <div style={{ borderTop: '1px solid #333', paddingTop: '6px', marginTop: '2px' }}>
               <span style={{ color: '#ffd700' }}>머니</span>

@@ -182,3 +182,62 @@ export const RocketPad = (props: any) => {
     </group>
   )
 }
+
+// 하이로: 카드 테이블
+export const CardTable = (props: any) => {
+  const cardRef = useRef<THREE.Group>(null!)
+  useFrame((state) => {
+    if (cardRef.current) cardRef.current.rotation.y = Math.sin(state.clock.elapsedTime) * 0.3
+  })
+
+  return (
+    <group {...props}>
+      {/* 테이블 */}
+      <mesh castShadow receiveShadow position={[0, 0.4, 0]}>
+        <cylinderGeometry args={[1, 1, 0.08, 16]} />
+        <meshStandardMaterial color='#0a5a0a' />
+      </mesh>
+      <mesh castShadow position={[0, 0.2, 0]}>
+        <cylinderGeometry args={[0.1, 0.1, 0.4, 8]} />
+        <meshStandardMaterial color='#5d3a1a' />
+      </mesh>
+      {/* 떠다니는 카드 */}
+      <group ref={cardRef} position={[0, 1.2, 0]}>
+        <mesh castShadow>
+          <boxGeometry args={[0.5, 0.7, 0.02]} />
+          <meshStandardMaterial color='#fff' />
+        </mesh>
+        <mesh position={[0, 0, 0.015]}>
+          <boxGeometry args={[0.35, 0.5, 0.005]} />
+          <meshStandardMaterial color='#e74c3c' />
+        </mesh>
+      </group>
+    </group>
+  )
+}
+
+// 코인 플립: 거대 동전
+export const GiantCoin = (props: any) => {
+  const coinRef = useRef<THREE.Mesh>(null!)
+  useFrame((state) => {
+    if (coinRef.current) {
+      coinRef.current.rotation.y = state.clock.elapsedTime * 1.2
+      coinRef.current.position.y = 1.2 + Math.sin(state.clock.elapsedTime * 2) * 0.15
+    }
+  })
+
+  return (
+    <group {...props}>
+      {/* 받침대 */}
+      <mesh castShadow receiveShadow position={[0, 0.15, 0]}>
+        <cylinderGeometry args={[0.6, 0.7, 0.3, 8]} />
+        <meshStandardMaterial color='#8B6914' metalness={0.5} />
+      </mesh>
+      {/* 회전 동전 */}
+      <mesh ref={coinRef} castShadow>
+        <cylinderGeometry args={[0.6, 0.6, 0.08, 24]} />
+        <meshStandardMaterial color='#ffd700' metalness={0.8} roughness={0.2} />
+      </mesh>
+    </group>
+  )
+}

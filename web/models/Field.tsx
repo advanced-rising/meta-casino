@@ -92,16 +92,20 @@ const Field = ({
     })
   }, [])
 
+  // 위치 저장 후 입장 (위치는 Character의 useFrame에서 이미 저장됨)
+  const enterGame = useCallback(() => {
+    if (!nearSpaceRef.current) return
+    router.push(nearSpaceRef.current.route)
+  }, [router])
+
   // E키로 입장
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === 'KeyE' && nearSpaceRef.current) {
-        router.push(nearSpaceRef.current.route)
-      }
+      if (e.code === 'KeyE' && nearSpaceRef.current) enterGame()
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [router])
+  }, [router, enterGame])
 
 
   return (
@@ -204,18 +208,19 @@ const Field = ({
           <Sky sunPosition={[100, 50, 100]} />
         </Canvas>
 
-        {/* 게임장 입장 UI */}
+        {/* 게임장 입장 UI (클릭 또는 E키) */}
         {nearSpace && (
-          <div className='fixed left-1/2 bottom-[120px] -translate-x-1/2 z-[200] animate-bounce'>
-            <div className='arcade-box flex flex-col items-center gap-[6px] px-[28px] py-[14px]'
+          <div className='fixed left-1/2 bottom-[120px] -translate-x-1/2 z-[200]'>
+            <button onClick={enterGame}
+              className='arcade-box arcade-btn flex flex-col items-center gap-[6px] px-[28px] py-[14px] cursor-pointer hover:scale-105 transition-transform'
               style={{ background: '#000000ee', boxShadow: '0 0 30px rgba(201,168,76,0.3)' }}>
               <span className='arcade-title text-[14px] font-bold' style={{ color: '#ffd700' }}>{nearSpace.name}</span>
               <div className='flex items-center gap-[8px]'>
-                <span className='arcade-btn text-[13px] font-bold w-[30px] h-[30px] rounded-[6px] flex items-center justify-center arcade-border'
+                <span className='text-[12px] font-bold w-[26px] h-[26px] rounded-[5px] flex items-center justify-center'
                   style={{ background: '#c9a84c', color: '#000' }}>E</span>
-                <span className='arcade-title text-[11px]' style={{ color: '#aaa' }}>PRESS TO ENTER</span>
+                <span className='arcade-title text-[11px]' style={{ color: '#aaa' }}>CLICK OR PRESS E</span>
               </div>
-            </div>
+            </button>
           </div>
         )}
 

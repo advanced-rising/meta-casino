@@ -57,6 +57,19 @@ const Character = ({
   const velocityY = useRef(0)
   const rotationY = useRef(0)
   const isGrounded = useRef(true)
+  const positionSaved = useRef(false)
+
+  // 초기 위치 복원
+  useEffect(() => {
+    if (typeof window === 'undefined' || !characterGroup.current) return
+    try {
+      const saved = localStorage.getItem('meta-casino-char-pos')
+      if (saved) {
+        const [x, , z] = JSON.parse(saved)
+        characterGroup.current.position.set(x, 0, z)
+      }
+    } catch {}
+  }, [])
 
   // 카메라 추적
   const cameraOffset = new THREE.Vector3(10, 10, 10)
@@ -287,6 +300,11 @@ const Character = ({
         rotation: [q.x, q.y, q.z, q.w],
         nickname: nickname || 'unknown',
       })
+    }
+
+    // 위치 저장 (60프레임마다 = ~1초)
+    if (emitCounter.current % 60 === 0 && typeof window !== 'undefined') {
+      localStorage.setItem('meta-casino-char-pos', JSON.stringify([obj.position.x, obj.position.y, obj.position.z]))
     }
 
     mixer.update(delta)

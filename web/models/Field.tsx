@@ -297,53 +297,90 @@ const Field = ({
             return <SimpleBox key={i} position={[x, y, z]} args={[w, h, d]} color={colors[i % colors.length]} />
           })}
 
-          {/* 나무 */}
-          <SimpleTree position={[25, 0, 10]} />
-          <SimpleTree position={[0, 0, 30]} />
-          <SimpleTree position={[-25, 0, 10]} />
-          <SimpleTree position={[-15, 0, -25]} />
-          <SimpleTree position={[10, 0, -30]} />
-          <SimpleTree position={[35, 0, -20]} />
-          <SimpleTree position={[-35, 0, -30]} />
-          <SimpleTree position={[20, 0, 25]} />
-          <SimpleTree position={[-30, 0, 25]} />
-          <SimpleTree position={[40, 0, 15]} />
-          <SimpleTree position={[-10, 0, -40]} />
-          <SimpleTree position={[30, 0, -35]} />
-          <SimpleTree position={[-40, 0, 0]} />
-          <SimpleTree position={[0, 0, 40]} />
-          <SimpleTree position={[42, 0, -5]} />
+          {/* 나무 - 도로변 + 공원 전체 */}
+          {[
+            [25,0,10],[-25,0,10],[0,0,30],[-15,0,-25],[10,0,-30],
+            [35,0,-20],[-35,0,-30],[20,0,25],[-30,0,25],[40,0,15],
+            [-10,0,-40],[30,0,-35],[-40,0,0],[0,0,40],[42,0,-5],
+            // 도로변 가로수
+            [4,0,12],[4,0,24],[4,0,36],[-4,0,-12],[-4,0,-24],[-4,0,-36],
+            [12,0,4],[24,0,4],[36,0,4],[-12,0,-4],[-24,0,-4],[-36,0,-4],
+            // 코너 숲
+            [42,0,38],[38,0,42],[44,0,35],[-42,0,38],[-38,0,42],
+            [-42,0,-38],[-38,0,-42],[42,0,-38],[38,0,-42],
+            [45,0,25],[-45,0,25],[45,0,-25],[-45,0,-25],
+          ].map(([x,y,z], i) => <SimpleTree key={`t${i}`} position={[x,y,z] as [number,number,number]} />)}
 
-          {/* 도로 (십자형) */}
-          <Road position={[0, 0, 0]} length={80} />
-          <Road position={[0, 0, 0]} length={80} horizontal />
+          {/* 도로 (십자형, 벽 끝까지) */}
+          <Road position={[0, 0, 0]} length={100} />
+          <Road position={[0, 0, 0]} length={100} horizontal />
+          {/* 외곽 순환 도로 */}
+          <Road position={[0, 0, 40]} length={100} horizontal />
+          <Road position={[0, 0, -40]} length={100} horizontal />
+          <Road position={[40, 0, 0]} length={100} />
+          <Road position={[-40, 0, 0]} length={100} />
 
           {/* 중앙 분수 */}
           <Fountain position={[0, 0, 0]} />
 
-          {/* 가로등 (도로변) */}
-          <Lamp position={[2, 0, 8]} />
-          <Lamp position={[-2, 0, -8]} />
-          <Lamp position={[8, 0, 2]} />
-          <Lamp position={[-8, 0, -2]} />
-          <Lamp position={[2, 0, 20]} />
-          <Lamp position={[-2, 0, -20]} />
-          <Lamp position={[20, 0, 2]} />
-          <Lamp position={[-20, 0, -2]} />
+          {/* 가로등 (도로 전체 균등 배치) */}
+          {[-44,-32,-20,-8,8,20,32,44].map((v, i) => (
+            <React.Fragment key={`lamp-${i}`}>
+              <Lamp position={[2, 0, v]} />
+              <Lamp position={[v, 0, 2]} />
+            </React.Fragment>
+          ))}
 
-          {/* 벤치 */}
-          <Bench position={[5, 0, 8]} rotation={0} />
-          <Bench position={[-5, 0, -8]} rotation={Math.PI} />
-          <Bench position={[8, 0, -5]} rotation={Math.PI / 2} />
-          <Bench position={[-8, 0, 5]} rotation={-Math.PI / 2} />
-          <Bench position={[25, 0, -5]} rotation={0.5} />
-          <Bench position={[-25, 0, -15]} rotation={1.2} />
+          {/* 벤치 (도로변) */}
+          {[8,-8,20,-20,32,-32].map((v, i) => (
+            <React.Fragment key={`bench-${i}`}>
+              <Bench position={[4, 0, v]} rotation={Math.PI / 2} />
+              <Bench position={[v, 0, 4]} rotation={0} />
+            </React.Fragment>
+          ))}
 
           {/* 화단 */}
-          <FlowerBed position={[3, 0, 3]} />
-          <FlowerBed position={[-3, 0, -3]} />
-          <FlowerBed position={[12, 0, 8]} />
-          <FlowerBed position={[-12, 0, -8]} />
+          {[
+            [3,0,3],[-3,0,-3],[12,0,8],[-12,0,-8],
+            [20,0,12],[-20,0,-12],[12,0,20],[-12,0,-20],
+            [30,0,8],[-30,0,8],[8,0,-30],[-8,0,30],
+          ].map(([x,y,z], i) => <FlowerBed key={`fb${i}`} position={[x,y,z] as [number,number,number]} />)}
+
+          {/* 동상/조형물 (교차로) */}
+          {[[20,0,20],[-20,0,20],[20,0,-20],[-20,0,-20]].map(([x,y,z], i) => (
+            <group key={`statue-${i}`} position={[x,y,z] as [number,number,number]}>
+              <mesh castShadow receiveShadow position={[0, 0.3, 0]}>
+                <cylinderGeometry args={[0.6, 0.7, 0.6, 8]} />
+                <meshStandardMaterial color='#888' roughness={0.4} />
+              </mesh>
+              <mesh castShadow position={[0, 1.2, 0]}>
+                <dodecahedronGeometry args={[0.5, 0]} />
+                <meshStandardMaterial color={['#e74c3c','#3498db','#2ecc71','#f39c12'][i]} metalness={0.3} />
+              </mesh>
+              <mesh castShadow position={[0, 2, 0]}>
+                <sphereGeometry args={[0.25, 8, 8]} />
+                <meshStandardMaterial color='#ffd700' metalness={0.6} />
+              </mesh>
+            </group>
+          ))}
+
+          {/* 아치 게이트 (도로 입구) */}
+          {[[0,0,45],[0,0,-45],[45,0,0],[-45,0,0]].map(([x,y,z], i) => (
+            <group key={`arch-${i}`} position={[x,y,z] as [number,number,number]} rotation={[0, i >= 2 ? Math.PI/2 : 0, 0]}>
+              <mesh castShadow position={[-1.2, 1.5, 0]}>
+                <cylinderGeometry args={[0.12, 0.15, 3, 6]} />
+                <meshStandardMaterial color='#8B6914' metalness={0.4} />
+              </mesh>
+              <mesh castShadow position={[1.2, 1.5, 0]}>
+                <cylinderGeometry args={[0.12, 0.15, 3, 6]} />
+                <meshStandardMaterial color='#8B6914' metalness={0.4} />
+              </mesh>
+              <mesh castShadow position={[0, 3.1, 0]}>
+                <boxGeometry args={[2.8, 0.3, 0.3]} />
+                <meshStandardMaterial color='#c9a84c' metalness={0.5} />
+              </mesh>
+            </group>
+          ))}
 
           {/* 높은 전망대 (비행으로 올라감) */}
           <group position={[30, 0, 30]}>

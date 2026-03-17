@@ -221,7 +221,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
   return (
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       {/* 좌측: 슬롯 머신 */}
-      <div className='flex-1 flex flex-col items-center gap-[10px] overflow-y-auto py-[12px] px-[8px]'>
+      <div className='flex-1 flex flex-col items-center justify-center gap-[10px] lg:overflow-hidden overflow-y-auto py-[12px] px-[8px]'>
         {/* 잭팟 배너 */}
         {jackpotHit && (
           <motion.div initial={{ scale: 0 }} animate={{ scale: [1, 1.2, 1] }}

@@ -17,8 +17,8 @@
   50% { transform: scale(1.08); }
 }
 @keyframes neonFlicker {
-  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px var(--neon-color, #c9a84c), 0 0 82px var(--neon-color, #c9a84c); }
-  20%, 24%, 55% { text-shadow: none; }
+  0%, 100% { text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px var(--neon-color, #c9a84c), 0 0 42px var(--neon-color, #c9a84c); }
+  50% { text-shadow: 0 0 4px #fff, 0 0 8px var(--neon-color, #c9a84c), 0 0 18px var(--neon-color, #c9a84c); }
 }
 @keyframes borderGlow {
   0%, 100% { border-color: #c9a84c88; }

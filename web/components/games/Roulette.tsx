@@ -24,6 +24,7 @@ const Roulette = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
   const [result, setResult] = useState<number | null>(null)
   const [winAmount, setWinAmount] = useState(0)
   const [history, setHistory] = useState<number[]>([])
+  const [gameHistory, setGameHistory] = useState<{ number: number; bet: number; win: number }[]>([])
   const [spinNumber, setSpinNumber] = useState<{ next: any }>({ next: null })
   const [showResult, setShowResult] = useState(false)
 
@@ -67,6 +68,7 @@ const Roulette = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
     setTimeout(() => {
       setResult(winningNumber)
       setHistory((prev) => [winningNumber, ...prev.slice(0, 29)])
+      setGameHistory((prev) => [{ number: winningNumber, bet: totalBet, win: totalWin }, ...prev.slice(0, 29)])
       let totalWin = 0
       bets.forEach((bet) => { if (isWinningBet(bet, winningNumber)) totalWin += bet.amount * getMultiplier(bet.type) })
       if (totalWin > 0) { setMoney(addMoney(totalWin)); setWinAmount(totalWin) }
@@ -81,8 +83,9 @@ const Roulette = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
   const row3 = [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34]
 
   return (
-    <div className='h-[calc(100vh-52px)] overflow-y-auto flex flex-col items-center py-[10px] gap-[10px]'>
-      {/* 상단: 휠 + 결과 + 히스토리를 가로로 */}
+    <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
+      <div className='flex-1 overflow-y-auto flex flex-col items-center py-[10px] gap-[10px] px-[8px]'>
+      {/* 휠 + 결과 */}
       <div className='flex items-center gap-[16px]'>
         {/* 휠 */}
         <div className='relative' style={{ transform: 'scale(0.75)', transformOrigin: 'center' }}>
@@ -221,6 +224,58 @@ const Roulette = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
           }}>
           {spinning ? 'SPINNING...' : 'SPIN'}
         </button>
+      </div>
+      </div>
+
+      {/* 우측: 정보 패널 (데스크탑) */}
+      <div className='hidden lg:flex flex-col w-[260px] overflow-y-auto py-[12px] px-[10px] gap-[10px]'
+        style={{ background: '#0d1f0d', borderLeft: '2px solid #c9a84c33' }}>
+
+        <div className='arcade-box p-[10px]' style={{ background: '#0a2a0a' }}>
+          <div className='arcade-title text-[10px] mb-[6px]' style={{ color: '#c9a84c' }}>STATS</div>
+          {[
+            ['SPINS', gameHistory.length, '#fff'],
+            ['WINS', gameHistory.filter((h) => h.win > 0).length, '#2ecc71'],
+            ['PROFIT', `${(gameHistory.reduce((s, h) => s + (h.win > 0 ? h.win - h.bet : -h.bet), 0) >= 0 ? '+' : '')}$${gameHistory.reduce((s, h) => s + (h.win > 0 ? h.win - h.bet : -h.bet), 0).toLocaleString()}`,
+              gameHistory.reduce((s, h) => s + (h.win > 0 ? h.win - h.bet : -h.bet), 0) >= 0 ? '#ffd700' : '#e74c3c'],
+          ].map(([label, val, color]) => (
+            <div key={label as string} className='flex justify-between text-[11px] mb-[2px]'>
+              <span style={{ color: '#888' }}>{label}</span><span style={{ color: color as string }}>{val}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className='arcade-box p-[10px]' style={{ background: '#0a2a0a' }}>
+          <div className='arcade-title text-[10px] mb-[4px]' style={{ color: '#c9a84c' }}>NUMBER HISTORY</div>
+          <div className='flex flex-wrap gap-[3px]'>
+            {history.map((n, i) => (
+              <div key={i} className='w-[22px] h-[22px] rounded-full flex items-center justify-center text-white text-[9px] font-bold'
+                style={{ background: getNumberColor(n) }}>
+                {n}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className='arcade-box p-[10px] flex-1' style={{ background: '#0a2a0a' }}>
+          <div className='arcade-title text-[10px] mb-[4px]' style={{ color: '#c9a84c' }}>GAME LOG</div>
+          <div className='flex flex-col gap-[2px] max-h-[250px] overflow-y-auto'>
+            {gameHistory.length === 0 && <span style={{ color: '#333', fontSize: '10px' }}>No spins yet</span>}
+            {gameHistory.map((h, i) => (
+              <div key={i} className='flex items-center justify-between px-[4px] py-[2px] rounded-[2px]'
+                style={{ background: h.win > 0 ? '#0a2a1a' : 'transparent' }}>
+                <div className='flex items-center gap-[4px]'>
+                  <span style={{ color: '#444', fontSize: '9px' }}>#{i + 1}</span>
+                  <div className='w-[18px] h-[18px] rounded-full flex items-center justify-center text-[8px] font-bold text-white'
+                    style={{ background: getNumberColor(h.number) }}>{h.number}</div>
+                </div>
+                <span className='arcade-title' style={{ color: h.win > 0 ? '#ffd700' : '#e74c3c', fontSize: '10px' }}>
+                  {h.win > 0 ? `+$${h.win.toLocaleString()}` : `-$${h.bet}`}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )

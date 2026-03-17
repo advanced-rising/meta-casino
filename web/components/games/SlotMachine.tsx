@@ -14,6 +14,18 @@ const LINE_DEFS = [
   [0,6,12,8,4],[20,16,12,6,0],
 ]
 
+const LINE_NAMES = [
+  '가로 1행', '가로 2행', '가로 3행', '가로 4행', '가로 5행',
+  '대각 ↘', '대각 ↗',
+  'V자 ↓', 'V자 ↑',
+]
+
+const LINE_COLORS = [
+  '#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#3498db',
+  '#9b59b6', '#e91e63',
+  '#1abc9c', '#ff6348',
+]
+
 // 배당: 3매치 기본, 4매치 x3, 5매치 x10
 const SYMBOL_MULT: Record<string, number> = {
   '7️⃣':50,'💎':25,'⭐':15,'🔔':10,'🍇':6,'🍊':4,'🍋':3,'🍒':2,
@@ -117,6 +129,8 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
   const [autoCount, setAutoCount] = useState(0)
   const [spinSignal, setSpinSignal] = useState(0)
   const [speed, setSpeed] = useState(1)
+  const [showInfo, setShowInfo] = useState(false)
+  const [gameHistory, setGameHistory] = useState<{ win: number; lines: number; bet: number }[]>([])
   const speedRef = useRef(1)
   const stoppedCols = useRef(0)
   const nextGrid = useRef<string[][]>([])
@@ -155,6 +169,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
       setWinCells(cells); setWinLineCount(lineCount)
       if (total > 0) { setMoney(addMoney(total)); setWinAmount(total); setLastResult('win') }
       else { setMoney(getMoney()); setWinAmount(0); setLastResult('lose') }
+      setGameHistory((prev) => [{ win: total, lines: lineCount, bet }, ...prev.slice(0, 29)])
       setSpinning(false)
       if (autoRef.current) {
         setAutoCount((c) => c + 1)
@@ -320,21 +335,81 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
         </div>
       </div>
 
-      <div className='rounded-[8px] px-[14px] py-[8px] flex gap-[12px] flex-wrap justify-center max-w-[500px]'
-        style={{ background: '#150825', border: '1px solid #c9a84c33' }}>
-        {SYMBOLS.map((s) => (
-          <div key={s} className='flex items-center gap-[4px]'>
-            <span className='text-[18px]'>{s}</span>
-            <span style={{ color: '#c9a84c', fontSize: '10px' }}>x{SYMBOL_MULT[s]}</span>
+      {/* INFO 토글 */}
+      <button onClick={() => setShowInfo(!showInfo)}
+        className='text-[11px] px-[12px] py-[4px] rounded-[4px]'
+        style={{ background: showInfo ? '#c9a84c' : '#222', color: showInfo ? '#1a0f08' : '#888', border: '1px solid #c9a84c44' }}>
+        {showInfo ? '닫기' : '📋 배당 & 라인 & 기록'}
+      </button>
+
+      {showInfo && (
+        <div className='rounded-[10px] p-[14px] max-w-[600px] w-full flex flex-col gap-[10px]'
+          style={{ background: '#150825', border: '1px solid #c9a84c33' }}>
+
+          {/* 심볼 배당 */}
+          <div>
+            <div className='text-[10px] mb-[4px]' style={{ color: '#c9a84c' }}>심볼 배당</div>
+            <div className='flex gap-[8px] flex-wrap'>
+              {SYMBOLS.map((s) => (
+                <div key={s} className='flex items-center gap-[3px] px-[6px] py-[2px] rounded-[4px]' style={{ background: '#1a0a2e' }}>
+                  <span className='text-[16px]'>{s}</span>
+                  <span style={{ color: '#c9a84c', fontSize: '10px' }}>x{SYMBOL_MULT[s]}</span>
+                </div>
+              ))}
+            </div>
+            <div className='flex gap-[10px] mt-[4px]'>
+              <span style={{ color: '#888', fontSize: '10px' }}>3매치=x1</span>
+              <span style={{ color: '#c9a84c', fontSize: '10px' }}>4매치=x3</span>
+              <span style={{ color: '#ffd700', fontSize: '10px' }}>5매치=x10</span>
+            </div>
           </div>
-        ))}
-        <div className='w-full flex justify-center gap-[12px] mt-[4px]'>
-          <span style={{ color: '#888', fontSize: '10px' }}>3매치=x1</span>
-          <span style={{ color: '#c9a84c', fontSize: '10px' }}>4매치=x3</span>
-          <span style={{ color: '#ffd700', fontSize: '10px' }}>5매치=x10</span>
-          <span style={{ color: '#555', fontSize: '10px' }}>{LINE_DEFS.length}라인</span>
+
+          {/* 라인 패턴 */}
+          <div>
+            <div className='text-[10px] mb-[4px]' style={{ color: '#c9a84c' }}>당첨 라인 패턴 ({LINE_DEFS.length}개)</div>
+            <div className='grid grid-cols-3 gap-[6px]'>
+              {LINE_DEFS.map((line, li) => (
+                <div key={li} className='flex items-center gap-[6px] px-[6px] py-[4px] rounded-[4px]' style={{ background: '#0d0518' }}>
+                  {/* 5x5 미니 그리드 */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 8px)', gap: '1px' }}>
+                    {Array.from({ length: 25 }, (_, idx) => (
+                      <div key={idx} style={{
+                        width: 8, height: 8, borderRadius: 2,
+                        background: line.includes(idx) ? LINE_COLORS[li] : '#1a1a1a',
+                      }} />
+                    ))}
+                  </div>
+                  <span style={{ color: LINE_COLORS[li], fontSize: '9px', fontWeight: 700 }}>{LINE_NAMES[li]}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 히스토리 */}
+          {gameHistory.length > 0 && (
+            <div>
+              <div className='text-[10px] mb-[4px]' style={{ color: '#c9a84c' }}>최근 기록</div>
+              <div className='flex flex-col gap-[2px] max-h-[120px] overflow-y-auto'>
+                {gameHistory.map((h, i) => (
+                  <div key={i} className='flex items-center gap-[8px] px-[6px] py-[2px] rounded-[3px]'
+                    style={{ background: h.win > 0 ? '#1a3a1a' : '#1a1a1a' }}>
+                    <span className='text-[10px]' style={{ color: '#666', minWidth: '20px' }}>#{i + 1}</span>
+                    <span className='text-[10px]' style={{ color: '#888' }}>${h.bet}</span>
+                    {h.win > 0 ? (
+                      <>
+                        <span style={{ color: '#ffd700', fontSize: '11px', fontWeight: 700 }}>+${h.win.toLocaleString()}</span>
+                        <span style={{ color: '#4ade80', fontSize: '9px' }}>{h.lines}line</span>
+                      </>
+                    ) : (
+                      <span style={{ color: '#555', fontSize: '10px' }}>MISS</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </div>
   )
 }

@@ -1,8 +1,10 @@
 import React, { useRef, useCallback, useEffect, useState } from 'react'
 
+// 화면 기준 방향 (dx, dy를 그대로 전달)
 export interface MobileInput {
-  angle: number    // 라디안 (조이스틱 방향)
-  magnitude: number // 0~1 (세기, 0이면 정지)
+  dx: number      // 화면 좌(-1) ~ 우(+1)
+  dy: number      // 화면 위(-1) ~ 아래(+1)
+  magnitude: number
   active: boolean
 }
 
@@ -37,9 +39,7 @@ const MobileControls = ({ mobileInputRef, onJump, onInteract }: MobileControlsPr
     const dy = touch.clientY - center.current.y
     const dist = Math.sqrt(dx * dx + dy * dy)
     const maxDist = 45
-
     const clampedDist = Math.min(dist, maxDist)
-    const angle = Math.atan2(dx, -dy) // 위=0, 우=π/2 (3D 좌표계 기준)
 
     // 노브 이동
     if (knobRef.current) {
@@ -49,10 +49,13 @@ const MobileControls = ({ mobileInputRef, onJump, onInteract }: MobileControlsPr
     }
 
     const magnitude = Math.min(dist / maxDist, 1)
-    mobileInputRef.current = {
-      angle,
-      magnitude: magnitude > 0.15 ? magnitude : 0, // 데드존
-      active: magnitude > 0.15,
+    if (magnitude > 0.15) {
+      // 정규화된 화면 방향
+      const normDx = dx / Math.max(dist, 1)
+      const normDy = dy / Math.max(dist, 1)
+      mobileInputRef.current = { dx: normDx, dy: normDy, magnitude, active: true }
+    } else {
+      mobileInputRef.current = { dx: 0, dy: 0, magnitude: 0, active: false }
     }
   }, [mobileInputRef])
 
@@ -60,14 +63,13 @@ const MobileControls = ({ mobileInputRef, onJump, onInteract }: MobileControlsPr
     if (knobRef.current) {
       knobRef.current.style.transform = 'translate(0px, 0px)'
     }
-    mobileInputRef.current = { angle: 0, magnitude: 0, active: false }
+    mobileInputRef.current = { dx: 0, dy: 0, magnitude: 0, active: false }
   }, [mobileInputRef])
 
   if (!isMobile) return null
 
   return (
     <div className='fixed bottom-0 left-0 right-0 z-[300] pointer-events-none' style={{ touchAction: 'none' }}>
-      {/* 조이스틱 */}
       <div
         ref={joystickRef}
         onTouchStart={handleStart}
@@ -89,7 +91,6 @@ const MobileControls = ({ mobileInputRef, onJump, onInteract }: MobileControlsPr
         />
       </div>
 
-      {/* 버튼 */}
       <div className='absolute bottom-[30px] right-[20px] flex flex-col gap-[12px] pointer-events-auto'>
         <button
           onTouchStart={(e) => { e.preventDefault(); onJump() }}

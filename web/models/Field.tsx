@@ -65,7 +65,7 @@ const Field = ({
 
   // 모바일 입력 ref
   const charInputRef = useRef<CharacterInput | null>(null)
-  const mobileInputRef = useRef<MobileInput>({ angle: 0, magnitude: 0, active: false })
+  const mobileInputRef = useRef<MobileInput>({ dx: 0, dy: 0, magnitude: 0, active: false })
 
   const handleMobileJump = useCallback(() => {
     if (charInputRef.current) {

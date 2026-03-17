@@ -135,25 +135,21 @@ const Character = ({
     // 모바일 조이스틱 입력
     const mobile = mobileInputRef?.current
     if (mobile && mobile.active) {
-      // 조이스틱 방향으로 바로 이동 + 캐릭터 회전
       const mobileSpeed = mobile.magnitude > 0.7 ? 14 : 7
-      // 카메라 기준 방향 보정: 카메라가 (10,10,10)에서 보므로 45도 회전
-      const cameraAngleOffset = Math.PI / 4
-      const moveAngle = mobile.angle + cameraAngleOffset
 
-      moveX = Math.sin(moveAngle) * mobileSpeed * delta * mobile.magnitude
-      moveZ = Math.cos(moveAngle) * mobileSpeed * delta * mobile.magnitude
+      // 화면 방향 → 월드 좌표 변환 (아이소메트릭 카메라 45도)
+      // 화면 오른쪽(+dx) = 월드 (+x, -z) / 화면 아래(+dy) = 월드 (+x, +z)
+      const SIN45 = 0.7071
+      const worldX = (mobile.dx - mobile.dy) * SIN45
+      const worldZ = (-mobile.dx - mobile.dy) * SIN45
+
+      moveX = worldX * mobileSpeed * delta * mobile.magnitude
+      moveZ = worldZ * mobileSpeed * delta * mobile.magnitude
 
       // 캐릭터가 이동 방향을 바라보도록
-      rotationY.current = moveAngle
+      rotationY.current = Math.atan2(worldX, worldZ)
       isMoving = true
-
-      // 애니메이션 오버라이드
-      if (mobile.magnitude > 0.7) {
-        anim.run = true
-      } else {
-        anim.run = false
-      }
+      anim.run = mobile.magnitude > 0.7
     } else {
       // 키보드 입력
       if (currActionRef.current !== animations['dance'].clip) {

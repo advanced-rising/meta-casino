@@ -205,28 +205,25 @@ const Character = ({
       }
     }
 
-    // 모바일 조이스틱: MMORPG 방식 (위=앞, 좌우=회전)
+    // 모바일: 버튼(앞뒤) + 스와이프(회전)
     const mobile = mobileInputRef?.current
     if (mobile && mobile.active) {
       const mobileSpeed = mobile.magnitude > 0.7 ? 14 : 7
 
-      // 좌우(dx) = 캐릭터 회전, 상하(-dy) = 앞뒤 이동
-      if (Math.abs(mobile.dx) > 0.3) {
-        rotationY.current -= mobile.dx * 3.0 * delta
+      // dx = 스와이프 회전
+      if (Math.abs(mobile.dx) > 0.01) {
+        rotationY.current -= mobile.dx * delta * 60
       }
 
+      // dy: -1=전진, +1=후진
       const fwd = new THREE.Vector3(Math.sin(rotationY.current), 0, Math.cos(rotationY.current))
-      // 위로 밀면(-dy) 전진, 아래로 밀면(+dy) 후진
-      if (Math.abs(mobile.dy) > 0.2) {
-        const forwardAmount = -mobile.dy * mobileSpeed * delta
-        moveX += fwd.x * forwardAmount
-        moveZ += fwd.z * forwardAmount
+      if (mobile.dy < -0.3) {
+        moveX += fwd.x * mobileSpeed * delta
+        moveZ += fwd.z * mobileSpeed * delta
         isMoving = true
-      }
-      // 좌우만 밀어도 약간 전진
-      if (Math.abs(mobile.dx) > 0.3 && Math.abs(mobile.dy) < 0.2) {
-        moveX += fwd.x * mobileSpeed * 0.3 * delta
-        moveZ += fwd.z * mobileSpeed * 0.3 * delta
+      } else if (mobile.dy > 0.3) {
+        moveX -= fwd.x * mobileSpeed * 0.5 * delta
+        moveZ -= fwd.z * mobileSpeed * 0.5 * delta
         isMoving = true
       }
       anim.run = mobile.magnitude > 0.7

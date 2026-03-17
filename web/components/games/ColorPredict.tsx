@@ -92,7 +92,7 @@ const ColorPredict = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
           </div>
 
           {!rolling && (
-            <div className='flex items-center gap-[6px]'>
+            <div className='flex items-center gap-[6px] flex-wrap justify-center'>
               {BET_OPTIONS.map((v) => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
                 style={{ background: bet === v ? '#c9a84c' : '#1a0a1a', color: bet === v ? '#000' : '#666' }}>${v >= 1000 ? `${v / 1000}K` : v}</button>))}
               <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}

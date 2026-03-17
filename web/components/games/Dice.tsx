@@ -133,7 +133,7 @@ const Dice = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
           {/* 배팅 타입 + 타겟 */}
           {!rolling && (
             <>
-              <div className='flex items-center gap-[6px]'>
+              <div className='flex items-center gap-[6px] flex-wrap justify-center'>
                 <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>TYPE</span>
                 {[
                   { label: `OVER ${target}`, type: 'over' as BetType },
@@ -149,7 +149,7 @@ const Dice = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                 ))}
               </div>
 
-              <div className='flex items-center gap-[6px]'>
+              <div className='flex items-center gap-[6px] flex-wrap justify-center'>
                 <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>TARGET</span>
                 <input type='range' min={2} max={12} value={target} onChange={(e) => setTarget(parseInt(e.target.value))}
                   className='w-[120px]' style={{ accentColor: '#c9a84c' }} />
@@ -157,7 +157,7 @@ const Dice = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                 <span className='arcade-title text-[11px]' style={{ color: '#4ade80' }}>x{getMultiplier()}</span>
               </div>
 
-              <div className='flex items-center gap-[6px]'>
+              <div className='flex items-center gap-[6px] flex-wrap justify-center'>
                 <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
                 {BET_OPTIONS.map((v) => (
                   <button key={v} onClick={() => setBet(v)}
@@ -175,7 +175,7 @@ const Dice = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
           )}
 
           <button onClick={roll} disabled={rolling || money < bet}
-            className='arcade-btn w-[180px] h-[46px] rounded-full text-[16px] font-bold disabled:opacity-30'
+            className='arcade-btn w-full max-w-full max-w-[180px] h-[44px] rounded-full text-[16px] font-bold disabled:opacity-30'
             style={{ background: rolling ? '#333' : 'linear-gradient(180deg, #2ecc71, #1e8449)', color: 'white', border: '3px solid #c9a84c' }}>
             {rolling ? '🎲...' : '🎲 ROLL'}
           </button>

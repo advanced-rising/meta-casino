@@ -128,7 +128,7 @@ const Baccarat = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
                   </button>
                 ))}
               </div>
-              <div className='flex items-center gap-[6px]'>
+              <div className='flex items-center gap-[6px] flex-wrap justify-center'>
                 <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
                 {BET_OPTIONS.map((v) => (
                   <button key={v} onClick={() => setBet(v)} className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
@@ -144,7 +144,7 @@ const Baccarat = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
           )}
 
           <button onClick={deal} disabled={playing || money < bet}
-            className='arcade-btn w-[180px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
+            className='arcade-btn w-full max-w-[180px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
             >
             {playing ? '...' : 'DEAL'}
           </button>

@@ -66,12 +66,12 @@ const NumberGuess = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
         {result && <span className='text-[18px] font-bold' style={{ color: '#22c55e' }}>🎉 +${Math.floor(bet * (attempts <= 3 ? 5 : attempts <= 5 ? 3 : attempts <= 7 ? 2 : 1.2)).toLocaleString()}</span>}
 
         {!playing && (
-          <div className='flex items-center gap-[6px]'>
+          <div className='flex items-center gap-[6px] flex-wrap justify-center'>
             {BET_OPTIONS.map(v => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[10px] py-[4px] rounded-[8px] text-[11px] font-bold'
               style={{ background: bet === v ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.04)', color: bet === v ? '#fff' : '#666' }}>${v >= 1000 ? `${v/1000}K` : v}</button>))}
           </div>
         )}
-        {!playing && <button onClick={start} disabled={money < bet} className='arcade-btn w-[160px] h-[40px] rounded-[12px] text-[14px] font-bold disabled:opacity-30'
+        {!playing && <button onClick={start} disabled={money < bet} className='arcade-btn w-full max-w-[160px] h-[40px] rounded-[12px] text-[14px] font-bold disabled:opacity-30'
           style={{ background: '#a855f7', color: 'white' }}>START</button>}
         <div className='text-[11px]' style={{ color: '#888' }}>$ <span style={{ color: '#22c55e' }}>{money.toLocaleString()}</span></div>
       </div>

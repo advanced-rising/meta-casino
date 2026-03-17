@@ -190,7 +190,7 @@ const Blackjack = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
             </div>
           ) : (
             <>
-              <div className='flex items-center gap-[6px]'>
+              <div className='flex items-center gap-[6px] flex-wrap justify-center'>
                 <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
                 {BET_OPTIONS.map((v) => (
                   <button key={v} onClick={() => setBet(v)}
@@ -205,7 +205,7 @@ const Blackjack = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
                   style={{ background: '#061a06', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>
               <button onClick={deal} disabled={money < bet}
-                className='arcade-btn w-[180px] h-[46px] rounded-full text-[16px] font-bold disabled:opacity-30'
+                className='arcade-btn w-full max-w-full max-w-[180px] h-[44px] rounded-full text-[16px] font-bold disabled:opacity-30'
                 >
                 DEAL
               </button>

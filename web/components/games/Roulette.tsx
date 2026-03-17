@@ -113,7 +113,7 @@ const Roulette = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
       </div>
 
       {/* 배팅 보드 */}
-      <div className='rounded-[8px] p-[10px] w-full max-w-[700px]'
+      <div className='rounded-[8px] p-[10px] w-full max-w-[700px] overflow-x-auto'
         style={{ background: '#0d5a0d', border: '3px solid #c9a84c', boxShadow: '0 0 30px rgba(0,0,0,0.5)' }}>
         {/* 0 */}
         <button onClick={() => placeBet('number', 0)} disabled={spinning}

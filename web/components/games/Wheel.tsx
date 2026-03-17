@@ -43,12 +43,12 @@ const FortuneWheel = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
 
     const segIndex = Math.floor(Math.random() * SEGMENTS.length)
     const segAngle = (segIndex / SEGMENTS.length) * 360
-    const spins = 5 + Math.floor(Math.random() * 3) // 5~7 바퀴
+    const spins = 7 + Math.floor(Math.random() * 4) // 7~10 바퀴 (최소 5바퀴 이상)
     const finalAngle = currentAngle.current + spins * 360 + segAngle
 
     controls.start({
       rotate: finalAngle,
-      transition: { duration: 4, ease: [0.17, 0.67, 0.12, 0.99] },
+      transition: { duration: 5 + spins * 0.3, ease: [0.12, 0.75, 0.15, 1] },
     }).then(() => {
       currentAngle.current = finalAngle % 360
       const seg = SEGMENTS[segIndex]
@@ -78,12 +78,12 @@ const FortuneWheel = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
           </span>
 
           {/* 휠 */}
-          <div className='relative w-[280px] h-[280px]'>
+          <div className='relative w-[220px] h-[220px] sm:w-[280px] sm:h-[280px]'>
             {/* 포인터 */}
             <div className='absolute top-[-12px] left-1/2 -translate-x-1/2 z-10'
               style={{ width: 0, height: 0, borderLeft: '10px solid transparent', borderRight: '10px solid transparent', borderTop: '20px solid #ffd700' }} />
 
-            <motion.div animate={controls} className='w-[280px] h-[280px] rounded-full relative'
+            <motion.div animate={controls} className='w-[220px] h-[220px] sm:w-[280px] sm:h-[280px] rounded-full relative'
               style={{ border: '4px solid #c9a84c', boxShadow: '0 0 30px rgba(201,168,76,0.3)' }}>
               {SEGMENTS.map((seg, i) => {
                 const startAngle = i * segAngle
@@ -128,7 +128,7 @@ const FortuneWheel = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
           </div>
 
           {!spinning && (
-            <div className='flex items-center gap-[6px]'>
+            <div className='flex items-center gap-[6px] flex-wrap justify-center'>
               <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
               {BET_OPTIONS.map((v) => (
                 <button key={v} onClick={() => setBet(v)}
@@ -145,7 +145,7 @@ const FortuneWheel = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
           )}
 
           <button onClick={spin} disabled={spinning || money < bet}
-            className='arcade-btn w-[180px] h-[46px] rounded-full text-[16px] font-bold disabled:opacity-30'
+            className='arcade-btn w-full max-w-full max-w-[180px] h-[44px] rounded-full text-[16px] font-bold disabled:opacity-30'
             style={{ background: spinning ? '#333' : 'linear-gradient(180deg, #e91e63, #c2185b)', color: 'white', border: '3px solid #c9a84c' }}>
             {spinning ? '🎡...' : '🎡 SPIN'}
           </button>

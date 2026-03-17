@@ -109,7 +109,7 @@ const CoinFlip = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
           </div>
 
           {/* 배팅 */}
-          <div className='flex items-center gap-[6px]'>
+          <div className='flex items-center gap-[6px] flex-wrap justify-center'>
             <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
             {BET_OPTIONS.map((v) => (
               <button key={v} onClick={() => !flipping && setBet(v)}

@@ -80,7 +80,7 @@ const Crash = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
           </span>
 
           {/* 그래프 */}
-          <div className='relative w-[340px] h-[280px] rounded-[10px] overflow-hidden flex items-end justify-center'
+          <div className='relative w-full max-w-[340px] h-[240px] sm:h-[280px] rounded-[10px] overflow-hidden flex items-end justify-center'
             style={{ background: '#0a0a0a', border: '2px solid #333' }}>
             <motion.div animate={{ height: graphHeight }} transition={{ duration: 0.05 }}
               className='w-[180px] rounded-t-[6px]'
@@ -164,13 +164,13 @@ const Crash = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
           <div className='flex items-center gap-[10px]'>
             {!playing ? (
               <button onClick={startGame} disabled={money < bet}
-                className='arcade-btn w-[180px] h-[46px] rounded-full text-[16px] font-bold disabled:opacity-30'
+                className='arcade-btn w-full max-w-full max-w-[180px] h-[44px] rounded-full text-[16px] font-bold disabled:opacity-30'
                 >
                 🚀 START
               </button>
             ) : (
               <button onClick={doCashOut}
-                className='arcade-btn w-[180px] h-[46px] rounded-full text-[16px] font-bold'
+                className='arcade-btn w-full max-w-full max-w-[180px] h-[44px] rounded-full text-[16px] font-bold'
                 style={{ background: 'linear-gradient(180deg, #f39c12, #d68910)', color: 'white', border: '3px solid #c9a84c',
                   boxShadow: '0 0 20px rgba(243,156,18,0.5)', animation: 'winPulse 0.4s ease infinite' }}>
                 💰 x{multiplier.toFixed(2)}
@@ -231,7 +231,7 @@ const Crash = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             {history.map((h, i) => (
               <div key={i} className='flex items-center justify-between px-[4px] py-[2px] rounded-[2px]'
                 style={{ background: h.won ? '#1a3a1a' : '#2a0a0a' }}>
-                <div className='flex items-center gap-[6px]'>
+                <div className='flex items-center gap-[6px] flex-wrap justify-center'>
                   <span style={{ color: '#444', fontSize: '9px' }}>#{i + 1}</span>
                   <span className='arcade-title' style={{ color: h.won ? '#2ecc71' : '#e74c3c', fontSize: '11px' }}>
                     {h.mult.toFixed(2)}x

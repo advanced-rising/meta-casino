@@ -90,13 +90,13 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
           </span>
 
           {/* 5x5 그리드 */}
-          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${GRID}, 58px)`, gap: '4px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${GRID}, minmax(40px, 58px))`, gap: '4px' }}>
             {board.map((cell, idx) => (
               <motion.button key={idx} onClick={() => revealTile(idx)}
                 disabled={!playing || cell !== 'hidden'}
                 whileHover={cell === 'hidden' && playing ? { scale: 1.06 } : {}}
                 whileTap={cell === 'hidden' && playing ? { scale: 0.95 } : {}}
-                className='w-[58px] h-[58px] rounded-[8px] flex items-center justify-center text-[22px] font-bold disabled:cursor-default'
+                className='w-[40px] h-[40px] sm:w-[58px] sm:h-[58px] rounded-[8px] flex items-center justify-center text-[22px] font-bold disabled:cursor-default'
                 style={{
                   background: cell === 'hidden' ? (playing ? 'linear-gradient(145deg, #1a3a5c, #0d2440)' : '#152535')
                     : cell === 'gem' ? 'linear-gradient(145deg, #1a5a3a, #0d4028)' : 'linear-gradient(145deg, #5a1a1a, #400d0d)',
@@ -150,7 +150,7 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                   className='w-[70px] h-[26px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                   style={{ background: '#0a1a2a', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>
-              <div className='flex items-center gap-[6px]'>
+              <div className='flex items-center gap-[6px] flex-wrap justify-center'>
                 <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>MINES</span>
                 {MINE_OPTIONS.map((m) => (
                   <button key={m} onClick={() => setMineCount(m)}
@@ -167,13 +167,13 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
           <div className='flex items-center gap-[10px]'>
             {!playing ? (
               <button onClick={startGame} disabled={money < bet}
-                className='arcade-btn w-[180px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
+                className='arcade-btn w-full max-w-[180px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
                 >
                 START
               </button>
             ) : (
               <button onClick={cashOut} disabled={revealed === 0}
-                className='arcade-btn w-[180px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
+                className='arcade-btn w-full max-w-[180px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
                 style={{ background: revealed > 0 ? 'linear-gradient(180deg, #f39c12, #d68910)' : '#333', color: 'white', border: '3px solid #c9a84c',
                   boxShadow: revealed > 0 ? '0 0 15px rgba(243,156,18,0.4)' : 'none' }}>
                 💰 CASH OUT x{currentMultiplier}

@@ -70,7 +70,7 @@ const HorseRace = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
           {/* 트랙 */}
           <div className='w-full flex flex-col gap-[4px]'>
             {HORSES.map((horse, i) => (
-              <div key={horse.id} className='flex items-center gap-[6px]'>
+              <div key={horse.id} className='flex items-center gap-[6px] flex-wrap justify-center'>
                 <span className='arcade-title text-[9px] w-[60px]' style={{ color: horse.color }}>{horse.name}</span>
                 <div className='flex-1 h-[28px] rounded-[4px] relative' style={{ background: '#111', border: `1px solid ${horse.color}33` }}>
                   {/* 트랙 라인 */}
@@ -113,7 +113,7 @@ const HorseRace = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
                   </button>
                 ))}
               </div>
-              <div className='flex items-center gap-[6px]'>
+              <div className='flex items-center gap-[6px] flex-wrap justify-center'>
                 <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
                 {BET_OPTIONS.map((v) => (
                   <button key={v} onClick={() => setBet(v)} className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
@@ -129,7 +129,7 @@ const HorseRace = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
           )}
 
           <button onClick={startRace} disabled={racing || money < bet}
-            className='arcade-btn w-[180px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
+            className='arcade-btn w-full max-w-[180px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
             style={{ background: racing ? '#333' : 'linear-gradient(180deg, #2ecc71, #1e8449)', color: 'white' }}>
             {racing ? '🏇 RACING...' : '🏇 START'}
           </button>

@@ -235,7 +235,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
         <div className='flex flex-col items-center gap-[8px] p-[8px]'
           >
 
-          <div className='flex items-center gap-[6px]'>
+          <div className='flex items-center gap-[6px] flex-wrap justify-center'>
             <span className='text-[16px]'>⭐</span>
             <span className='arcade-title neon-text' style={{ '--neon-color': '#c9a84c', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>
               PACHISLOT 777

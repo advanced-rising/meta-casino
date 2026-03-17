@@ -74,7 +74,7 @@ const Keno = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             </motion.span>}
           </div>
           {!playing && (
-            <div className='flex items-center gap-[6px]'>
+            <div className='flex items-center gap-[6px] flex-wrap justify-center'>
               {BET_OPTIONS.map(v => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[10px] py-[4px] rounded-[8px] text-[11px] font-bold'
                 style={{ background: bet === v ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.04)', color: bet === v ? '#fff' : '#666' }}>${v >= 1000 ? `${v/1000}K` : v}</button>))}
               <input type='number' min={1} value={bet} onChange={e => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
@@ -82,7 +82,7 @@ const Keno = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             </div>
           )}
           <button onClick={play} disabled={playing || picks.size === 0 || money < bet}
-            className='arcade-btn w-[160px] h-[40px] rounded-[12px] text-[14px] font-bold disabled:opacity-30'
+            className='arcade-btn w-full max-w-[160px] h-[40px] rounded-[12px] text-[14px] font-bold disabled:opacity-30'
             style={{ background: '#3b82f6', color: 'white' }}>{playing ? 'DRAWING...' : 'DRAW'}</button>
           <div className='text-[11px]' style={{ color: '#888' }}>$ <span style={{ color: '#22c55e' }}>{money.toLocaleString()}</span></div>
         </div>

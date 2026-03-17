@@ -116,7 +116,7 @@ const Tower = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             </button>
           ) : !playing ? (
             <>
-              <div className='flex items-center gap-[6px]'>
+              <div className='flex items-center gap-[6px] flex-wrap justify-center'>
                 <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
                 {BET_OPTIONS.map((v) => (
                   <button key={v} onClick={() => setBet(v)} className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
@@ -126,7 +126,7 @@ const Tower = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                   className='w-[60px] h-[24px] rounded-[4px] text-[10px] text-center font-bold outline-none'
                   style={{ background: '#0d0d1a', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>
-              <button onClick={start} disabled={money < bet} className='arcade-btn w-[160px] h-[40px] rounded-full text-[14px] font-bold disabled:opacity-30'
+              <button onClick={start} disabled={money < bet} className='arcade-btn w-full max-w-[160px] h-[40px] rounded-full text-[14px] font-bold disabled:opacity-30'
                 >CLIMB</button>
             </>
           ) : null}

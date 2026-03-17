@@ -191,7 +191,7 @@ const Plinko = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                   style={{ background: '#050d20', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>
 
-              <div className='flex items-center gap-[6px]'>
+              <div className='flex items-center gap-[6px] flex-wrap justify-center'>
                 <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BALLS</span>
                 {BALL_COUNT_OPTIONS.map((n) => (
                   <button key={n} onClick={() => setBallCount(n)}
@@ -209,7 +209,7 @@ const Plinko = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
           )}
 
           <button onClick={drop} disabled={dropping || money < bet * ballCount}
-            className='arcade-btn w-[180px] h-[42px] rounded-full text-[15px] font-bold disabled:opacity-30'
+            className='arcade-btn w-full max-w-[180px] h-[42px] rounded-full text-[15px] font-bold disabled:opacity-30'
             style={{ background: dropping ? '#333' : 'linear-gradient(180deg, #f39c12, #d68910)', color: 'white', border: '3px solid #c9a84c' }}>
             {dropping ? `⏳ ${doneCount.current}/${ballCount}` : `📐 DROP x${ballCount}`}
           </button>

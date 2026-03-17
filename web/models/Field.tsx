@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef, Suspense } from 'react'
 import { Sky, Loader, Sparkles } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import Lights from '@/models/ui/Lights'
+import Lights, { getDayProgress } from '@/models/ui/Lights'
 import Character, { OtherCharacter, CharacterInput } from '@/models/Character'
 import MobileControls, { MobileInput } from '@/components/dom/MobileControls'
 import { useRouter } from 'next/router'
@@ -86,8 +86,8 @@ const Floor = ({ onClick }: { onClick?: (e: any) => void }) => (
   </group>
 )
 
-// 가로등
-const StreetLight = ({ position }: { position: [number, number, number] }) => (
+// 가로등 (밤에 빛남)
+const StreetLight = ({ position, isNight }: { position: [number, number, number]; isNight: boolean }) => (
   <group position={position}>
     <mesh castShadow position={[0, 2, 0]}>
       <cylinderGeometry args={[0.04, 0.05, 4, 6]} />
@@ -95,8 +95,13 @@ const StreetLight = ({ position }: { position: [number, number, number] }) => (
     </mesh>
     <mesh position={[0, 4.1, 0]}>
       <sphereGeometry args={[0.15, 8, 8]} />
-      <meshStandardMaterial color='#ffeaa7' emissive='#ffd700' emissiveIntensity={0.6} />
+      <meshStandardMaterial
+        color={isNight ? '#ffeaa7' : '#ddd'}
+        emissive={isNight ? '#ffd700' : '#555'}
+        emissiveIntensity={isNight ? 1 : 0.1}
+      />
     </mesh>
+    {isNight && <pointLight position={[0, 3.5, 0]} intensity={0.8} distance={8} color='#ffd700' />}
   </group>
 )
 
@@ -111,7 +116,15 @@ const Field = ({
   const mobileInputRef = useRef<MobileInput>({ dx: 0, dy: 0, magnitude: 0, active: false })
   const clickTargetRef = useRef<{ x: number; z: number } | null>(null)
 
-  useEffect(() => { if (typeof window !== 'undefined') setIsSet(true) }, [])
+  const [isNight, setIsNight] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') setIsSet(true)
+    const checkTime = () => { const d = getDayProgress(); setIsNight(!d.isDay) }
+    checkTime()
+    const timer = setInterval(checkTime, 60000) // 1분마다 체크
+    return () => clearInterval(timer)
+  }, [])
 
   const handleNearSpace = useCallback((space: any) => {
     nearSpaceRef.current = space
@@ -135,35 +148,38 @@ const Field = ({
   const handleMobileInteract = useCallback(() => { if (nearSpaceRef.current) router.push(nearSpaceRef.current.route) }, [router])
 
   // 게임장 건물 데이터: [id, x, z, width, depth, height, color, emissive]
+  // 건물: 도로(x=0,z=0) 옆에 배치 (도로 폭 6m, |x|>5 또는 |z|>5)
   const BUILDINGS: [string, number, number, number, number, number, string, string][] = [
-    ['roulette', 15, 0, 5, 4, 8, '#1a3a1a', '#22c55e'],
-    ['slot', -15, 15, 5, 4, 10, '#2a1040', '#a855f7'],
-    ['mines', 0, -18, 4, 4, 6, '#0a2540', '#3b82f6'],
-    ['crash', -18, -12, 5, 4, 12, '#2a0a0a', '#ef4444'],
-    ['hilo', 18, -15, 4, 4, 7, '#0a3a0a', '#22c55e'],
-    ['coinflip', 15, 18, 4, 4, 5, '#2a1a00', '#eab308'],
-    ['dice', -20, 20, 4, 4, 6, '#1a2a0a', '#22c55e'],
-    ['wheel', 20, 20, 5, 4, 9, '#2a0a2a', '#e91e63'],
-    ['plinko', 30, -20, 5, 4, 8, '#0a1a3a', '#f59e0b'],
-    ['blackjack', -30, 0, 6, 4, 7, '#0a3a0a', '#22c55e'],
-    ['baccarat', 0, 25, 5, 4, 6, '#0a2a0a', '#c9a84c'],
-    ['rps', -25, -25, 4, 4, 5, '#2a1a00', '#f59e0b'],
-    ['horserace', 25, -25, 6, 4, 5, '#1a2a0a', '#22c55e'],
-    ['tower', 35, 10, 4, 4, 14, '#1a1a2e', '#a855f7'],
-    ['scratch', -35, -10, 4, 4, 5, '#2a1a00', '#f59e0b'],
-    ['limbo', 10, 35, 4, 4, 7, '#0a0a2a', '#3b82f6'],
-    ['colorpredict', -10, -35, 4, 4, 6, '#1a0a1a', '#e91e63'],
+    // 메인 도로 옆 (x축 양쪽)
+    ['roulette', 12, 8, 5, 4, 8, '#1a3a1a', '#22c55e'],
+    ['slot', -12, 15, 5, 4, 10, '#2a1040', '#a855f7'],
+    ['mines', 8, -18, 4, 4, 6, '#0a2540', '#3b82f6'],
+    ['crash', -15, -15, 5, 4, 12, '#2a0a0a', '#ef4444'],
+    ['hilo', 18, -10, 4, 4, 7, '#0a3a0a', '#22c55e'],
+    ['coinflip', 12, 20, 4, 4, 5, '#2a1a00', '#eab308'],
+    // 외곽 블럭
+    ['dice', -18, 22, 4, 4, 6, '#1a2a0a', '#22c55e'],
+    ['wheel', 22, 22, 5, 4, 9, '#2a0a2a', '#e91e63'],
+    ['plinko', 28, -22, 5, 4, 8, '#0a1a3a', '#f59e0b'],
+    ['blackjack', -28, 8, 6, 4, 7, '#0a3a0a', '#22c55e'],
+    ['baccarat', 8, 28, 5, 4, 6, '#0a2a0a', '#c9a84c'],
+    ['rps', -22, -22, 4, 4, 5, '#2a1a00', '#f59e0b'],
+    ['horserace', 22, -28, 6, 4, 5, '#1a2a0a', '#22c55e'],
+    ['tower', 35, 12, 4, 4, 14, '#1a1a2e', '#a855f7'],
+    ['scratch', -35, -12, 4, 4, 5, '#2a1a00', '#f59e0b'],
+    ['limbo', 12, 35, 4, 4, 7, '#0a0a2a', '#3b82f6'],
+    ['colorpredict', -12, -35, 4, 4, 6, '#1a0a1a', '#e91e63'],
     ['bombdefuse', 35, 35, 5, 4, 8, '#2a0a0a', '#ef4444'],
-    ['keno', -35, 30, 4, 4, 6, '#0a1a3a', '#3b82f6'],
-    ['war', 40, -30, 5, 4, 7, '#1a0a0a', '#ef4444'],
-    ['numberguess', -40, -20, 4, 4, 8, '#0c0812', '#a855f7'],
-    ['wheelofdeath', 0, -40, 5, 4, 6, '#1a0808', '#ef4444'],
+    ['keno', -35, 28, 4, 4, 6, '#0a1a3a', '#3b82f6'],
+    ['war', 38, -28, 5, 4, 7, '#1a0a0a', '#ef4444'],
+    ['numberguess', -38, -18, 4, 4, 8, '#0c0812', '#a855f7'],
+    ['wheelofdeath', 8, -38, 5, 4, 6, '#1a0808', '#ef4444'],
   ]
 
   return (
     isSet && clients && socket && (
       <>
-        <Canvas shadows camera={{ zoom: 60, position: [10, 10, 10], near: -1000, far: 1000 }} orthographic style={{ background: '#111' }}>
+        <Canvas shadows camera={{ zoom: 60, position: [10, 10, 10], near: -1000, far: 1000 }} orthographic style={{ background: isNight ? '#050510' : '#87ceeb' }}>
           <Lights />
           <Suspense fallback={null}>
             {/* 다른 플레이어 */}
@@ -195,10 +211,10 @@ const Field = ({
           {/* 가로등 (도로변) */}
           {[-40, -28, -16, -4, 8, 20, 32, 44].map((v, i) => (
             <React.Fragment key={`sl-${i}`}>
-              <StreetLight position={[4.5, 0, v]} />
-              <StreetLight position={[-4.5, 0, v]} />
-              <StreetLight position={[v, 0, 4.5]} />
-              <StreetLight position={[v, 0, -4.5]} />
+              <StreetLight position={[4.5, 0, v]} isNight={isNight} />
+              <StreetLight position={[-4.5, 0, v]} isNight={isNight} />
+              <StreetLight position={[v, 0, 4.5]} isNight={isNight} />
+              <StreetLight position={[v, 0, -4.5]} isNight={isNight} />
             </React.Fragment>
           ))}
 
@@ -215,7 +231,7 @@ const Field = ({
             </mesh>
           ))}
 
-          <Sky sunPosition={[100, 20, 100]} />
+          <Sky sunPosition={isNight ? [0, -50, 0] : [100, 50, 100]} />
         </Canvas>
 
         {/* 게임장 입장 UI */}

@@ -21,14 +21,15 @@ const SYMBOL_MULT: Record<string, number> = {
 
 // 심볼 가중치: 낮은 심볼이 더 자주 나옴 → 당첨 확률 UP
 const WEIGHTED_POOL: string[] = [
-  ...'🍒🍒🍒🍒🍒🍒'.split(''),     // 6
-  ...'🍋🍋🍋🍋🍋'.split(''),        // 5
-  ...'🍊🍊🍊🍊🍊'.split(''),        // 5
-  ...'🍇🍇🍇🍇'.split(''),          // 4
-  ...'🔔🔔🔔'.split(''),             // 3
-  ...'⭐⭐'.split(''),                // 2
+  '🍒','🍒','🍒','🍒','🍒','🍒',   // 6
+  '🍋','🍋','🍋','🍋','🍋',         // 5
+  '🍊','🍊','🍊','🍊','🍊',         // 5
+  '🍇','🍇','🍇','🍇',              // 4
+  '🔔','🔔','🔔',                    // 3
+  '⭐','⭐',                          // 2
   '💎',                               // 1
-].concat(['7️⃣'])                      // 1 (총 27개, 🍒 확률 ~22%, 7️⃣ ~3.7%)
+  '7️⃣',                               // 1
+]
 
 const BET_OPTIONS = [100, 500, 1000, 2000]
 const randSym = () => WEIGHTED_POOL[Math.floor(Math.random() * WEIGHTED_POOL.length)]

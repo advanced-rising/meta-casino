@@ -56,9 +56,14 @@ const Building = ({ position, width, depth, height, color, emissive, name }: {
 )
 
 // 바닥
-const Floor = ({ onClick }: { onClick?: (e: any) => void }) => (
+const Floor = ({ onClick, groundColor }: { onClick?: (e: any) => void; groundColor: string }) => (
   <group>
-    {/* 잔디 */}
+    {/* 맵 밖 배경 (매우 넓게) */}
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]}>
+      <planeGeometry args={[500, 500]} />
+      <meshStandardMaterial color={groundColor} />
+    </mesh>
+    {/* 맵 영역 바닥 */}
     <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} onClick={onClick}>
       <planeGeometry args={[MAP_SIZE * 2, MAP_SIZE * 2]} />
       <meshStandardMaterial color='#2a2a2a' />
@@ -223,7 +228,7 @@ const Field = ({
             })}
           </Suspense>
 
-          <Floor onClick={(e: any) => { if (e.point) clickTargetRef.current = { x: e.point.x, z: e.point.z } }} />
+          <Floor groundColor={isNight ? '#0a0a12' : '#3a5a2a'} onClick={(e: any) => { if (e.point) clickTargetRef.current = { x: e.point.x, z: e.point.z } }} />
 
           {/* 가로등 (도로변) */}
           {[-44, -36, -28, -20, -12, -4, 8, 16, 24, 32, 40].map((v, i) => (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const BET_OPTIONS = [100, 500, 1000, 2000]
 const COLS = 3
@@ -15,10 +16,11 @@ const Tower = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const [traps, setTraps] = useState<number[]>([])
   const [revealed, setRevealed] = useState<Record<number, 'safe' | 'trap'>>({})
   const [result, setResult] = useState<'win' | 'lose' | null>(null)
-  const [history, setHistory] = useState<{ floor: number; profit: number }[]>([])
+  const [history, setHistory] = useState<{ floor: number; profit: number }[]>(() => loadHistory('tower'))
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('tower', history) }, [history])
 
   const start = () => {
     if (money < bet) return
@@ -122,7 +124,7 @@ const Tower = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                   <button key={v} onClick={() => setBet(v)} className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                     style={{ background: bet === v ? '#c9a84c' : '#1a1a2e', color: bet === v ? '#000' : '#666' }}>${v >= 1000 ? `${v / 1000}K` : v}</button>
                 ))}
-                <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+                <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
                   className='w-[50px] h-[22px] rounded-[4px] text-[10px] text-center font-bold outline-none'
                   style={{ background: '#0d0d1a', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>

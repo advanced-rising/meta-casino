@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const BET_OPTIONS = [100, 500, 1000, 2000]
 type BetType = 'over' | 'under' | 'exact'
@@ -41,19 +42,24 @@ const Dice = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const [result, setResult] = useState<'win' | 'lose' | null>(null)
   const [winAmount, setWinAmount] = useState(0)
   const [shaking, setShaking] = useState(false)
-  const [history, setHistory] = useState<{ d1: number; d2: number; total: number; profit: number }[]>([])
+  const [history, setHistory] = useState<{ d1: number; d2: number; total: number; profit: number }[]>(() => loadHistory('dice'))
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('dice', history) }, [history])
 
   // 배당 계산
+  const DICE_WAYS: Record<number, number> = { 2:1, 3:2, 4:3, 5:4, 6:5, 7:6, 8:5, 9:4, 10:3, 11:2, 12:1 }
   const getMultiplier = () => {
-    if (betType === 'exact') return 6
-    // over/under: target이 극단일수록 배당 높음
-    const prob = betType === 'over'
-      ? Array.from({ length: 11 }, (_, i) => i + 2).filter((v) => v > target).length / 11
-      : Array.from({ length: 11 }, (_, i) => i + 2).filter((v) => v < target).length / 11
-    return prob > 0 ? Math.max(1.2, Math.round((1 / prob) * 100) / 100) : 10
+    if (betType === 'exact') {
+      const ways = DICE_WAYS[target] || 1
+      return Math.max(1.2, Math.round((36 / ways) * 100) / 100)
+    }
+    let ways = 0
+    for (let s = 2; s <= 12; s++) {
+      if (betType === 'over' ? s > target : s < target) ways += DICE_WAYS[s] || 0
+    }
+    return ways > 0 ? Math.max(1.2, Math.round((36 / ways) * 100) / 100) : 10
   }
 
   const roll = () => {
@@ -167,7 +173,7 @@ const Dice = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                     ${v >= 1000 ? `${v / 1000}K` : v}
                   </button>
                 ))}
-                <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+                <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
                   className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                   style={{ background: '#0a1a05', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>

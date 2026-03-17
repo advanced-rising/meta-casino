@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const CHOICES = [
   { id: 'rock', emoji: '✊', label: 'ROCK', beats: 'scissors' },
@@ -19,13 +20,14 @@ const RPS = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const [cpuChoice, setCpuChoice] = useState<string | null>(null)
   const [result, setResult] = useState<'win' | 'lose' | 'draw' | null>(null)
   const [shaking, setShaking] = useState(false)
-  const [history, setHistory] = useState<{ result: string; streak: number; profit: number }[]>([])
+  const [history, setHistory] = useState<{ result: string; streak: number; profit: number }[]>(() => loadHistory('rps'))
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('rps', history) }, [history])
 
-  const multiplier = 1 + streak * 0.5
-  const potentialWin = Math.floor(bet * multiplier * 2)
+  const multiplier = 1 + streak * 0.8
+  const potentialWin = Math.floor(bet * (1 + streak * 0.8))
 
   const play = (choice: string) => {
     if (shaking || money < bet) return
@@ -133,7 +135,7 @@ const RPS = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                   ${v >= 1000 ? `${v / 1000}K` : v}
                 </button>
               ))}
-              <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+              <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
                 className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                 style={{ background: '#0a0a00', color: '#ffd700', border: '1px solid #c9a84c' }} />
             </div>

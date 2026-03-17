@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const BET_OPTIONS = [100, 500, 1000, 2000]
 
@@ -13,18 +14,28 @@ const Crash = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const [cashedOut, setCashedOut] = useState(false)
   const [cashOutMult, setCashOutMult] = useState(1.0)
   const [crashPoint, setCrashPoint] = useState(1.0)
-  const [history, setHistory] = useState<{ mult: number; won: boolean; profit: number }[]>([])
+  const [history, setHistory] = useState<{ mult: number; won: boolean; profit: number }[]>(() => loadHistory('crash'))
   const [autoCashOut, setAutoCashOut] = useState(0)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const multiplierRef = useRef(1.0)
+  const playingRef = useRef(false)
+  const cashedOutRef = useRef(false)
+  const crashedRef = useRef(false)
+  const betRef = useRef(100)
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { playingRef.current = playing }, [playing])
+  useEffect(() => { cashedOutRef.current = cashedOut }, [cashedOut])
+  useEffect(() => { crashedRef.current = crashed }, [crashed])
+  useEffect(() => { betRef.current = bet }, [bet])
+  useEffect(() => { saveHistory('crash', history) }, [history])
 
   const generateCrashPoint = () => {
     const r = Math.random()
     if (r < 0.03) return 1.0
-    return Math.max(1.0, Math.floor(100 / (r * 100)) * 100) / 100
+    const cp = Math.round((1 / r) * 100) / 100
+    return Math.max(1.01, cp)
   }
 
   const startGame = () => {
@@ -48,14 +59,14 @@ const Crash = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   }
 
   const doCashOut = useCallback(() => {
-    if (!playing || cashedOut || crashed) return
+    if (!playingRef.current || cashedOutRef.current || crashedRef.current) return
     if (intervalRef.current) clearInterval(intervalRef.current)
     const m = multiplierRef.current
-    const winAmount = Math.floor(bet * m)
+    const winAmount = Math.floor(betRef.current * m)
     setCashedOut(true); setCashOutMult(m); setPlaying(false)
     setMoney(addMoney(winAmount))
-    setHistory((prev) => [{ mult: m, won: true, profit: winAmount - bet }, ...prev.slice(0, 29)])
-  }, [playing, cashedOut, crashed, bet])
+    setHistory((prev) => [{ mult: m, won: true, profit: winAmount - betRef.current }, ...prev.slice(0, 29)])
+  }, [])
 
   useEffect(() => { return () => { if (intervalRef.current) clearInterval(intervalRef.current) } }, [])
 
@@ -143,7 +154,7 @@ const Crash = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                   </button>
                 ))}
                 <input type='number' min={1} value={bet}
-                  onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+                  onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
                   className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                   style={{ background: '#111', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>

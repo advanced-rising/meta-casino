@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const GRID = 5
 const TOTAL = GRID * GRID
@@ -18,17 +19,18 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const [gameOver, setGameOver] = useState(false)
   const [cashedOut, setCashedOut] = useState(false)
   const [currentMultiplier, setCurrentMultiplier] = useState(1)
-  const [history, setHistory] = useState<{ gems: number; mult: number; profit: number; mines: number }[]>([])
+  const [history, setHistory] = useState<{ gems: number; mult: number; profit: number; mines: number }[]>(() => loadHistory('mines'))
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('mines', history) }, [history])
 
   const calcMultiplier = useCallback((picks: number) => {
     if (picks === 0) return 1
     let mult = 1
     const safe = TOTAL - mineCount
     for (let i = 0; i < picks; i++) {
-      mult *= safe > 0 ? TOTAL / (safe - i) : 1
+      mult *= (safe - i) > 0 ? (TOTAL - i) / (safe - i) : 1
     }
     return Math.round(mult * 100) / 100
   }, [mineCount])
@@ -146,7 +148,7 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                   </button>
                 ))}
                 <input type='number' min={1} value={bet}
-                  onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+                  onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
                   className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                   style={{ background: '#0a1a2a', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>

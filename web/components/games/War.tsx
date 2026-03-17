@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 const RANKS = ['2','3','4','5','6','7','8','9','10','J','Q','K','A']
 const SUITS = ['♠','♥','♦','♣']
 const suitColor = (s: string) => s === '♥' || s === '♦' ? '#ef4444' : '#fff'
@@ -15,9 +16,10 @@ const War = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const [dealerCard, setDealerCard] = useState<{rank:string;suit:string}|null>(null)
   const [result, setResult] = useState<'win'|'lose'|'war'|null>(null)
   const [dealing, setDealing] = useState(false)
-  const [history, setHistory] = useState<{result:string;profit:number}[]>([])
+  const [history, setHistory] = useState<{result:string;profit:number}[]>(() => loadHistory('war'))
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('war', history) }, [history])
 
   const deal = () => {
     if (dealing || money < bet) return

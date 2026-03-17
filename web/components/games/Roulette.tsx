@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import Wheel from '../roulette/Wheel'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const ROULETTE_NUMBERS = [
   0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18,
@@ -23,13 +24,15 @@ const Roulette = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
   const [spinning, setSpinning] = useState(false)
   const [result, setResult] = useState<number | null>(null)
   const [winAmount, setWinAmount] = useState(0)
-  const [history, setHistory] = useState<number[]>([])
-  const [gameHistory, setGameHistory] = useState<{ number: number; bet: number; win: number }[]>([])
+  const [history, setHistory] = useState<number[]>(() => loadHistory('roulette-numbers'))
+  const [gameHistory, setGameHistory] = useState<{ number: number; bet: number; win: number }[]>(() => loadHistory('roulette'))
   const [spinNumber, setSpinNumber] = useState<{ next: any }>({ next: null })
   const [showResult, setShowResult] = useState(false)
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('roulette', gameHistory) }, [gameHistory])
+  useEffect(() => { saveHistory('roulette-numbers', history) }, [history])
 
   const totalBet = bets.reduce((s, b) => s + b.amount, 0)
   const getBetOn = (type: BetType, value?: number) => bets.find((b) => b.type === type && b.value === value)?.amount || 0
@@ -68,9 +71,9 @@ const Roulette = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
     setTimeout(() => {
       setResult(winningNumber)
       setHistory((prev) => [winningNumber, ...prev.slice(0, 29)])
-      setGameHistory((prev) => [{ number: winningNumber, bet: totalBet, win: totalWin }, ...prev.slice(0, 29)])
       let totalWin = 0
       bets.forEach((bet) => { if (isWinningBet(bet, winningNumber)) totalWin += bet.amount * getMultiplier(bet.type) })
+      setGameHistory((prev) => [{ number: winningNumber, bet: totalBet, win: totalWin }, ...prev.slice(0, 29)])
       if (totalWin > 0) { setMoney(addMoney(totalWin)); setWinAmount(totalWin) }
       else { setMoney(getMoney()) }
       setBets([]); setSpinning(false); setShowResult(true)

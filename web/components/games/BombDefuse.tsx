@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const WIRE_COLORS = ['🔴', '🔵', '🟢', '🟡', '🟣']
 const BET_OPTIONS = [100, 500, 1000, 2000]
@@ -16,10 +17,11 @@ const BombDefuse = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) 
   const [cutCount, setCutCount] = useState(0)
   const [exploded, setExploded] = useState(false)
   const [result, setResult] = useState<'win' | 'lose' | null>(null)
-  const [history, setHistory] = useState<{ cuts: number; profit: number }[]>([])
+  const [history, setHistory] = useState<{ cuts: number; profit: number }[]>(() => loadHistory('bombdefuse'))
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('bombdefuse', history) }, [history])
 
   const start = () => {
     if (money < bet) return
@@ -38,7 +40,7 @@ const BombDefuse = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) 
       const newCut = { ...cut, [idx]: true }; const newCount = cutCount + 1
       setCut(newCut); setCutCount(newCount)
       if (newCount >= MAX_WIRES - 1) {
-        const win = Math.floor(bet * MULTIPLIERS[MAX_WIRES - 2])
+        const win = Math.floor(bet * MULTIPLIERS[newCount - 1])
         setMoney(addMoney(win)); setResult('win'); setPlaying(false)
         setHistory((prev) => [{ cuts: newCount, profit: win - bet }, ...prev.slice(0, 29)])
       }
@@ -97,7 +99,7 @@ const BombDefuse = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) 
               <div className='flex items-center gap-[6px] flex-wrap justify-center'>
                 {BET_OPTIONS.map((v) => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                   style={{ background: bet === v ? '#c9a84c' : '#2a0a0a', color: bet === v ? '#000' : '#666' }}>${v >= 1000 ? `${v / 1000}K` : v}</button>))}
-                <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+                <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
                   className='w-[50px] h-[22px] rounded-[4px] text-[10px] text-center font-bold outline-none' style={{ background: '#1a0505', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>
               <button onClick={start} disabled={money < bet} className='arcade-btn w-full max-w-[160px] h-[36px] rounded-full text-[14px] font-bold disabled:opacity-30'
@@ -111,7 +113,7 @@ const BombDefuse = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) 
       <div className='hidden lg:flex flex-col w-[200px] overflow-y-auto py-[12px] px-[10px] gap-[10px]' style={{ background: '#1a0505', borderLeft: '1px solid #c9a84c22' }}>
         <div className='rounded-[8px] p-[10px]' style={{ background: '#2a0a0a' }}>
           <div className='arcade-title text-[10px] mb-[4px]' style={{ color: '#c9a84c' }}>PAYOUTS</div>
-          {MULTIPLIERS.map((m, i) => (<div key={i} className='flex justify-between text-[10px] mb-[1px]'><span style={{ color: '#888' }}>{i + 1} cuts</span><span style={{ color: '#ffd700' }}>x{m}</span></div>))}
+          {MULTIPLIERS.slice(0, MAX_WIRES - 1).map((m, i) => (<div key={i} className='flex justify-between text-[10px] mb-[1px]'><span style={{ color: '#888' }}>{i + 1} cuts</span><span style={{ color: '#ffd700' }}>x{m}</span></div>))}
         </div>
         <div className='rounded-[8px] p-[10px] flex-1' style={{ background: '#2a0a0a' }}>
           <div className='arcade-title text-[10px] mb-[4px]' style={{ color: '#c9a84c' }}>HISTORY</div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const COLORS = [
   { id: 'red', emoji: '🔴', color: '#e74c3c', mult: 2 },
@@ -24,10 +25,11 @@ const ColorPredict = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
   const [result, setResult] = useState<typeof COLORS[0] | null>(null)
   const [won, setWon] = useState<boolean | null>(null)
   const [recentColors, setRecentColors] = useState<typeof COLORS[0][]>([])
-  const [history, setHistory] = useState<{ color: string; profit: number }[]>([])
+  const [history, setHistory] = useState<{ color: string; profit: number }[]>(() => loadHistory('colorpredict'))
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('colorpredict', history) }, [history])
 
   const play = (colorId: string) => {
     if (rolling || money < bet) return
@@ -95,7 +97,7 @@ const ColorPredict = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
             <div className='flex items-center gap-[6px] flex-wrap justify-center'>
               {BET_OPTIONS.map((v) => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                 style={{ background: bet === v ? '#c9a84c' : '#1a0a1a', color: bet === v ? '#000' : '#666' }}>${v >= 1000 ? `${v / 1000}K` : v}</button>))}
-              <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+              <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
                 className='w-[50px] h-[22px] rounded-[4px] text-[10px] text-center font-bold outline-none' style={{ background: '#0d050d', color: '#ffd700', border: '1px solid #c9a84c' }} />
             </div>
           )}

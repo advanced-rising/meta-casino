@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const BET_OPTIONS = [100, 500, 1000, 2000]
 const SUITS = ['♠', '♥', '♦', '♣']
@@ -49,10 +50,11 @@ const Blackjack = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
   const [dealerCards, setDealerCards] = useState<Card[]>([])
   const [showDealer, setShowDealer] = useState(false)
   const [gameResult, setGameResult] = useState<'win' | 'lose' | 'push' | 'blackjack' | null>(null)
-  const [history, setHistory] = useState<{ result: string; profit: number }[]>([])
+  const [history, setHistory] = useState<{ result: string; profit: number }[]>(() => loadHistory('blackjack'))
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('blackjack', history) }, [history])
 
   const deal = () => {
     if (money < bet) return
@@ -88,14 +90,14 @@ const Blackjack = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
 
   const doubleDown = () => {
     if (!playing || money < bet) return
+    const originalBet = bet
     setMoney(subtractMoney(bet))
-    setBet(bet * 2)
     const newCards = [...playerCards, drawCard()]
     setPlayerCards(newCards)
     let dc = [...dealerCards]
     while (cardValue(dc) < 17) dc.push(drawCard())
     setDealerCards(dc)
-    setTimeout(() => endGame(newCards, dc, bet * 2), 300)
+    setTimeout(() => endGame(newCards, dc, originalBet * 2), 300)
   }
 
   const endGame = (pCards: Card[], dCards: Card[], currentBet = bet) => {
@@ -105,7 +107,10 @@ const Blackjack = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
     let profit: number
 
     if (pv > 21) { result = 'lose'; profit = -currentBet }
-    else if (pv === 21 && pCards.length === 2) { result = 'blackjack'; profit = Math.floor(currentBet * 1.5); setMoney(addMoney(currentBet + profit)) }
+    else if (pv === 21 && pCards.length === 2) {
+      if (dv === 21 && dCards.length === 2) { result = 'push'; profit = 0; setMoney(addMoney(currentBet)) }
+      else { result = 'blackjack'; profit = Math.floor(currentBet * 1.5); setMoney(addMoney(currentBet + profit)) }
+    }
     else if (dv > 21) { result = 'win'; profit = currentBet; setMoney(addMoney(currentBet * 2)) }
     else if (pv > dv) { result = 'win'; profit = currentBet; setMoney(addMoney(currentBet * 2)) }
     else if (pv === dv) { result = 'push'; profit = 0; setMoney(addMoney(currentBet)) }
@@ -115,10 +120,9 @@ const Blackjack = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
 
     setGameResult(result)
     setHistory((prev) => [{ result, profit }, ...prev.slice(0, 29)])
-    setBet(currentBet > 2000 ? 100 : currentBet) // 더블다운 후 리셋
   }
 
-  const pv = cardValue(playerCards); const dv = showDealer ? cardValue(dealerCards) : cardValue([dealerCards[0] || drawCard()])
+  const pv = cardValue(playerCards)
   const totalProfit = history.reduce((s, h) => s + h.profit, 0)
 
   return (
@@ -200,7 +204,7 @@ const Blackjack = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
                     ${v >= 1000 ? `${v / 1000}K` : v}
                   </button>
                 ))}
-                <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+                <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
                   className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                   style={{ background: '#061a06', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>

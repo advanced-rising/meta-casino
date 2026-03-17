@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, useAnimation } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const BET_OPTIONS = [100, 500, 1000, 2000]
 const BALL_COUNT_OPTIONS = [1, 3, 5, 10, 20]
@@ -28,12 +29,11 @@ const simulateBall = () => {
 }
 
 // 개별 공 컴포넌트
-const Ball = ({ path, delay, onDone, color }: {
-  path: { x: number; y: number }[]; delay: number; onDone: (slot: number) => void; color: string
+const Ball = ({ path, delay, onDone, color, slot: precomputedSlot }: {
+  path: { x: number; y: number }[]; delay: number; onDone: (slot: number) => void; color: string; slot: number
 }) => {
   const controls = useAnimation()
   const startX = BOARD_WIDTH / 2
-  const slot = useRef(0)
 
   useEffect(() => {
     const run = async () => {
@@ -45,11 +45,7 @@ const Ball = ({ path, delay, onDone, color }: {
           transition: { duration: 0.12, ease: 'easeIn' },
         })
       }
-      // 슬롯 계산
-      const lastX = path[path.length - 1].x
-      const s = Math.round((lastX - PEG_SPACING) / (BOARD_WIDTH / SLOTS))
-      slot.current = Math.max(0, Math.min(SLOTS - 1, s))
-      onDone(slot.current)
+      onDone(precomputedSlot)
     }
     run()
   }, [])
@@ -74,12 +70,13 @@ const Plinko = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const [slotHits, setSlotHits] = useState<Record<number, number>>({})
   const [totalWin, setTotalWin] = useState(0)
   const [totalBet, setTotalBet] = useState(0)
-  const [history, setHistory] = useState<{ balls: number; totalBet: number; totalWin: number; profit: number }[]>([])
+  const [history, setHistory] = useState<{ balls: number; totalBet: number; totalWin: number; profit: number }[]>(() => loadHistory('plinko'))
   const doneCount = useRef(0)
   const winAccum = useRef(0)
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('plinko', history) }, [history])
 
   const drop = () => {
     const cost = bet * ballCount
@@ -141,7 +138,7 @@ const Plinko = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
 
             {/* 공들 */}
             {dropping && balls.map((b) => (
-              <Ball key={b.id} path={b.path} delay={b.id * 150} color={BALL_COLORS[b.id % BALL_COLORS.length]} onDone={onBallDone} />
+              <Ball key={b.id} path={b.path} delay={b.id * 150} color={BALL_COLORS[b.id % BALL_COLORS.length]} onDone={onBallDone} slot={b.slot} />
             ))}
 
             {/* 하단 슬롯 */}
@@ -186,7 +183,7 @@ const Plinko = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                     ${v >= 1000 ? `${v / 1000}K` : v}
                   </button>
                 ))}
-                <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+                <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
                   className='w-[50px] h-[22px] rounded-[4px] text-[10px] text-center font-bold outline-none'
                   style={{ background: '#050d20', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>

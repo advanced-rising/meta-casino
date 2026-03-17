@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 const BET_OPTIONS = [100, 500, 1000, 2000]
 
 const NumberGuess = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
@@ -12,9 +13,10 @@ const NumberGuess = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
   const [hints, setHints] = useState<string[]>([])
   const [attempts, setAttempts] = useState(0)
   const [result, setResult] = useState<'win'|null>(null)
-  const [history, setHistory] = useState<{attempts:number;profit:number}[]>([])
+  const [history, setHistory] = useState<{attempts:number;profit:number}[]>(() => loadHistory('numberguess'))
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('numberguess', history) }, [history])
 
   const start = () => {
     if (money < bet) return
@@ -27,7 +29,7 @@ const NumberGuess = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
     if (!playing) return
     const a = attempts + 1; setAttempts(a)
     if (guess === target) {
-      const mult = a <= 3 ? 5 : a <= 5 ? 3 : a <= 7 ? 2 : 1.2
+      const mult = a <= 2 ? 5 : a <= 4 ? 2.5 : a <= 6 ? 1.5 : a <= 8 ? 0.8 : 0.5
       const win = Math.floor(bet * mult)
       setMoney(addMoney(win)); setResult('win'); setPlaying(false)
       setHints(prev => [...prev, `${guess} = 정답! (${a}번, x${mult})`])
@@ -63,7 +65,7 @@ const NumberGuess = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
             style={{ background: 'rgba(255,255,255,0.04)', color: h.includes('정답') ? '#22c55e' : h.includes('오버') ? '#ef4444' : '#fff' }}>{h}</div>))}
         </div>
 
-        {result && <span className='text-[18px] font-bold' style={{ color: '#22c55e' }}>🎉 +${Math.floor(bet * (attempts <= 3 ? 5 : attempts <= 5 ? 3 : attempts <= 7 ? 2 : 1.2)).toLocaleString()}</span>}
+        {result && (() => { const m = attempts <= 2 ? 5 : attempts <= 4 ? 2.5 : attempts <= 6 ? 1.5 : attempts <= 8 ? 0.8 : 0.5; const p = Math.floor(bet * m) - bet; return <span className='text-[18px] font-bold' style={{ color: p >= 0 ? '#22c55e' : '#ef4444' }}>{p >= 0 ? '🎉' : ''} {p >= 0 ? '+' : ''}${p.toLocaleString()}</span> })()}
 
         {!playing && (
           <div className='flex items-center gap-[6px] flex-wrap justify-center'>
@@ -77,7 +79,7 @@ const NumberGuess = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
       </div>
       <div className='hidden lg:flex flex-col w-[200px] overflow-y-auto py-[12px] px-[10px] gap-[10px]' style={{ background: 'rgba(0,0,0,0.3)', borderLeft: '1px solid rgba(255,255,255,0.04)' }}>
         <div className='glass p-[10px]'><div className='text-[10px] font-semibold mb-[4px]' style={{ color: '#fff' }}>배당</div>
-          {[['1~3회', 'x5'], ['4~5회', 'x3'], ['6~7회', 'x2'], ['8~10회', 'x1.2']].map(([l, v], i) => (
+          {[['1~2회', 'x5'], ['3~4회', 'x2.5'], ['5~6회', 'x1.5'], ['7~8회', 'x0.8'], ['9~10회', 'x0.5']].map(([l, v], i) => (
             <div key={i} className='flex justify-between text-[10px]'><span style={{ color: '#888' }}>{l}</span><span style={{ color: '#22c55e' }}>{v}</span></div>))}
         </div>
         <div className='glass p-[10px] flex-1'><div className='text-[10px] font-semibold mb-[4px]' style={{ color: '#fff' }}>기록</div>

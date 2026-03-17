@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const CARDS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 const SUITS = ['♠', '♥', '♦', '♣']
@@ -18,11 +19,12 @@ const HiLo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const [nextCard, setNextCard] = useState<{ rank: string; suit: string } | null>(null)
   const [streak, setStreak] = useState(0)
   const [result, setResult] = useState<'win' | 'lose' | null>(null)
-  const [history, setHistory] = useState<{ streak: number; profit: number }[]>([])
+  const [history, setHistory] = useState<{ streak: number; profit: number }[]>(() => loadHistory('hilo'))
   const [showNext, setShowNext] = useState(false)
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('hilo', history) }, [history])
 
   const multiplier = 1 + streak * 0.8
   const potentialWin = Math.floor(bet * multiplier)
@@ -141,7 +143,7 @@ const HiLo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                   </button>
                 ))}
                 <input type='number' min={1} value={bet}
-                  onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+                  onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
                   className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                   style={{ background: '#0a1a0a', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>

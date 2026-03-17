@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const PRIZES = ['🍒', '💎', '7️⃣', '⭐', '🔔', '👑']
 const PRIZE_MULT: Record<string, number> = { '🍒': 2, '💎': 10, '7️⃣': 25, '⭐': 5, '🔔': 3, '👑': 50 }
@@ -25,10 +26,11 @@ const ScratchCard = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
   const [scratched, setScratched] = useState<boolean[]>(Array(9).fill(false))
   const [playing, setPlaying] = useState(false)
   const [result, setResult] = useState<{ symbol: string; count: number; win: number } | null>(null)
-  const [history, setHistory] = useState<{ win: number; profit: number }[]>([])
+  const [history, setHistory] = useState<{ win: number; profit: number }[]>(() => loadHistory('scratchcard'))
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('scratchcard', history) }, [history])
 
   const buyCard = () => {
     if (money < bet) return

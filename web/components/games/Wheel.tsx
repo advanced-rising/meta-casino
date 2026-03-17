@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, useAnimation } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const BET_OPTIONS = [100, 500, 1000, 2000]
 
@@ -29,12 +30,13 @@ const FortuneWheel = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
   const [spinning, setSpinning] = useState(false)
   const [result, setResult] = useState<{ label: string; mult: number } | null>(null)
   const [winAmount, setWinAmount] = useState(0)
-  const [history, setHistory] = useState<{ label: string; profit: number }[]>([])
+  const [history, setHistory] = useState<{ label: string; profit: number }[]>(() => loadHistory('wheel'))
   const controls = useAnimation()
   const currentAngle = useRef(0)
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('wheel', history) }, [history])
 
   const spin = () => {
     if (spinning || money < bet) return
@@ -42,7 +44,7 @@ const FortuneWheel = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
     setSpinning(true); setResult(null); setWinAmount(0)
 
     const segIndex = Math.floor(Math.random() * SEGMENTS.length)
-    const segAngle = (segIndex / SEGMENTS.length) * 360
+    const segAngle = ((segIndex + 0.5) / SEGMENTS.length) * 360
     const spins = 7 + Math.floor(Math.random() * 4) // 7~10 바퀴 (최소 5바퀴 이상)
     const finalAngle = currentAngle.current + spins * 360 + segAngle
 
@@ -50,7 +52,7 @@ const FortuneWheel = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
       rotate: finalAngle,
       transition: { duration: 5 + spins * 0.3, ease: [0.12, 0.75, 0.15, 1] },
     }).then(() => {
-      currentAngle.current = finalAngle % 360
+      currentAngle.current = finalAngle
       const seg = SEGMENTS[segIndex]
       setResult(seg)
       const win = bet * seg.mult
@@ -138,7 +140,7 @@ const FortuneWheel = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
                   ${v >= 1000 ? `${v / 1000}K` : v}
                 </button>
               ))}
-              <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+              <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
                 className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                 style={{ background: '#1a0520', color: '#ffd700', border: '1px solid #c9a84c' }} />
             </div>

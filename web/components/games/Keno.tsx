@@ -1,10 +1,26 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 const BET_OPTIONS = [100, 500, 1000, 2000]
 const TOTAL = 40
 const DRAW_COUNT = 10
-const PAYOUTS: Record<number, number> = { 0: 0, 1: 0, 2: 1, 3: 2, 4: 5, 5: 12, 6: 30, 7: 80, 8: 200, 9: 500, 10: 2000 }
+// 배당표: [선택 수][적중 수] = 배율
+const PAYOUT_TABLE: Record<number, Record<number, number>> = {
+  1: { 1: 3 },
+  2: { 1: 1, 2: 6 },
+  3: { 2: 2, 3: 16 },
+  4: { 2: 1, 3: 5, 4: 30 },
+  5: { 2: 1, 3: 3, 4: 12, 5: 60 },
+  6: { 3: 2, 4: 5, 5: 25, 6: 100 },
+  7: { 3: 1, 4: 3, 5: 12, 6: 50, 7: 200 },
+  8: { 4: 2, 5: 8, 6: 30, 7: 100, 8: 500 },
+  9: { 4: 1, 5: 5, 6: 20, 7: 80, 8: 250, 9: 1000 },
+  10: { 4: 1, 5: 3, 6: 10, 7: 40, 8: 200, 9: 500, 10: 2000 },
+}
+const getPayoutMult = (pickCount: number, hits: number): number => {
+  return PAYOUT_TABLE[pickCount]?.[hits] || 0
+}
 
 const Keno = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const [money, setMoneyLocal] = useState(0)
@@ -13,9 +29,10 @@ const Keno = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const [drawn, setDrawn] = useState<Set<number>>(new Set())
   const [playing, setPlaying] = useState(false)
   const [result, setResult] = useState<{ hits: number; win: number } | null>(null)
-  const [history, setHistory] = useState<{ hits: number; profit: number }[]>([])
+  const [history, setHistory] = useState<{ hits: number; profit: number }[]>(() => loadHistory('keno'))
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('keno', history) }, [history])
 
   const toggle = (n: number) => {
     if (playing) return
@@ -36,7 +53,7 @@ const Keno = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
       if (i >= DRAW_COUNT) {
         clearInterval(interval)
         const hits = arr.filter(n => picks.has(n)).length
-        const mult = PAYOUTS[hits] || 0
+        const mult = getPayoutMult(picks.size, hits)
         const win = bet * mult
         if (win > 0) setMoney(addMoney(win))
         else setMoney(getMoney())
@@ -77,7 +94,7 @@ const Keno = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             <div className='flex items-center gap-[6px] flex-wrap justify-center'>
               {BET_OPTIONS.map(v => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                 style={{ background: bet === v ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.04)', color: bet === v ? '#fff' : '#666' }}>${v >= 1000 ? `${v/1000}K` : v}</button>))}
-              <input type='number' min={1} value={bet} onChange={e => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+              <input type='number' min={1} value={bet} onChange={e => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
                 className='w-[50px] h-[22px] rounded-[8px] text-[10px] text-center font-bold outline-none' style={{ background: 'rgba(255,255,255,0.06)', color: '#fff', border: 'none' }} />
             </div>
           )}
@@ -88,8 +105,8 @@ const Keno = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
         </div>
       </div>
       <div className='hidden lg:flex flex-col w-[200px] overflow-y-auto py-[12px] px-[10px] gap-[10px]' style={{ background: 'rgba(0,0,0,0.3)', borderLeft: '1px solid rgba(255,255,255,0.04)' }}>
-        <div className='glass p-[10px]'><div className='text-[10px] font-semibold mb-[4px]' style={{ color: '#fff' }}>배당표</div>
-          {Object.entries(PAYOUTS).filter(([,v]) => v > 0).map(([k,v]) => (<div key={k} className='flex justify-between text-[10px]'><span style={{ color: '#888' }}>{k}적중</span><span style={{ color: '#22c55e' }}>x{v}</span></div>))}
+        <div className='glass p-[10px]'><div className='text-[10px] font-semibold mb-[4px]' style={{ color: '#fff' }}>배당표 ({picks.size}선택)</div>
+          {picks.size > 0 && PAYOUT_TABLE[picks.size] ? Object.entries(PAYOUT_TABLE[picks.size]).map(([k,v]) => (<div key={k} className='flex justify-between text-[10px]'><span style={{ color: '#888' }}>{k}적중</span><span style={{ color: '#22c55e' }}>x{v}</span></div>)) : <span style={{ color: '#666', fontSize: '10px' }}>숫자를 선택하세요</span>}
         </div>
         <div className='glass p-[10px] flex-1'><div className='text-[10px] font-semibold mb-[4px]' style={{ color: '#fff' }}>기록</div>
           {history.map((h, i) => (<div key={i} className='flex justify-between text-[10px]'><span style={{ color: '#888' }}>{h.hits}hits</span><span style={{ color: h.profit > 0 ? '#22c55e' : '#ef4444' }}>{h.profit > 0 ? `+$${h.profit}` : `-$${Math.abs(h.profit)}`}</span></div>))}

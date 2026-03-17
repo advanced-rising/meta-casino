@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const HORSES = [
   { id: 1, name: 'THUNDER', emoji: '🐎', color: '#e74c3c', odds: 2.5 },
@@ -21,7 +22,7 @@ const HorseRace = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
   const [positions, setPositions] = useState<number[]>(HORSES.map(() => 0))
   const [winner, setWinner] = useState<number | null>(null)
   const [result, setResult] = useState<{ won: boolean; profit: number } | null>(null)
-  const [history, setHistory] = useState<{ horse: string; won: boolean; profit: number }[]>([])
+  const [history, setHistory] = useState<{ horse: string; won: boolean; profit: number }[]>(() => loadHistory('horserace'))
   const raceRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
@@ -35,24 +36,31 @@ const HorseRace = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
     raceRef.current = setInterval(() => {
       setPositions((prev) => {
         const next = prev.map((p) => p + Math.random() * 3 + 0.5)
-        const winIdx = next.findIndex((p) => p >= TRACK_WIDTH)
-        if (winIdx >= 0) {
-          clearInterval(raceRef.current!)
-          const winHorse = HORSES[winIdx]
-          setWinner(winHorse.id)
-          const won = winHorse.id === selectedHorse
-          const profit = won ? Math.floor(bet * winHorse.odds) - bet : -bet
-          if (won) setMoney(addMoney(Math.floor(bet * winHorse.odds)))
-          else setMoney(getMoney())
-          setResult({ won, profit })
-          setHistory((prev) => [{ horse: winHorse.name, won, profit }, ...prev.slice(0, 29)])
-          setRacing(false)
-          return next.map((p, i) => i === winIdx ? TRACK_WIDTH : Math.min(p, TRACK_WIDTH - 1))
-        }
         return next
       })
     }, 80)
   }
+
+  useEffect(() => {
+    if (!racing) return
+    let winIdx = -1
+    let maxPos = -1
+    positions.forEach((p, i) => { if (p >= TRACK_WIDTH && p > maxPos) { maxPos = p; winIdx = i } })
+    if (winIdx >= 0) {
+      if (raceRef.current) clearInterval(raceRef.current)
+      const winHorse = HORSES[winIdx]
+      setWinner(winHorse.id)
+      const won = winHorse.id === selectedHorse
+      const profit = won ? Math.floor(bet * winHorse.odds) - bet : -bet
+      if (won) setMoney(addMoney(Math.floor(bet * winHorse.odds)))
+      else setMoney(getMoney())
+      setResult({ won, profit })
+      setHistory((prev) => [{ horse: winHorse.name, won, profit }, ...prev.slice(0, 29)])
+      setRacing(false)
+    }
+  }, [positions, racing])
+
+  useEffect(() => { saveHistory('horserace', history) }, [history])
 
   useEffect(() => { return () => { if (raceRef.current) clearInterval(raceRef.current) } }, [])
   const totalProfit = history.reduce((s, h) => s + h.profit, 0)
@@ -121,7 +129,7 @@ const HorseRace = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
                     ${v >= 1000 ? `${v / 1000}K` : v}
                   </button>
                 ))}
-                <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+                <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
                   className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                   style={{ background: '#0d1a05', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>

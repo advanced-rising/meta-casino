@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, useAnimation } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const SYMBOLS = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '7️⃣', '⭐']
 const COLS = 5
@@ -11,7 +12,7 @@ const EXTRA = 30
 const LINE_DEFS = [
   [0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24],
   [0,6,12,18,24],[4,8,12,16,20],
-  [0,6,12,8,4],[20,16,12,6,0],
+  [0,6,12,8,4],[20,16,12,18,24],
 ]
 
 const LINE_NAMES = [
@@ -138,7 +139,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
   const [spinSignal, setSpinSignal] = useState(0)
   const [speed, setSpeed] = useState(1)
   const [showInfo, setShowInfo] = useState(false)
-  const [gameHistory, setGameHistory] = useState<{ win: number; lines: number; bet: number }[]>([])
+  const [gameHistory, setGameHistory] = useState<{ win: number; lines: number; bet: number }[]>(() => loadHistory('slotmachine'))
   const speedRef = useRef(1)
   const stoppedCols = useRef(0)
   const nextGrid = useRef<string[][]>([])
@@ -146,6 +147,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('slotmachine', gameHistory) }, [gameHistory])
   useEffect(() => { autoRef.current = autoSpin }, [autoSpin])
   useEffect(() => { speedRef.current = speed }, [speed])
 
@@ -155,13 +157,17 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
     let total = 0; const cells = new Set<number>(); let lineCount = 0
     for (const line of LINE_DEFS) {
       const syms = line.map((i) => flat[i])
-      let mc = 1
-      for (let i = 1; i < syms.length; i++) { if (syms[i] === syms[0]) mc++; else break }
-      if (mc >= 3) {
-        // 3매치=x1, 4매치=x3, 5매치=x10
-        const matchBonus = mc === 3 ? 1 : mc === 4 ? 3 : 10
-        total += bet * (SYMBOL_MULT[syms[0]] || 2) * matchBonus
-        line.slice(0, mc).forEach((i) => cells.add(i))
+      // 라인 내 어디서든 가장 긴 연속 매치를 찾음
+      let bestStart = 0, bestLen = 1, curStart = 0, curLen = 1
+      for (let i = 1; i < syms.length; i++) {
+        if (syms[i] === syms[curStart]) { curLen++ }
+        else { curStart = i; curLen = 1 }
+        if (curLen > bestLen) { bestStart = curStart; bestLen = curLen }
+      }
+      if (bestLen >= 3) {
+        const matchBonus = bestLen === 3 ? 1 : bestLen === 4 ? 3 : 10
+        total += bet * (SYMBOL_MULT[syms[bestStart]] || 2) * matchBonus
+        line.slice(bestStart, bestStart + bestLen).forEach((i) => cells.add(i))
         lineCount++
       }
     }
@@ -300,7 +306,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
               </button>
             ))}
             <input type='number' min={1} disabled={spinning} value={bet}
-              onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+              onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
               className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
               style={{ background: '#111', color: '#ffd700', border: '1px solid #c9a84c' }} />
           </div>

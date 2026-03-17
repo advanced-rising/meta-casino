@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const BET_OPTIONS = [100, 500, 1000, 5000]
 
@@ -11,11 +12,12 @@ const CoinFlip = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
   const [result, setResult] = useState<'heads' | 'tails' | null>(null)
   const [choice, setChoice] = useState<'heads' | 'tails' | null>(null)
   const [won, setWon] = useState<boolean | null>(null)
-  const [history, setHistory] = useState<{ choice: string; result: string; profit: number }[]>([])
+  const [history, setHistory] = useState<{ choice: string; result: string; profit: number }[]>(() => loadHistory('coinflip'))
   const [flipAngle, setFlipAngle] = useState(0)
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('coinflip', history) }, [history])
 
   const flip = (side: 'heads' | 'tails') => {
     if (flipping || money < bet) return
@@ -119,7 +121,7 @@ const CoinFlip = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
               </button>
             ))}
             <input type='number' min={1} value={bet} disabled={flipping}
-              onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+              onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
               className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
               style={{ background: '#0a0a00', color: '#ffd700', border: '1px solid #c9a84c' }} />
           </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const SUITS = ['♠', '♥', '♦', '♣']
 const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
@@ -31,10 +32,11 @@ const Baccarat = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
   const [playerCards, setPlayerCards] = useState<Card[]>([])
   const [bankerCards, setBankerCards] = useState<Card[]>([])
   const [result, setResult] = useState<{ winner: string; profit: number } | null>(null)
-  const [history, setHistory] = useState<{ winner: string; side: string; profit: number }[]>([])
+  const [history, setHistory] = useState<{ winner: string; side: string; profit: number }[]>(() => loadHistory('baccarat'))
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('baccarat', history) }, [history])
 
   const deal = () => {
     if (money < bet || playing) return
@@ -43,10 +45,24 @@ const Baccarat = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
     const pc = [drawCard(), drawCard()]
     const bc = [drawCard(), drawCard()]
 
-    // 3번째 카드 규칙 (간소화)
+    // 3번째 카드 규칙 (내추럴 체크)
     const pt = handTotal(pc); const bt = handTotal(bc)
-    if (pt <= 5) pc.push(drawCard())
-    if (bt <= 5) bc.push(drawCard())
+    if (pt >= 8 || bt >= 8) {
+      // 내추럴: 양측 모두 추가 카드 없음
+    } else {
+      let playerThird: Card | null = null
+      if (pt <= 5) { playerThird = drawCard(); pc.push(playerThird) }
+      if (playerThird === null) {
+        if (bt <= 5) bc.push(drawCard())
+      } else {
+        const p3v = cardPoint(playerThird)
+        if (bt <= 2) bc.push(drawCard())
+        else if (bt === 3 && p3v !== 8) bc.push(drawCard())
+        else if (bt === 4 && [2,3,4,5,6,7].includes(p3v)) bc.push(drawCard())
+        else if (bt === 5 && [4,5,6,7].includes(p3v)) bc.push(drawCard())
+        else if (bt === 6 && [6,7].includes(p3v)) bc.push(drawCard())
+      }
+    }
 
     setPlayerCards(pc); setBankerCards(bc)
 
@@ -136,7 +152,7 @@ const Baccarat = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
                     ${v >= 1000 ? `${v / 1000}K` : v}
                   </button>
                 ))}
-                <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+                <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
                   className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                   style={{ background: '#051505', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>

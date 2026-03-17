@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 
 const BET_OPTIONS = [100, 500, 1000, 2000]
 
@@ -11,18 +12,20 @@ const Limbo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const [playing, setPlaying] = useState(false)
   const [result, setResult] = useState<number | null>(null)
   const [won, setWon] = useState<boolean | null>(null)
-  const [history, setHistory] = useState<{ target: number; result: number; profit: number }[]>([])
+  const [history, setHistory] = useState<{ target: number; result: number; profit: number }[]>(() => loadHistory('limbo'))
 
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('limbo', history) }, [history])
 
   const play = () => {
     if (money < bet || playing) return
     setMoney(subtractMoney(bet)); setPlaying(true); setResult(null); setWon(null)
 
     setTimeout(() => {
-      const r = Math.random()
-      const val = Math.max(1, Math.round((1 / (r + 0.01)) * 100) / 100)
+      let r = Math.random()
+      while (r === 0) r = Math.random()
+      const val = Math.max(1.01, Math.round((1 / r) * 100) / 100)
       setResult(val)
       const w = val >= target
       setWon(w)
@@ -63,7 +66,7 @@ const Limbo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             <div className='flex items-center gap-[6px] flex-wrap justify-center'>
               {BET_OPTIONS.map((v) => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                 style={{ background: bet === v ? '#c9a84c' : '#0a0a2a', color: bet === v ? '#000' : '#666' }}>${v >= 1000 ? `${v / 1000}K` : v}</button>))}
-              <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+              <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setBet(v) }}
                 className='w-[50px] h-[22px] rounded-[4px] text-[10px] text-center font-bold outline-none' style={{ background: '#05051a', color: '#ffd700', border: '1px solid #c9a84c' }} />
             </div>
           )}

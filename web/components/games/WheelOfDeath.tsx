@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
+import { loadHistory, saveHistory } from '@/utils/gameHistory'
 const BET_OPTIONS = [100, 500, 1000, 2000]
 const CHAMBERS = 6
 const MULTIPLIERS = [1.5, 2, 3, 5, 10, 25]
@@ -13,9 +14,10 @@ const WheelOfDeath = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
   const [bullet, setBullet] = useState(0)
   const [result, setResult] = useState<'survive'|'dead'|null>(null)
   const [spinning, setSpinning] = useState(false)
-  const [history, setHistory] = useState<{rounds:number;profit:number}[]>([])
+  const [history, setHistory] = useState<{rounds:number;profit:number}[]>(() => loadHistory('wheelofdeath'))
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+  useEffect(() => { saveHistory('wheelofdeath', history) }, [history])
 
   const start = () => {
     if (money < bet) return
@@ -34,10 +36,10 @@ const WheelOfDeath = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
         setMoney(getMoney())
       } else {
         setResult('survive'); setRound(round + 1)
-        if (round + 1 >= CHAMBERS - 1) {
-          const win = Math.floor(bet * MULTIPLIERS[CHAMBERS - 2])
+        if (round + 1 >= CHAMBERS) {
+          const win = Math.floor(bet * MULTIPLIERS[CHAMBERS - 1])
           setMoney(addMoney(win)); setPlaying(false)
-          setHistory(prev => [{ rounds: CHAMBERS - 1, profit: win - bet }, ...prev.slice(0, 29)])
+          setHistory(prev => [{ rounds: CHAMBERS, profit: win - bet }, ...prev.slice(0, 29)])
         }
       }
       setSpinning(false)
@@ -45,7 +47,7 @@ const WheelOfDeath = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
   }
 
   const cashOut = () => {
-    if (!playing || round === 0) return
+    if (!playing || round === 0 || spinning) return
     const win = Math.floor(bet * MULTIPLIERS[round - 1])
     setMoney(addMoney(win)); setPlaying(false)
     setHistory(prev => [{ rounds: round, profit: win - bet }, ...prev.slice(0, 29)])

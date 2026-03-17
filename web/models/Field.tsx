@@ -37,10 +37,20 @@ const Building = ({ position, width, depth, height, color, emissive, name }: {
         </mesh>
       ))
     )}
-    {/* 입구 (앞면 하단) */}
+    {/* 입구 */}
     <mesh position={[0, 0.8, depth / 2 + 0.01]}>
       <boxGeometry args={[1.2, 1.6, 0.01]} />
       <meshStandardMaterial color='#111' />
+    </mesh>
+    {/* 네온 간판 (건물 상단 앞면) */}
+    <mesh position={[0, height - 0.8, depth / 2 + 0.05]}>
+      <boxGeometry args={[width * 0.8, 0.6, 0.05]} />
+      <meshStandardMaterial color={emissive || '#fff'} emissive={emissive || '#fff'} emissiveIntensity={1.5} />
+    </mesh>
+    {/* 입구 위 조명 */}
+    <mesh position={[0, 1.8, depth / 2 + 0.03]}>
+      <boxGeometry args={[1.5, 0.15, 0.03]} />
+      <meshStandardMaterial color={emissive || '#fff'} emissive={emissive || '#fff'} emissiveIntensity={1} />
     </mesh>
   </group>
 )
@@ -86,22 +96,22 @@ const Floor = ({ onClick }: { onClick?: (e: any) => void }) => (
   </group>
 )
 
-// 가로등 (밤에 빛남)
+// 가로등
 const StreetLight = ({ position, isNight }: { position: [number, number, number]; isNight: boolean }) => (
   <group position={position}>
     <mesh castShadow position={[0, 2, 0]}>
       <cylinderGeometry args={[0.04, 0.05, 4, 6]} />
-      <meshStandardMaterial color='#555' metalness={0.6} />
+      <meshStandardMaterial color='#666' metalness={0.6} />
     </mesh>
     <mesh position={[0, 4.1, 0]}>
-      <sphereGeometry args={[0.15, 8, 8]} />
+      <sphereGeometry args={[0.2, 8, 8]} />
       <meshStandardMaterial
-        color={isNight ? '#ffeaa7' : '#ddd'}
-        emissive={isNight ? '#ffd700' : '#555'}
-        emissiveIntensity={isNight ? 1 : 0.1}
+        color={isNight ? '#fff5d0' : '#ddd'}
+        emissive={isNight ? '#ffd700' : '#888'}
+        emissiveIntensity={isNight ? 2 : 0.2}
       />
     </mesh>
-    {isNight && <pointLight position={[0, 3.5, 0]} intensity={0.8} distance={8} color='#ffd700' />}
+    {isNight && <pointLight position={[0, 3.8, 0]} intensity={2} distance={12} color='#ffeaa7' decay={2} />}
   </group>
 )
 
@@ -117,12 +127,19 @@ const Field = ({
   const clickTargetRef = useRef<{ x: number; z: number } | null>(null)
 
   const [isNight, setIsNight] = useState(false)
+  const [sunPos, setSunPos] = useState<[number, number, number]>([100, 50, 100])
+  const [bgColor, setBgColor] = useState('#87ceeb')
 
   useEffect(() => {
     if (typeof window !== 'undefined') setIsSet(true)
-    const checkTime = () => { const d = getDayProgress(); setIsNight(!d.isDay) }
+    const checkTime = () => {
+      const d = getDayProgress()
+      setIsNight(!d.isDay)
+      setSunPos(d.sunPosition)
+      setBgColor(d.bgColor)
+    }
     checkTime()
-    const timer = setInterval(checkTime, 60000) // 1분마다 체크
+    const timer = setInterval(checkTime, 10000) // 10초마다 체크
     return () => clearInterval(timer)
   }, [])
 
@@ -179,7 +196,7 @@ const Field = ({
   return (
     isSet && clients && socket && (
       <>
-        <Canvas shadows camera={{ zoom: 60, position: [10, 10, 10], near: -1000, far: 1000 }} orthographic style={{ background: isNight ? '#050510' : '#87ceeb' }}>
+        <Canvas shadows camera={{ zoom: 60, position: [10, 10, 10], near: -1000, far: 1000 }} orthographic style={{ background: bgColor }}>
           <Lights />
           <Suspense fallback={null}>
             {/* 다른 플레이어 */}
@@ -209,7 +226,7 @@ const Field = ({
           <Floor onClick={(e: any) => { if (e.point) clickTargetRef.current = { x: e.point.x, z: e.point.z } }} />
 
           {/* 가로등 (도로변) */}
-          {[-40, -28, -16, -4, 8, 20, 32, 44].map((v, i) => (
+          {[-44, -36, -28, -20, -12, -4, 8, 16, 24, 32, 40].map((v, i) => (
             <React.Fragment key={`sl-${i}`}>
               <StreetLight position={[4.5, 0, v]} isNight={isNight} />
               <StreetLight position={[-4.5, 0, v]} isNight={isNight} />
@@ -231,7 +248,7 @@ const Field = ({
             </mesh>
           ))}
 
-          <Sky sunPosition={isNight ? [0, -50, 0] : [100, 50, 100]} />
+          <Sky sunPosition={sunPos} />
         </Canvas>
 
         {/* 게임장 입장 UI */}

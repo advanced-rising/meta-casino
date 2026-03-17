@@ -205,6 +205,31 @@ const Field = ({
           <SimpleTree position={[-10, 0, -40]} />
           <SimpleTree position={[30, 0, -35]} />
 
+          {/* 맵 경계 벽 */}
+          {[
+            { pos: [MAP_SIZE, 1, 0] as [number, number, number], args: [0.3, 2, MAP_SIZE * 2] as [number, number, number] },
+            { pos: [-MAP_SIZE, 1, 0] as [number, number, number], args: [0.3, 2, MAP_SIZE * 2] as [number, number, number] },
+            { pos: [0, 1, MAP_SIZE] as [number, number, number], args: [MAP_SIZE * 2, 2, 0.3] as [number, number, number] },
+            { pos: [0, 1, -MAP_SIZE] as [number, number, number], args: [MAP_SIZE * 2, 2, 0.3] as [number, number, number] },
+          ].map(({ pos, args }, i) => (
+            <mesh key={`wall-${i}`} castShadow receiveShadow position={pos}>
+              <boxGeometry args={args} />
+              <meshStandardMaterial color='#5a4a3a' roughness={0.9} />
+            </mesh>
+          ))}
+          {/* 벽 위 장식 라인 */}
+          {[
+            { pos: [MAP_SIZE, 2.05, 0] as [number, number, number], args: [0.4, 0.1, MAP_SIZE * 2] as [number, number, number] },
+            { pos: [-MAP_SIZE, 2.05, 0] as [number, number, number], args: [0.4, 0.1, MAP_SIZE * 2] as [number, number, number] },
+            { pos: [0, 2.05, MAP_SIZE] as [number, number, number], args: [MAP_SIZE * 2, 0.1, 0.4] as [number, number, number] },
+            { pos: [0, 2.05, -MAP_SIZE] as [number, number, number], args: [MAP_SIZE * 2, 0.1, 0.4] as [number, number, number] },
+          ].map(({ pos, args }, i) => (
+            <mesh key={`wallcap-${i}`} position={pos}>
+              <boxGeometry args={args} />
+              <meshStandardMaterial color='#8B6914' metalness={0.3} />
+            </mesh>
+          ))}
+
           <Sky sunPosition={[100, 50, 100]} />
         </Canvas>
 

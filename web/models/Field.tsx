@@ -113,10 +113,10 @@ const StreetLight = ({ position, isNight }: { position: [number, number, number]
       <meshStandardMaterial
         color={isNight ? '#fff5d0' : '#ddd'}
         emissive={isNight ? '#ffd700' : '#888'}
-        emissiveIntensity={isNight ? 2 : 0.2}
+        emissiveIntensity={isNight ? 3 : 0.2}
       />
     </mesh>
-    {isNight && <pointLight position={[0, 3.8, 0]} intensity={2} distance={12} color='#ffeaa7' decay={2} />}
+    {isNight && <pointLight position={[0, 3.8, 0]} intensity={4} distance={18} color='#ffeaa7' decay={1.5} />}
   </group>
 )
 
@@ -233,7 +233,7 @@ const Field = ({
             })}
           </Suspense>
 
-          <Floor groundColor={isNight ? '#1a1a30' : '#3a5a2a'} onClick={(e: any) => { if (e.point) clickTargetRef.current = { x: e.point.x, z: e.point.z } }} />
+          <Floor groundColor={isNight ? '#2a2a45' : '#3a5a2a'} onClick={(e: any) => { if (e.point) clickTargetRef.current = { x: e.point.x, z: e.point.z } }} />
 
           {/* 가로등 (도로변) */}
           {[-44, -36, -28, -20, -12, -4, 8, 16, 24, 32, 40].map((v, i) => (

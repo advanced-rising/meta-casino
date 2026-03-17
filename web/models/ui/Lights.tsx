@@ -39,20 +39,20 @@ export function getDayProgress() {
 
   // 조명 강도 (밤에도 충분히 밝게)
   const moonBrightness = Math.sin(sunAngle) * 0.5
-  const intensity = isDay ? Math.sin(sunAngle) * 2.0 : 1.2 + moonBrightness
-  const ambientIntensity = isDay ? 0.2 + Math.sin(sunAngle) * 0.3 : 0.6 + moonBrightness
+  const intensity = isDay ? Math.sin(sunAngle) * 2.0 : 2.0 + moonBrightness
+  const ambientIntensity = isDay ? 0.2 + Math.sin(sunAngle) * 0.3 : 1.2 + moonBrightness
 
   // 하늘 색상
   const noon = isDay ? Math.sin(sunAngle) : 0
   const skyColor = isDay
     ? new THREE.Color().lerpColors(new THREE.Color('#ff8c42'), new THREE.Color('#87ceeb'), noon)
-    : new THREE.Color('#2a2a4a')
+    : new THREE.Color('#4a4a6a')
   const groundColor = isDay
     ? new THREE.Color().lerpColors(new THREE.Color('#4a3520'), new THREE.Color('#556b2f'), noon)
-    : new THREE.Color('#202035')
+    : new THREE.Color('#3a3a55')
   const sunColor = isDay
     ? new THREE.Color().lerpColors(new THREE.Color('#ff6b35'), new THREE.Color('#fffbe6'), noon)
-    : new THREE.Color('#bbbbee')
+    : new THREE.Color('#ddddf8')
 
   // Sky 컴포넌트용 sunPosition
   const sunPosition: [number, number, number] = isDay
@@ -65,7 +65,7 @@ export function getDayProgress() {
     if (noon < 0.3) bgColor = '#d4886b' // 일출/일몰
     else bgColor = '#6bb3d4' // 낮
   } else {
-    bgColor = '#1a1a35' // 밤
+    bgColor = '#2a2a50' // 밤
   }
 
   return { hour, isDay, sunAngle, intensity, ambientIntensity, skyColor, groundColor, sunColor, sunPosition, celestialX, celestialY, celestialZ, bgColor }
@@ -96,7 +96,7 @@ function Lights() {
     if (hemiRef.current) {
       hemiRef.current.color.copy(d.skyColor)
       hemiRef.current.groundColor.copy(d.groundColor)
-      hemiRef.current.intensity = d.isDay ? 0.5 : 0.4
+      hemiRef.current.intensity = d.isDay ? 0.5 : 0.8
     }
     if (ambientRef.current) {
       ambientRef.current.intensity = d.ambientIntensity

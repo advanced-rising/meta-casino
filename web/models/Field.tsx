@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef, Suspense } from 'react'
 
-import { Sky, Loader, Sparkles, Stats } from '@react-three/drei'
+import { Sky, Loader, Sparkles } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import Lights from '@/models/ui/Lights'
 import Character, { OtherCharacter, CharacterInput } from '@/models/Character'
@@ -18,8 +18,8 @@ const SimpleBox = ({ position, args, color }: { position: [number, number, numbe
   </mesh>
 )
 
-const Floor = () => (
-  <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+const Floor = ({ onClick }: { onClick?: (e: any) => void }) => (
+  <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} onClick={onClick}>
     <planeGeometry args={[MAP_SIZE * 2, MAP_SIZE * 2]} />
     <meshStandardMaterial color='#c8d6b9' />
   </mesh>
@@ -65,6 +65,7 @@ const Field = ({
   // 모바일 입력 ref
   const charInputRef = useRef<CharacterInput | null>(null)
   const mobileInputRef = useRef<MobileInput>({ dx: 0, dy: 0, magnitude: 0, active: false })
+  const clickTargetRef = useRef<{ x: number; z: number } | null>(null)
 
   const handleMobileJump = useCallback(() => {
     if (charInputRef.current) {
@@ -118,7 +119,6 @@ const Field = ({
           }}
           orthographic
           style={{ background: '#c8d6b9' }}>
-          <Stats />
           <Lights />
 
           <Suspense fallback={null}>
@@ -144,6 +144,7 @@ const Field = ({
               onNearSpace={handleNearSpace}
               inputRef={charInputRef}
               mobileInputRef={mobileInputRef}
+              clickTarget={clickTargetRef}
             />
 
             {/* 게임장: 룰렛 테이블 */}
@@ -171,7 +172,9 @@ const Field = ({
             )}
           </Suspense>
 
-          <Floor />
+          <Floor onClick={(e: any) => {
+            if (e.point) clickTargetRef.current = { x: e.point.x, z: e.point.z }
+          }} />
 
           {MAP_BLOCKS.map(([x, y, z, w, h, d], i) => {
             const colors = ['#e74c3c', '#e67e22', '#9b59b6', '#27ae60', '#3498db', '#2980b9', '#1abc9c']

@@ -27,6 +27,7 @@ const Character = ({
   onNearSpace,
   inputRef,
   mobileInputRef,
+  clickTarget,
 }: {
   socket: SocketTypes
   enteredInput: boolean
@@ -34,6 +35,7 @@ const Character = ({
   onNearSpace: (space: { id: string; name: string; route: string } | null) => void
   inputRef?: React.MutableRefObject<CharacterInput | null>
   mobileInputRef?: React.MutableRefObject<MobileInput>
+  clickTarget?: React.MutableRefObject<{ x: number; z: number } | null>
 }) => {
   const activeAnimation = useRef<CharacterInput>({
     forward: false,
@@ -131,6 +133,24 @@ const Character = ({
     let moveX = 0
     let moveZ = 0
     let isMoving = false
+
+    // 클릭 이동
+    const ct = clickTarget?.current
+    if (ct && !anim.forward && !anim.backward && !anim.left && !anim.right) {
+      const dx = ct.x - obj.position.x
+      const dz = ct.z - obj.position.z
+      const dist = Math.sqrt(dx * dx + dz * dz)
+      if (dist > 0.5) {
+        const spd = dist > 3 ? 10 : 5
+        moveX = (dx / dist) * spd * delta
+        moveZ = (dz / dist) * spd * delta
+        rotationY.current = Math.atan2(dx, dz)
+        isMoving = true
+        anim.run = dist > 3
+      } else {
+        clickTarget.current = null // 도착
+      }
+    }
 
     // 모바일 조이스틱 입력
     const mobile = mobileInputRef?.current

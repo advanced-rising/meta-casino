@@ -4,7 +4,7 @@ import { getMoney, addMoney, subtractMoney } from '@/utils/money'
 
 const CARDS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 const SUITS = ['♠', '♥', '♦', '♣']
-const SUIT_COLORS: Record<string, string> = { '♠': '#fff', '♥': '#e74c3c', '♦': '#e74c3c', '♣': '#fff' }
+const SUIT_COLORS: Record<string, string> = { '♠': '#1a1a1a', '♥': '#e74c3c', '♦': '#e74c3c', '♣': '#1a1a1a' }
 const cardValue = (c: string) => CARDS.indexOf(c) + 1
 const BET_OPTIONS = [100, 500, 1000, 2000]
 
@@ -77,12 +77,12 @@ const HiLo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
           {/* 카드 영역 */}
           <div className='flex items-center gap-[20px]'>
             {/* 현재 카드 */}
-            <motion.div className='w-[100px] h-[140px] rounded-[10px] flex flex-col items-center justify-center'
+            <motion.div className='w-[130px] h-[180px] rounded-[10px] flex flex-col items-center justify-center'
               style={{ background: '#fff', border: '3px solid #c9a84c', boxShadow: '0 4px 15px rgba(0,0,0,0.3)' }}>
-              <span style={{ fontSize: '32px', fontWeight: 900, color: SUIT_COLORS[currentCard.suit] }}>
+              <span style={{ fontSize: '42px', fontWeight: 900, color: SUIT_COLORS[currentCard.suit] }}>
                 {currentCard.rank}
               </span>
-              <span style={{ fontSize: '24px', color: SUIT_COLORS[currentCard.suit] }}>{currentCard.suit}</span>
+              <span style={{ fontSize: '32px', color: SUIT_COLORS[currentCard.suit] }}>{currentCard.suit}</span>
             </motion.div>
 
             {/* VS */}
@@ -92,18 +92,18 @@ const HiLo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             <motion.div
               animate={showNext ? { rotateY: 0 } : { rotateY: 180 }}
               transition={{ duration: 0.5 }}
-              className='w-[100px] h-[140px] rounded-[10px] flex flex-col items-center justify-center'
+              className='w-[130px] h-[180px] rounded-[10px] flex flex-col items-center justify-center'
               style={{
                 background: showNext && nextCard ? '#fff' : 'linear-gradient(145deg, #1a3a8a, #0a1a4a)',
                 border: '3px solid #c9a84c', boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
               }}>
               {showNext && nextCard ? (
                 <>
-                  <span style={{ fontSize: '32px', fontWeight: 900, color: SUIT_COLORS[nextCard.suit] }}>{nextCard.rank}</span>
-                  <span style={{ fontSize: '24px', color: SUIT_COLORS[nextCard.suit] }}>{nextCard.suit}</span>
+                  <span style={{ fontSize: '42px', fontWeight: 900, color: SUIT_COLORS[nextCard.suit] }}>{nextCard.rank}</span>
+                  <span style={{ fontSize: '32px', color: SUIT_COLORS[nextCard.suit] }}>{nextCard.suit}</span>
                 </>
               ) : (
-                <span style={{ fontSize: '28px', color: '#c9a84c' }}>?</span>
+                <span style={{ fontSize: '40px', color: '#c9a84c' }}>?</span>
               )}
             </motion.div>
           </div>

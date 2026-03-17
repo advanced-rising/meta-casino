@@ -6,7 +6,7 @@ import Lights from '@/models/ui/Lights'
 import Character, { OtherCharacter, CharacterInput } from '@/models/Character'
 import MobileControls, { MobileInput } from '@/components/dom/MobileControls'
 import { useRouter } from 'next/router'
-import { RouletteTable, SlotCabinet, MineRock, RocketPad, CardTable, GiantCoin } from './ui/GameLandmarks'
+import { RouletteTable, SlotCabinet, MineRock, RocketPad, CardTable, GiantCoin, GiantDice, WheelStand } from './ui/GameLandmarks'
 import { MAP_BLOCKS } from '@/utils/mapData'
 
 const MAP_SIZE = 50
@@ -275,6 +275,16 @@ const Field = ({
             <GiantCoin position={[15, 0, 18]} />
             {nearSpace?.id === 'coinflip' && (
               <Sparkles count={60} size={6} position={[15, 1, 18]} scale={[3, 2, 3]} speed={5} color='#ffd700' />
+            )}
+
+            <GiantDice position={[-20, 0, 20]} />
+            {nearSpace?.id === 'dice' && (
+              <Sparkles count={60} size={6} position={[-20, 1, 20]} scale={[3, 2, 3]} speed={5} color='#2ecc71' />
+            )}
+
+            <WheelStand position={[20, 0, 20]} />
+            {nearSpace?.id === 'wheel' && (
+              <Sparkles count={60} size={6} position={[20, 1.5, 20]} scale={[3, 3, 3]} speed={5} color='#e91e63' />
             )}
           </Suspense>
 

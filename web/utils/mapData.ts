@@ -21,6 +21,8 @@ export const GAME_SPACES = [
   { id: 'crash', name: 'Crash 🚀', position: [-18, 0, -12] as [number, number, number], route: '/space/crash', radius: 3 },
   { id: 'hilo', name: 'Hi-Lo 🃏', position: [18, 0, -15] as [number, number, number], route: '/space/hilo', radius: 3 },
   { id: 'coinflip', name: 'Coin Flip 🪙', position: [15, 0, 18] as [number, number, number], route: '/space/coinflip', radius: 3 },
+  { id: 'dice', name: 'Dice 🎲', position: [-20, 0, 20] as [number, number, number], route: '/space/dice', radius: 3 },
+  { id: 'wheel', name: 'Fortune Wheel 🎡', position: [20, 0, 20] as [number, number, number], route: '/space/wheel', radius: 3 },
 ]
 
 // AABB 충돌 체크

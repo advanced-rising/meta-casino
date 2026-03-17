@@ -241,3 +241,51 @@ export const GiantCoin = (props: any) => {
     </group>
   )
 }
+
+// 주사위: 거대 주사위
+export const GiantDice = (props: any) => {
+  const ref = useRef<THREE.Mesh>(null!)
+  useFrame((state) => {
+    if (ref.current) {
+      ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.5) * 0.2
+      ref.current.rotation.z = Math.cos(state.clock.elapsedTime * 0.7) * 0.2
+      ref.current.position.y = 1 + Math.sin(state.clock.elapsedTime) * 0.1
+    }
+  })
+  return (
+    <group {...props}>
+      <mesh castShadow receiveShadow position={[0, 0.15, 0]}>
+        <cylinderGeometry args={[0.8, 0.9, 0.3, 8]} />
+        <meshStandardMaterial color='#2d5a27' />
+      </mesh>
+      <mesh ref={ref} castShadow>
+        <boxGeometry args={[0.8, 0.8, 0.8]} />
+        <meshStandardMaterial color='#fff' />
+      </mesh>
+    </group>
+  )
+}
+
+// 행운의 바퀴
+export const WheelStand = (props: any) => {
+  const wheelRef = useRef<THREE.Mesh>(null!)
+  useFrame((state) => {
+    if (wheelRef.current) wheelRef.current.rotation.z = state.clock.elapsedTime * 0.3
+  })
+  return (
+    <group {...props}>
+      <mesh castShadow position={[0, 1.5, 0]}>
+        <cylinderGeometry args={[0.08, 0.1, 3, 6]} />
+        <meshStandardMaterial color='#8B6914' metalness={0.5} />
+      </mesh>
+      <mesh ref={wheelRef} castShadow position={[0, 2.5, 0.15]}>
+        <torusGeometry args={[0.8, 0.08, 8, 16]} />
+        <meshStandardMaterial color='#e91e63' metalness={0.3} />
+      </mesh>
+      <mesh castShadow position={[0, 2.5, 0.15]}>
+        <cylinderGeometry args={[0.1, 0.1, 0.05, 8]} />
+        <meshStandardMaterial color='#ffd700' metalness={0.7} />
+      </mesh>
+    </group>
+  )
+}

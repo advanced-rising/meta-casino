@@ -7,6 +7,7 @@ import { Socket as SocketTypes } from 'socket.io-client'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { MAP_LIMIT, resolveCollisions, GAME_SPACES } from '@/utils/mapData'
+import { MobileInput } from '@/components/dom/MobileControls'
 
 interface Animations {
   [name: string]: {
@@ -25,12 +26,14 @@ const Character = ({
   nickname,
   onNearSpace,
   inputRef,
+  mobileInputRef,
 }: {
   socket: SocketTypes
   enteredInput: boolean
   nickname: string
   onNearSpace: (space: { id: string; name: string; route: string } | null) => void
   inputRef?: React.MutableRefObject<CharacterInput | null>
+  mobileInputRef?: React.MutableRefObject<MobileInput>
 }) => {
   const activeAnimation = useRef<CharacterInput>({
     forward: false,
@@ -122,6 +125,66 @@ const Character = ({
     const anim = activeAnimation.current
     const obj = characterGroup.current
 
+    // --- Movement ---
+    const speed = anim.run ? 14 : 7
+    const rotSpeed = 4.0
+    let moveX = 0
+    let moveZ = 0
+    let isMoving = false
+
+    // 모바일 조이스틱 입력
+    const mobile = mobileInputRef?.current
+    if (mobile && mobile.active) {
+      // 조이스틱 방향으로 바로 이동 + 캐릭터 회전
+      const mobileSpeed = mobile.magnitude > 0.7 ? 14 : 7
+      // 카메라 기준 방향 보정: 카메라가 (10,10,10)에서 보므로 45도 회전
+      const cameraAngleOffset = Math.PI / 4
+      const moveAngle = mobile.angle + cameraAngleOffset
+
+      moveX = Math.sin(moveAngle) * mobileSpeed * delta * mobile.magnitude
+      moveZ = Math.cos(moveAngle) * mobileSpeed * delta * mobile.magnitude
+
+      // 캐릭터가 이동 방향을 바라보도록
+      rotationY.current = moveAngle
+      isMoving = true
+
+      // 애니메이션 오버라이드
+      if (mobile.magnitude > 0.7) {
+        anim.run = true
+      } else {
+        anim.run = false
+      }
+    } else {
+      // 키보드 입력
+      if (currActionRef.current !== animations['dance'].clip) {
+        if (anim.left) rotationY.current += rotSpeed * delta
+        if (anim.right) rotationY.current -= rotSpeed * delta
+      }
+
+      const forward = new THREE.Vector3(0, 0, 1)
+      forward.applyAxisAngle(new THREE.Vector3(0, 1, 0), rotationY.current)
+
+      if (currActionRef.current !== animations['dance'].clip) {
+        if (anim.forward) {
+          moveX += forward.x * speed * delta
+          moveZ += forward.z * speed * delta
+          isMoving = true
+        }
+        if (anim.backward) {
+          moveX -= forward.x * speed * 0.6 * delta
+          moveZ -= forward.z * speed * 0.6 * delta
+          isMoving = true
+        }
+        if ((anim.left || anim.right) && !anim.forward && !anim.backward) {
+          moveX += forward.x * speed * 0.5 * delta
+          moveZ += forward.z * speed * 0.5 * delta
+          isMoving = true
+        }
+      }
+    }
+
+    obj.rotation.y = rotationY.current
+
     // --- Animation ---
     prevActionRef.current = currActionRef.current
 
@@ -129,7 +192,7 @@ const Character = ({
       currActionRef.current = animations['dance'].clip
     } else if (anim.jump && !isGrounded.current) {
       currActionRef.current = animations['jump'].clip
-    } else if (anim.forward || anim.backward || anim.left || anim.right) {
+    } else if (isMoving || anim.forward || anim.backward || anim.left || anim.right) {
       currActionRef.current = anim.run ? animations['run'].clip : animations['walk'].clip
     } else {
       currActionRef.current = animations['idle'].clip
@@ -140,40 +203,6 @@ const Character = ({
       currActionRef.current.reset().fadeIn(0.2).play()
     } else {
       currActionRef.current.play()
-    }
-
-    // --- Movement (직접 위치 제어) ---
-    const speed = anim.run ? 14 : 7
-    const rotSpeed = 4.0
-
-    // 회전
-    if (currActionRef.current !== animations['dance'].clip) {
-      if (anim.left) rotationY.current += rotSpeed * delta
-      if (anim.right) rotationY.current -= rotSpeed * delta
-    }
-
-    obj.rotation.y = rotationY.current
-
-    // 이동 방향
-    const forward = new THREE.Vector3(0, 0, 1)
-    forward.applyAxisAngle(new THREE.Vector3(0, 1, 0), rotationY.current)
-
-    let moveX = 0
-    let moveZ = 0
-
-    if (currActionRef.current !== animations['dance'].clip) {
-      if (anim.forward) {
-        moveX += forward.x * speed * delta
-        moveZ += forward.z * speed * delta
-      }
-      if (anim.backward) {
-        moveX -= forward.x * speed * 0.6 * delta
-        moveZ -= forward.z * speed * 0.6 * delta
-      }
-      if ((anim.left || anim.right) && !anim.forward && !anim.backward) {
-        moveX += forward.x * speed * 0.5 * delta
-        moveZ += forward.z * speed * 0.5 * delta
-      }
     }
 
     // 이전 위치 저장

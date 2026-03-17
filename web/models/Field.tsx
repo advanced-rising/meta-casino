@@ -4,7 +4,7 @@ import { Sky, Loader, Sparkles, Stats } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import Lights from '@/models/ui/Lights'
 import Character, { OtherCharacter, CharacterInput } from '@/models/Character'
-import MobileControls from '@/components/dom/MobileControls'
+import MobileControls, { MobileInput } from '@/components/dom/MobileControls'
 import { useRouter } from 'next/router'
 import StoneHenge from './ui/StoneHenge'
 import { useImmer } from 'use-immer'
@@ -65,16 +65,7 @@ const Field = ({
 
   // 모바일 입력 ref
   const charInputRef = useRef<CharacterInput | null>(null)
-
-  const handleMobileInput = useCallback((input: { forward: boolean; backward: boolean; left: boolean; right: boolean; run: boolean }) => {
-    if (charInputRef.current) {
-      charInputRef.current.forward = input.forward
-      charInputRef.current.backward = input.backward
-      charInputRef.current.left = input.left
-      charInputRef.current.right = input.right
-      charInputRef.current.run = input.run
-    }
-  }, [])
+  const mobileInputRef = useRef<MobileInput>({ angle: 0, magnitude: 0, active: false })
 
   const handleMobileJump = useCallback(() => {
     if (charInputRef.current) {
@@ -154,6 +145,7 @@ const Field = ({
               nickname={nickname}
               onNearSpace={handleNearSpace}
               inputRef={charInputRef}
+              mobileInputRef={mobileInputRef}
             />
 
             <StoneHenge
@@ -224,7 +216,7 @@ const Field = ({
 
         {/* 모바일 조이스틱 + 버튼 */}
         <MobileControls
-          onInput={handleMobileInput}
+          mobileInputRef={mobileInputRef}
           onJump={handleMobileJump}
           onInteract={handleMobileInteract}
         />

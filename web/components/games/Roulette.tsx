@@ -196,6 +196,11 @@ const Roulette = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
               {v >= 1000 ? `${v / 1000}K` : v}
             </button>
           ))}
+          <input type='number' min={1} value={selectedChip}
+            onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v > 0) setSelectedChip(v) }}
+            className='w-[70px] h-[36px] rounded-[4px] text-[12px] text-center font-bold outline-none'
+            style={{ background: '#0d2a0d', color: '#ffd700', border: '1px solid #c9a84c' }}
+          />
         </div>
 
         <div className='text-[12px]' style={{ color: '#aaa' }}>

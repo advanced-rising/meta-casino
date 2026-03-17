@@ -177,6 +177,11 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                   ${v >= 1000 ? `${v / 1000}K` : v}
                 </button>
               ))}
+              <input type='number' min={1} value={bet}
+                onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
+                className='w-[80px] h-[28px] rounded-[4px] text-[12px] text-center font-bold outline-none'
+                style={{ background: '#0a1a2a', color: '#ffd700', border: '1px solid #c9a84c' }}
+              />
             </div>
             <div className='flex items-center gap-[8px]'>
               <span style={{ color: '#c9a84c', fontSize: '11px', fontWeight: 700 }}>MINES</span>

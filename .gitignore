@@ -1,15 +1,16 @@
 # dependencies
-/node_modules
+node_modules/
 
 # testing
 /coverage
 
 # next.js
-/.next/
+.next/
 /out/
 
 # production
 /build
+dist/
 
 # misc
 .DS_Store
@@ -30,8 +31,8 @@ yarn-error.log*
 .vercel
 
 # next-pwa
-/public/workbox-*.js
-/public/sw.js
+public/workbox-*.js
+public/sw.js
 
 # prefer yarn than npm
 package-lock.json
@@ -40,3 +41,6 @@ report.*.json
 
 # .vscode Debugging
 .vscode/*-debug-profile
+
+# build cache
+*.tsbuildinfo

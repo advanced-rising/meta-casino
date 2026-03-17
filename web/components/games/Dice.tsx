@@ -5,7 +5,30 @@ import { getMoney, addMoney, subtractMoney } from '@/utils/money'
 const BET_OPTIONS = [100, 500, 1000, 2000]
 type BetType = 'over' | 'under' | 'exact'
 
-const DICE_FACES = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅']
+// 주사위 도트 위치 (3x3 그리드 기준, 1~6)
+const DOT_PATTERNS: Record<number, [number, number][]> = {
+  1: [[1,1]],
+  2: [[0,0],[2,2]],
+  3: [[0,0],[1,1],[2,2]],
+  4: [[0,0],[0,2],[2,0],[2,2]],
+  5: [[0,0],[0,2],[1,1],[2,0],[2,2]],
+  6: [[0,0],[0,1],[0,2],[2,0],[2,1],[2,2]],
+}
+
+const DiceFace = ({ value, size = 70 }: { value: number; size?: number }) => {
+  const dots = DOT_PATTERNS[value] || []
+  const cell = size / 4
+  return (
+    <div className='rounded-[10px] relative' style={{ width: size, height: size, background: '#fff', border: '3px solid #c9a84c', boxShadow: '0 4px 15px rgba(0,0,0,0.3)' }}>
+      {dots.map(([col, row], i) => (
+        <div key={i} className='absolute rounded-full' style={{
+          width: cell * 0.7, height: cell * 0.7, background: '#1a1a1a',
+          left: cell * 0.65 + col * cell, top: cell * 0.65 + row * cell,
+        }} />
+      ))}
+    </div>
+  )
+}
 
 const Dice = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const [money, setMoneyLocal] = useState(0)
@@ -82,22 +105,18 @@ const Dice = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
           </span>
 
           {/* 주사위 */}
-          <div className='flex items-center gap-[24px]'>
+          <div className='flex items-center gap-[20px]'>
             <motion.div animate={shaking ? { rotate: [0, 15, -15, 10, -10, 0], scale: [1, 1.1, 0.9, 1.05, 1] } : {}}
-              transition={{ duration: 0.3, repeat: shaking ? Infinity : 0 }}
-              className='w-[80px] h-[80px] rounded-[12px] flex items-center justify-center'
-              style={{ background: '#fff', border: '3px solid #c9a84c', boxShadow: '0 4px 15px rgba(0,0,0,0.3)', fontSize: '50px' }}>
-              {DICE_FACES[dice1 - 1]}
+              transition={{ duration: 0.3, repeat: shaking ? Infinity : 0 }}>
+              <DiceFace value={dice1} size={80} />
             </motion.div>
             <span className='arcade-title text-[20px]' style={{ color: '#c9a84c' }}>+</span>
             <motion.div animate={shaking ? { rotate: [0, -15, 15, -10, 10, 0], scale: [1, 0.9, 1.1, 0.95, 1] } : {}}
-              transition={{ duration: 0.3, repeat: shaking ? Infinity : 0, delay: 0.05 }}
-              className='w-[80px] h-[80px] rounded-[12px] flex items-center justify-center'
-              style={{ background: '#fff', border: '3px solid #c9a84c', boxShadow: '0 4px 15px rgba(0,0,0,0.3)', fontSize: '50px' }}>
-              {DICE_FACES[dice2 - 1]}
+              transition={{ duration: 0.3, repeat: shaking ? Infinity : 0, delay: 0.05 }}>
+              <DiceFace value={dice2} size={80} />
             </motion.div>
             <span className='arcade-title text-[20px]' style={{ color: '#c9a84c' }}>=</span>
-            <span className='arcade-title text-[32px] font-bold' style={{ color: '#ffd700' }}>{dice1 + dice2}</span>
+            <span className='arcade-title text-[36px] font-bold' style={{ color: '#ffd700' }}>{dice1 + dice2}</span>
           </div>
 
           {/* 결과 */}
@@ -187,7 +206,7 @@ const Dice = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             {history.map((h, i) => (
               <div key={i} className='flex justify-between px-[4px] py-[2px] rounded-[2px]'
                 style={{ background: h.profit > 0 ? '#0a2a1a' : 'transparent' }}>
-                <span style={{ color: '#888', fontSize: '10px' }}>{DICE_FACES[h.d1 - 1]}{DICE_FACES[h.d2 - 1]} = {h.total}</span>
+                <span style={{ color: '#888', fontSize: '10px' }}>[{h.d1}]+[{h.d2}]={h.total}</span>
                 <span className='arcade-title' style={{ color: h.profit > 0 ? '#ffd700' : '#e74c3c', fontSize: '10px' }}>
                   {h.profit > 0 ? `+$${h.profit}` : `-$${Math.abs(h.profit)}`}
                 </span>

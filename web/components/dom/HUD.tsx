@@ -126,6 +126,8 @@ const HUD = () => {
               <p>🪙 Coin Flip - 거대 동전</p>
               <p>🎲 Dice - 주사위</p>
               <p>🎡 Fortune Wheel - 행운의 바퀴</p>
+              <p>📐 Plinko - 구슬 낙하</p>
+              <p>🃏 Blackjack - 블랙잭</p>
             </div>
             <div style={{ borderTop: '1px solid #333', paddingTop: '6px', marginTop: '2px' }}>
               <span style={{ color: '#ffd700' }}>머니</span>

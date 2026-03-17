@@ -57,21 +57,36 @@ const CoinFlip = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
             🪙 COIN FLIP
           </span>
 
-          {/* 동전 */}
-          <div className='relative w-[150px] h-[150px] flex items-center justify-center' style={{ perspective: '500px' }}>
+          {/* 3D 동전 */}
+          <div className='relative w-[160px] h-[160px] flex items-center justify-center' style={{ perspective: '800px' }}>
             <motion.div
-              animate={{ rotateX: flipping ? flipAngle : 0 }}
+              animate={{ rotateY: flipping ? flipAngle : (result === 'tails' ? 180 : 0) }}
               transition={{ duration: 2, ease: [0.17, 0.67, 0.12, 0.99] }}
-              className='w-[120px] h-[120px] rounded-full flex items-center justify-center'
-              style={{
-                background: result === 'tails'
-                  ? 'radial-gradient(circle at 40% 40%, #c0c0c0, #888)'
-                  : 'radial-gradient(circle at 40% 40%, #ffd700, #c9a84c)',
-                border: '4px solid #8B6914',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.4), inset 0 2px 6px rgba(255,255,255,0.3)',
-                fontSize: '40px',
-              }}>
-              {!flipping && result ? (result === 'heads' ? '👑' : '🌙') : '🪙'}
+              className='relative w-[130px] h-[130px]'
+              style={{ transformStyle: 'preserve-3d' }}>
+              {/* 앞면 (HEAD) */}
+              <div className='absolute w-full h-full rounded-full flex flex-col items-center justify-center'
+                style={{
+                  background: 'radial-gradient(circle at 35% 35%, #ffd700, #c9a84c, #8B6914)',
+                  border: '5px solid #8B6914',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.4), inset 0 2px 8px rgba(255,255,255,0.3)',
+                  backfaceVisibility: 'hidden',
+                }}>
+                <span style={{ fontSize: '36px' }}>👑</span>
+                <span style={{ fontSize: '11px', color: '#5a3a00', fontWeight: 900, letterSpacing: '2px' }}>HEAD</span>
+              </div>
+              {/* 뒷면 (TAIL) */}
+              <div className='absolute w-full h-full rounded-full flex flex-col items-center justify-center'
+                style={{
+                  background: 'radial-gradient(circle at 35% 35%, #e0e0e0, #a0a0a0, #666)',
+                  border: '5px solid #666',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.4), inset 0 2px 8px rgba(255,255,255,0.2)',
+                  backfaceVisibility: 'hidden',
+                  transform: 'rotateY(180deg)',
+                }}>
+                <span style={{ fontSize: '36px' }}>🌙</span>
+                <span style={{ fontSize: '11px', color: '#333', fontWeight: 900, letterSpacing: '2px' }}>TAIL</span>
+              </div>
             </motion.div>
           </div>
 

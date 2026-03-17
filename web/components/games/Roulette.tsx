@@ -83,7 +83,7 @@ const Roulette = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
   const row3 = [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34]
 
   return (
-    <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
       <div className='flex-1 overflow-y-auto flex flex-col items-center py-[10px] gap-[10px] px-[8px]'>
       {/* 휠 + 결과 */}
       <div className='flex items-center gap-[16px]'>

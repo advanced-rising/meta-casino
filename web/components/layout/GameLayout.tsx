@@ -57,6 +57,16 @@ const GameLayout = ({ children, title, theme, onMoneyChange, money: propMoney }:
       <div className='relative z-10'>
         {children}
       </div>
+
+      {/* 하단 광고 영역 */}
+      <div className='fixed bottom-0 left-0 right-0 z-20 flex items-center justify-center'
+        style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+        <div id='game-ad-slot' className='w-full max-w-[728px] h-[50px] flex items-center justify-center'
+          style={{ color: '#333', fontSize: '11px' }}>
+          {/* 광고 스크립트가 이 영역을 채움 */}
+          AD SPACE
+        </div>
+      </div>
     </div>
   )
 }

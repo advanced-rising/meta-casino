@@ -54,7 +54,7 @@ const WheelOfDeath = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
   const currentMult = round > 0 ? MULTIPLIERS[round - 1] : 1
 
   return (
-    <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
         <span className='text-[18px] font-bold' style={{ color: '#fff' }}>🔫 WHEEL OF DEATH</span>
 

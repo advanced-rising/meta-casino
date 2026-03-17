@@ -79,7 +79,7 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const bestMult = history.length > 0 ? Math.max(...history.filter((h) => h.mult > 0).map((h) => h.mult), 0) : 0
 
   return (
-    <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
       {/* 좌측: 게임 */}
       <div className='flex-1 flex flex-col items-center justify-center gap-[10px] overflow-y-auto py-[12px] px-[8px]'>
         <div className='flex flex-col items-center gap-[10px] p-[10px]'

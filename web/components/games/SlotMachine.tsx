@@ -219,7 +219,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
   const totalProfit = gameHistory.reduce((sum, h) => sum + (h.win > 0 ? h.win - h.bet : -h.bet), 0)
 
   return (
-    <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
       {/* 좌측: 슬롯 머신 */}
       <div className='flex-1 flex flex-col items-center justify-center gap-[10px] lg:overflow-hidden overflow-y-auto py-[12px] px-[8px]'>
         {/* 잭팟 배너 */}

@@ -85,62 +85,73 @@ const HUD = () => {
 
       {/* 정보 패널 */}
       {showInfo && (
-        <div className='fixed top-[42px] right-[10px] z-[200] arcade-box p-[16px] w-[280px]' style={{ background: '#000000ee' }}>
-          <div className='arcade-title text-[11px] mb-[8px]' style={{ color: '#c9a84c' }}>HOW TO PLAY</div>
-          <div className='flex flex-col gap-[6px] text-[10px]' style={{ fontFamily: 'Courier New, monospace', color: '#aaa' }}>
-            <div>
-              <span style={{ color: '#ffd700' }}>이동</span>
-              <p>PC: WASD / 화살표키</p>
-              <p>모바일: 좌측 조이스틱</p>
+        <div className='fixed top-[42px] right-[10px] z-[200] rounded-[12px] p-[14px] w-[300px] max-h-[80vh] overflow-y-auto' style={{ background: '#000000ee' }}>
+          <div className='arcade-title text-[11px] mb-[8px]' style={{ color: '#c9a84c' }}>GUIDE</div>
+          <div className='flex flex-col gap-[8px] text-[10px]' style={{ fontFamily: 'Pretendard, sans-serif', color: '#aaa' }}>
+
+            <div className='rounded-[6px] p-[8px]' style={{ background: '#ffffff08' }}>
+              <span className='arcade-title text-[10px]' style={{ color: '#ffd700' }}>조작법</span>
+              <div className='grid grid-cols-2 gap-x-[8px] gap-y-[2px] mt-[4px]'>
+                <span style={{ color: '#888' }}>이동</span><span>W/A/S/D 또는 조이스틱</span>
+                <span style={{ color: '#888' }}>달리기</span><span>Shift 또는 조이스틱 끝까지</span>
+                <span style={{ color: '#888' }}>점프</span><span>Space (짧게)</span>
+                <span style={{ color: '#888' }}>비행</span><span>Space 꾹 (누르는 동안)</span>
+                <span style={{ color: '#888' }}>입장</span><span>E키 또는 클릭</span>
+                <span style={{ color: '#888' }}>클릭이동</span><span>바닥 클릭</span>
+              </div>
             </div>
-            <div>
-              <span style={{ color: '#ffd700' }}>달리기</span>
-              <p>PC: Shift 누른 채 이동</p>
-              <p>모바일: 조이스틱 끝까지</p>
+
+            <div className='rounded-[6px] p-[8px]' style={{ background: '#ffffff08' }}>
+              <span className='arcade-title text-[10px]' style={{ color: '#ffd700' }}>머니</span>
+              <p>초기 $10,000 / 1시간마다 $5,000 자동 충전</p>
             </div>
-            <div>
-              <span style={{ color: '#ffd700' }}>점프</span>
-              <p>PC: Space (짧게)</p>
-              <p>모바일: ⬆ 버튼</p>
+
+            <div className='rounded-[6px] p-[8px]' style={{ background: '#ffffff08' }}>
+              <span className='arcade-title text-[10px]' style={{ color: '#ffd700' }}>카지노 게임 (11)</span>
+              <div className='flex flex-col gap-[3px] mt-[4px]'>
+                {[
+                  ['🎰', 'Roulette', '숫자/색상 배팅, 최대 x36'],
+                  ['🎰', 'Slot Machine', '5x5 빠칭코, 잭팟 x500, 오토+배속'],
+                  ['💎', 'Mines', '보석 찾기, 지뢰 피하기, 캐시아웃'],
+                  ['🚀', 'Crash', '배수 상승, 터지기 전 캐시아웃'],
+                  ['🃏', 'Hi-Lo', '다음 카드 높/낮 맞추기, 연승 배수'],
+                  ['🪙', 'Coin Flip', '3D 동전 뒤집기, x2'],
+                  ['🎲', 'Dice', '주사위 2개, Over/Under/Exact'],
+                  ['🎡', 'Fortune Wheel', '16칸 바퀴, x1~x20'],
+                  ['📐', 'Plinko', '구슬 낙하, 1~20개 동시, x0.5~x8'],
+                  ['🃏', 'Blackjack', 'Hit/Stand/Double, BJ=x2.5'],
+                  ['🃏', 'Baccarat', 'Player/Banker/Tie, x2/x1.95/x9'],
+                ].map(([emoji, name, desc], i) => (
+                  <div key={i} className='flex gap-[4px]'>
+                    <span>{emoji}</span>
+                    <span style={{ color: '#fff', minWidth: '80px' }}>{name}</span>
+                    <span style={{ color: '#666' }}>{desc}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div>
-              <span style={{ color: '#ffd700' }}>비행 (3초)</span>
-              <p>PC: Space 꾹 0.5초 이상 누르기</p>
-              <p>높은 전망대에 올라갈 수 있음</p>
+
+            <div className='rounded-[6px] p-[8px]' style={{ background: '#ffffff08' }}>
+              <span className='arcade-title text-[10px]' style={{ color: '#ffd700' }}>아케이드 게임 (7)</span>
+              <div className='flex flex-col gap-[3px] mt-[4px]'>
+                {[
+                  ['✊', 'RPS', '가위바위보 연승 도전, 캐시아웃'],
+                  ['🏇', 'Horse Race', '5마리 경주, 배당 x2.5~x8'],
+                  ['🏗️', 'Tower', '8층 탑, 함정 피해 올라가기, x1.4~x25'],
+                  ['🎫', 'Scratch Card', '9칸 스크래치, 3매치 당첨'],
+                  ['🎯', 'Limbo', '목표 배수 설정, 높을수록 고위험'],
+                  ['🎨', 'Color Predict', '빨x2/초x3/보x5 색 예측'],
+                  ['💣', 'Bomb Defuse', '5선 중 폭탄선 피하기, x1.5~x15'],
+                ].map(([emoji, name, desc], i) => (
+                  <div key={i} className='flex gap-[4px]'>
+                    <span>{emoji}</span>
+                    <span style={{ color: '#fff', minWidth: '80px' }}>{name}</span>
+                    <span style={{ color: '#666' }}>{desc}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div>
-              <span style={{ color: '#ffd700' }}>게임장 입장</span>
-              <p>게임장 근처에서 E키 또는 입장 버튼</p>
-            </div>
-            <div>
-              <span style={{ color: '#ffd700' }}>클릭 이동</span>
-              <p>바닥을 클릭하면 해당 위치로 이동</p>
-            </div>
-            <div style={{ borderTop: '1px solid #333', paddingTop: '6px', marginTop: '2px' }}>
-              <span style={{ color: '#ffd700' }}>게임 목록</span>
-              <p>🎰 Roulette - 룰렛 테이블</p>
-              <p>🎰 Slot Machine - 보라색 캐비넷</p>
-              <p>💎 Mines - 보석 바위</p>
-              <p>🚀 Crash - 로켓 발사대</p>
-              <p>🃏 Hi-Lo - 카드 테이블</p>
-              <p>🪙 Coin Flip - 거대 동전</p>
-              <p>🎲 Dice - 주사위</p>
-              <p>🎡 Fortune Wheel - 행운의 바퀴</p>
-              <p>📐 Plinko - 구슬 낙하</p>
-              <p>🃏 Blackjack - 블랙잭</p>
-              <p>🃏 Baccarat - 바카라</p>
-              <p>✊ RPS - 가위바위보</p>
-              <p>🏇 Horse Race - 경마</p>
-              <p>🏗️ Tower - 층 올라가기</p>
-              <p>🎫 Scratch Card - 스크래치</p>
-              <p>🎯 Limbo - 목표 배수</p>
-              <p>🎨 Color Predict - 색 예측</p>
-              <p>💣 Bomb Defuse - 폭탄 해체</p>
-            </div>
-            <div style={{ borderTop: '1px solid #333', paddingTop: '6px', marginTop: '2px' }}>
-              <span style={{ color: '#ffd700' }}>머니</span>
-              <p>기본 $10,000 / 1시간마다 $5,000 충전</p>
-            </div>
+
           </div>
         </div>
       )}

@@ -6,7 +6,7 @@ import Lights from '@/models/ui/Lights'
 import Character, { OtherCharacter, CharacterInput } from '@/models/Character'
 import MobileControls, { MobileInput } from '@/components/dom/MobileControls'
 import { useRouter } from 'next/router'
-import { RouletteTable, SlotCabinet, MineRock, RocketPad, CardTable, GiantCoin, GiantDice, WheelStand, PlinkoBoard, BlackjackTable } from './ui/GameLandmarks'
+import { RouletteTable, SlotCabinet, MineRock, RocketPad, CardTable, GiantCoin, GiantDice, WheelStand, PlinkoBoard, BlackjackTable, BaccaratTable, RPSStand, RaceTrack } from './ui/GameLandmarks'
 import { VISIBLE_BLOCKS } from '@/utils/mapData'
 
 const MAP_SIZE = 50
@@ -295,6 +295,21 @@ const Field = ({
             <BlackjackTable position={[-30, 0, 0]} />
             {nearSpace?.id === 'blackjack' && (
               <Sparkles count={60} size={6} position={[-30, 1, 0]} scale={[3, 2, 3]} speed={5} color='#2ecc71' />
+            )}
+
+            <BaccaratTable position={[0, 0, 25]} />
+            {nearSpace?.id === 'baccarat' && (
+              <Sparkles count={60} size={6} position={[0, 1, 25]} scale={[3, 2, 3]} speed={5} color='#c9a84c' />
+            )}
+
+            <RPSStand position={[-25, 0, -25]} />
+            {nearSpace?.id === 'rps' && (
+              <Sparkles count={60} size={6} position={[-25, 1, -25]} scale={[3, 2, 3]} speed={5} color='#f39c12' />
+            )}
+
+            <RaceTrack position={[25, 0, -25]} />
+            {nearSpace?.id === 'horserace' && (
+              <Sparkles count={60} size={6} position={[25, 1, -25]} scale={[3, 2, 3]} speed={5} color='#2ecc71' />
             )}
           </Suspense>
 

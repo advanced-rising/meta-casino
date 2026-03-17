@@ -39,6 +39,9 @@ export const MAP_BLOCKS: [number, number, number, number, number, number][] = [
   [20, 0, 20, 0.6, 3, 0.6],      // 포춘휠
   [30, 0, -20, 2, 2.5, 0.5],     // 플링코
   [-30, 0, 0, 2.4, 1.5, 2.4],    // 블랙잭
+  [0, 0, 25, 2.4, 1.5, 2.4],     // 바카라
+  [-25, 0, -25, 1.6, 1.5, 1.6],  // 가위바위보
+  [25, 0, -25, 2.4, 1.5, 2.4],   // 경마
 
   // 동상 (교차로 4개)
   [20, 0, 20, 1.2, 2.5, 1.2],
@@ -87,6 +90,9 @@ export const GAME_SPACES = [
   { id: 'wheel', name: 'Fortune Wheel 🎡', position: [20, 0, 20] as [number, number, number], route: '/space/wheel', radius: 3 },
   { id: 'plinko', name: 'Plinko 📐', position: [30, 0, -20] as [number, number, number], route: '/space/plinko', radius: 3 },
   { id: 'blackjack', name: 'Blackjack 🃏', position: [-30, 0, 0] as [number, number, number], route: '/space/blackjack', radius: 3 },
+  { id: 'baccarat', name: 'Baccarat 🃏', position: [0, 0, 25] as [number, number, number], route: '/space/baccarat', radius: 3 },
+  { id: 'rps', name: 'Rock Paper Scissors ✊', position: [-25, 0, -25] as [number, number, number], route: '/space/rps', radius: 3 },
+  { id: 'horserace', name: 'Horse Race 🏇', position: [25, 0, -25] as [number, number, number], route: '/space/horserace', radius: 3 },
 ]
 
 // AABB 충돌 체크

@@ -128,6 +128,9 @@ const HUD = () => {
               <p>🎡 Fortune Wheel - 행운의 바퀴</p>
               <p>📐 Plinko - 구슬 낙하</p>
               <p>🃏 Blackjack - 블랙잭</p>
+              <p>🃏 Baccarat - 바카라</p>
+              <p>✊ RPS - 가위바위보</p>
+              <p>🏇 Horse Race - 경마</p>
             </div>
             <div style={{ borderTop: '1px solid #333', paddingTop: '6px', marginTop: '2px' }}>
               <span style={{ color: '#ffd700' }}>머니</span>

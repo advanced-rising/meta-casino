@@ -359,3 +359,75 @@ export const BlackjackTable = (props: any) => {
     </group>
   )
 }
+
+// 바카라: 카드 테이블 (반원)
+export const BaccaratTable = (props: any) => {
+  return (
+    <group {...props}>
+      <mesh castShadow receiveShadow position={[0, 0.4, 0]} rotation={[0, 0, 0]}>
+        <cylinderGeometry args={[1.2, 1.2, 0.08, 16]} />
+        <meshStandardMaterial color='#0a5a0a' />
+      </mesh>
+      <mesh castShadow position={[0, 0.2, 0]}>
+        <cylinderGeometry args={[0.12, 0.15, 0.4, 8]} />
+        <meshStandardMaterial color='#5d3a1a' />
+      </mesh>
+      <mesh castShadow position={[0, 0.55, 0]}>
+        <boxGeometry args={[0.6, 0.02, 0.4]} />
+        <meshStandardMaterial color='#fff' />
+      </mesh>
+    </group>
+  )
+}
+
+// 가위바위보: 3개 손 모형
+export const RPSStand = (props: any) => {
+  const ref = useRef<THREE.Group>(null!)
+  useFrame((state) => { if (ref.current) ref.current.rotation.y = state.clock.elapsedTime * 0.5 })
+  return (
+    <group {...props}>
+      <mesh castShadow position={[0, 0.15, 0]}>
+        <cylinderGeometry args={[0.7, 0.8, 0.3, 8]} />
+        <meshStandardMaterial color='#8B6914' metalness={0.3} />
+      </mesh>
+      <group ref={ref} position={[0, 0.8, 0]}>
+        {[0, 2.1, 4.2].map((angle, i) => (
+          <mesh key={i} castShadow position={[Math.cos(angle) * 0.4, 0, Math.sin(angle) * 0.4]}>
+            <sphereGeometry args={[0.2, 8, 8]} />
+            <meshStandardMaterial color={['#e74c3c', '#3498db', '#2ecc71'][i]} />
+          </mesh>
+        ))}
+      </group>
+    </group>
+  )
+}
+
+// 경마: 말 + 트랙
+export const RaceTrack = (props: any) => {
+  const horseRef = useRef<THREE.Group>(null!)
+  useFrame((state) => {
+    if (horseRef.current) {
+      horseRef.current.position.x = Math.sin(state.clock.elapsedTime * 2) * 0.8
+      horseRef.current.position.z = Math.cos(state.clock.elapsedTime * 2) * 0.8
+      horseRef.current.rotation.y = state.clock.elapsedTime * 2 + Math.PI / 2
+    }
+  })
+  return (
+    <group {...props}>
+      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+        <ringGeometry args={[0.6, 1.2, 16]} />
+        <meshStandardMaterial color='#8B6914' />
+      </mesh>
+      <group ref={horseRef}>
+        <mesh castShadow position={[0, 0.3, 0]}>
+          <boxGeometry args={[0.4, 0.3, 0.15]} />
+          <meshStandardMaterial color='#8B4513' />
+        </mesh>
+        <mesh castShadow position={[0.2, 0.5, 0]}>
+          <boxGeometry args={[0.1, 0.2, 0.1]} />
+          <meshStandardMaterial color='#8B4513' />
+        </mesh>
+      </group>
+    </group>
+  )
+}

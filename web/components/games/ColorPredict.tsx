@@ -55,10 +55,10 @@ const ColorPredict = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
   const totalProfit = history.reduce((s, h) => s + h.profit, 0)
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
-        <div className='flex flex-col items-center gap-[12px] p-[12px]'>
-          <span className='arcade-title neon-text' style={{ '--neon-color': '#e91e63', color: '#ffd700', fontSize: '20px', fontWeight: 900 } as any}>🎨 COLOR PREDICT</span>
+        <div className='flex flex-col items-center gap-[8px] p-[8px] sm:gap-[12px] sm:p-[12px]'>
+          <span className='arcade-title neon-text' style={{ '--neon-color': '#e91e63', color: '#ffd700', fontSize: '16px', fontWeight: 800 } as any}>🎨 COLOR PREDICT</span>
 
           {/* 결과 원 */}
           <motion.div animate={rolling ? { scale: [1, 1.2, 1] } : {}} transition={{ repeat: rolling ? Infinity : 0, duration: 0.3 }}
@@ -75,7 +75,7 @@ const ColorPredict = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
           </div>
 
           <div className='h-[24px]'>
-            {won === true && <motion.span animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: 3, duration: 0.3 }} className='arcade-title' style={{ color: '#ffd700', fontSize: '20px', fontWeight: 900 }}>+${(bet * (result?.mult || 2) - bet).toLocaleString()}</motion.span>}
+            {won === true && <motion.span animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: 3, duration: 0.3 }} className='arcade-title' style={{ color: '#ffd700', fontSize: '16px', fontWeight: 800 }}>+${(bet * (result?.mult || 2) - bet).toLocaleString()}</motion.span>}
             {won === false && <span className='arcade-title' style={{ color: '#e74c3c', fontSize: '14px' }}>WRONG!</span>}
           </div>
 
@@ -93,13 +93,13 @@ const ColorPredict = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
 
           {!rolling && (
             <div className='flex items-center gap-[6px] flex-wrap justify-center'>
-              {BET_OPTIONS.map((v) => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
+              {BET_OPTIONS.map((v) => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                 style={{ background: bet === v ? '#c9a84c' : '#1a0a1a', color: bet === v ? '#000' : '#666' }}>${v >= 1000 ? `${v / 1000}K` : v}</button>))}
               <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
-                className='w-[60px] h-[24px] rounded-[4px] text-[10px] text-center font-bold outline-none' style={{ background: '#0d050d', color: '#ffd700', border: '1px solid #c9a84c' }} />
+                className='w-[50px] h-[22px] rounded-[4px] text-[10px] text-center font-bold outline-none' style={{ background: '#0d050d', color: '#ffd700', border: '1px solid #c9a84c' }} />
             </div>
           )}
-          <div className='arcade-title text-[11px]' style={{ color: '#888' }}>BAL <span style={{ color: '#4ade80', fontWeight: 700 }}>${money.toLocaleString()}</span></div>
+          <div className='text-[10px]' style={{ color: '#666' }}>BAL <span style={{ color: '#4ade80', fontWeight: 700 }}>${money.toLocaleString()}</span></div>
         </div>
       </div>
       <div className='hidden lg:flex flex-col w-[200px] overflow-y-auto py-[12px] px-[10px] gap-[10px]' style={{ background: '#0d050d', borderLeft: '1px solid #c9a84c22' }}>

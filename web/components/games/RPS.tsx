@@ -62,12 +62,12 @@ const RPS = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const totalProfit = history.reduce((s, h) => s + h.profit, 0)
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
-        <div className='flex flex-col items-center gap-[12px] p-[12px]'
+        <div className='flex flex-col items-center gap-[8px] p-[8px] sm:gap-[12px] sm:p-[12px]'
           >
 
-          <span className='arcade-title neon-text' style={{ '--neon-color': '#f39c12', color: '#ffd700', fontSize: '20px', fontWeight: 900 } as any}>
+          <span className='arcade-title neon-text' style={{ '--neon-color': '#f39c12', color: '#ffd700', fontSize: '16px', fontWeight: 800 } as any}>
             ✊✋✌️ ROCK PAPER SCISSORS
           </span>
 
@@ -128,18 +128,18 @@ const RPS = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             <div className='flex items-center gap-[6px] flex-wrap justify-center'>
               <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
               {BET_OPTIONS.map((v) => (
-                <button key={v} onClick={() => setBet(v)} className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
+                <button key={v} onClick={() => setBet(v)} className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                   style={{ background: bet === v ? '#c9a84c' : '#1a1a0a', color: bet === v ? '#000' : '#666' }}>
                   ${v >= 1000 ? `${v / 1000}K` : v}
                 </button>
               ))}
               <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
-                className='w-[70px] h-[26px] rounded-[4px] text-[11px] text-center font-bold outline-none'
+                className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                 style={{ background: '#0a0a00', color: '#ffd700', border: '1px solid #c9a84c' }} />
             </div>
           )}
 
-          <div className='arcade-title text-[11px]' style={{ color: '#888' }}>
+          <div className='text-[10px]' style={{ color: '#666' }}>
             BAL <span style={{ color: '#4ade80', fontWeight: 700, fontSize: '13px' }}>${money.toLocaleString()}</span>
           </div>
         </div>

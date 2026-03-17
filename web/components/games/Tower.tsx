@@ -68,11 +68,11 @@ const Tower = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const totalProfit = history.reduce((s, h) => s + h.profit, 0)
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[10px] px-[8px]'>
-        <div className='rounded-[12px] p-[20px] flex flex-col items-center gap-[8px]'
+        <div className='rounded-[12px] p-[10px] sm:p-[18px] flex flex-col items-center gap-[8px]'
           >
-          <span className='arcade-title neon-text' style={{ '--neon-color': '#9b59b6', color: '#ffd700', fontSize: '20px', fontWeight: 900 } as any}>🏗️ TOWER</span>
+          <span className='arcade-title neon-text' style={{ '--neon-color': '#9b59b6', color: '#ffd700', fontSize: '16px', fontWeight: 800 } as any}>🏗️ TOWER</span>
 
           {/* 타워 */}
           <div className='flex flex-col-reverse gap-[3px]'>
@@ -105,7 +105,7 @@ const Tower = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
 
           <div className='h-[26px] flex items-center justify-center'>
             {playing && floor > 0 && <span className='arcade-title' style={{ color: '#4ade80', fontSize: '14px' }}>FLOOR {floor} → x{currentMult}</span>}
-            {result === 'win' && <motion.span animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: 3, duration: 0.3 }} className='arcade-title' style={{ color: '#ffd700', fontSize: '18px', fontWeight: 900 }}>🏆 +${Math.floor(bet * currentMult).toLocaleString()}</motion.span>}
+            {result === 'win' && <motion.span animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: 3, duration: 0.3 }} className='arcade-title' style={{ color: '#ffd700', fontSize: '15px', fontWeight: 800 }}>🏆 +${Math.floor(bet * currentMult).toLocaleString()}</motion.span>}
             {result === 'lose' && <span className='arcade-title' style={{ color: '#e74c3c', fontSize: '16px' }}>💀 TRAPPED!</span>}
           </div>
 
@@ -119,19 +119,19 @@ const Tower = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
               <div className='flex items-center gap-[6px] flex-wrap justify-center'>
                 <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
                 {BET_OPTIONS.map((v) => (
-                  <button key={v} onClick={() => setBet(v)} className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
+                  <button key={v} onClick={() => setBet(v)} className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                     style={{ background: bet === v ? '#c9a84c' : '#1a1a2e', color: bet === v ? '#000' : '#666' }}>${v >= 1000 ? `${v / 1000}K` : v}</button>
                 ))}
                 <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
-                  className='w-[60px] h-[24px] rounded-[4px] text-[10px] text-center font-bold outline-none'
+                  className='w-[50px] h-[22px] rounded-[4px] text-[10px] text-center font-bold outline-none'
                   style={{ background: '#0d0d1a', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>
-              <button onClick={start} disabled={money < bet} className='arcade-btn w-full max-w-[160px] h-[40px] rounded-full text-[14px] font-bold disabled:opacity-30'
+              <button onClick={start} disabled={money < bet} className='arcade-btn w-full max-w-[160px] h-[36px] rounded-full text-[14px] font-bold disabled:opacity-30'
                 >CLIMB</button>
             </>
           ) : null}
 
-          <div className='arcade-title text-[11px]' style={{ color: '#888' }}>BAL <span style={{ color: '#4ade80', fontWeight: 700 }}>${money.toLocaleString()}</span></div>
+          <div className='text-[10px]' style={{ color: '#666' }}>BAL <span style={{ color: '#4ade80', fontWeight: 700 }}>${money.toLocaleString()}</span></div>
         </div>
       </div>
       <div className='hidden lg:flex flex-col w-[200px] overflow-y-auto py-[12px] px-[10px] gap-[10px]' style={{ background: '#0d0d1a', borderLeft: '1px solid #c9a84c22' }}>

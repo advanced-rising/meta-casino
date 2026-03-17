@@ -10,7 +10,7 @@ const SLOTS = ROWS + 1
 const MULTIPLIERS = [8, 4, 2, 1.5, 1, 0.5, 1, 1.5, 2, 4, 8]
 const SLOT_COLORS = ['#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6', '#3498db', '#2ecc71', '#f1c40f', '#e67e22', '#e74c3c']
 
-const PEG_SPACING = 30
+const PEG_SPACING = typeof window !== 'undefined' && window.innerWidth < 640 ? 22 : 30
 const BOARD_WIDTH = (ROWS + 2) * PEG_SPACING
 const BOARD_HEIGHT = ROWS * (PEG_SPACING + 4) + 50
 
@@ -119,12 +119,12 @@ const Plinko = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const totalProfit = history.reduce((s, h) => s + h.profit, 0)
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center gap-[8px] overflow-y-auto py-[10px] px-[8px]'>
         <div className='flex flex-col items-center gap-[8px] p-[8px]'
           >
 
-          <span className='arcade-title neon-text' style={{ '--neon-color': '#f39c12', color: '#ffd700', fontSize: '20px', fontWeight: 900 } as any}>
+          <span className='arcade-title neon-text' style={{ '--neon-color': '#f39c12', color: '#ffd700', fontSize: '16px', fontWeight: 800 } as any}>
             📐 PLINKO
           </span>
 
@@ -164,10 +164,10 @@ const Plinko = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
           </div>
 
           {/* 결과 */}
-          <div className='h-[28px] flex items-center justify-center'>
+          <div className='h-[22px] flex items-center justify-center'>
             {!dropping && totalWin > 0 && (
               <motion.span animate={{ scale: [1, 1.08, 1] }} transition={{ repeat: 3, duration: 0.3 }}
-                className='arcade-title' style={{ color: profit >= 0 ? '#ffd700' : '#e74c3c', fontSize: '18px', fontWeight: 900 }}>
+                className='arcade-title' style={{ color: profit >= 0 ? '#ffd700' : '#e74c3c', fontSize: '15px', fontWeight: 800 }}>
                 {profit >= 0 ? `🎉 +$${profit.toLocaleString()}` : `-$${Math.abs(profit).toLocaleString()}`}
                 <span className='text-[12px] ml-[6px]' style={{ color: '#888' }}>({ballCount}balls)</span>
               </motion.span>
@@ -187,7 +187,7 @@ const Plinko = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                   </button>
                 ))}
                 <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
-                  className='w-[60px] h-[24px] rounded-[4px] text-[10px] text-center font-bold outline-none'
+                  className='w-[50px] h-[22px] rounded-[4px] text-[10px] text-center font-bold outline-none'
                   style={{ background: '#050d20', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>
 
@@ -202,19 +202,19 @@ const Plinko = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                 ))}
               </div>
 
-              <div className='arcade-title text-[11px]' style={{ color: '#888' }}>
+              <div className='text-[10px]' style={{ color: '#666' }}>
                 TOTAL: <span style={{ color: '#ffd700' }}>${(bet * ballCount).toLocaleString()}</span>
               </div>
             </>
           )}
 
           <button onClick={drop} disabled={dropping || money < bet * ballCount}
-            className='arcade-btn w-full max-w-[180px] h-[42px] rounded-full text-[15px] font-bold disabled:opacity-30'
+            className='arcade-btn w-full max-w-[180px] h-[36px] rounded-full text-[15px] font-bold disabled:opacity-30'
             style={{ background: dropping ? '#333' : 'linear-gradient(180deg, #f39c12, #d68910)', color: 'white', border: '3px solid #c9a84c' }}>
             {dropping ? `⏳ ${doneCount.current}/${ballCount}` : `📐 DROP x${ballCount}`}
           </button>
 
-          <div className='arcade-title text-[11px]' style={{ color: '#888' }}>
+          <div className='text-[10px]' style={{ color: '#666' }}>
             BAL <span style={{ color: '#4ade80', fontWeight: 700, fontSize: '13px' }}>${money.toLocaleString()}</span>
           </div>
         </div>

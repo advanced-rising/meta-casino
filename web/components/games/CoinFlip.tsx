@@ -48,21 +48,21 @@ const CoinFlip = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
   const tailsCount = history.filter((h) => h.result === 'tails').length
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
-      <div className='flex-1 flex flex-col items-center justify-center gap-[14px] px-[8px]'>
-        <div className='arcade-box p-[24px] flex flex-col items-center gap-[14px]'
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
+      <div className='flex-1 flex flex-col items-center justify-center gap-[8px] sm:gap-[14px] px-[8px]'>
+        <div className='arcade-box p-[10px] sm:p-[10px] sm:p-[18px] flex flex-col items-center gap-[8px] sm:gap-[14px]'
           >
 
-          <span className='arcade-title neon-text' style={{ '--neon-color': '#f39c12', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>
+          <span className='arcade-title neon-text' style={{ '--neon-color': '#f39c12', color: '#ffd700', fontSize: '16px', fontWeight: 900 } as any}>
             🪙 COIN FLIP
           </span>
 
           {/* 3D 동전 */}
-          <div className='relative w-[160px] h-[160px] flex items-center justify-center' style={{ perspective: '800px' }}>
+          <div className='relative w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] flex items-center justify-center' style={{ perspective: '800px' }}>
             <motion.div
               animate={{ rotateY: flipping ? flipAngle : (result === 'tails' ? 180 : 0) }}
               transition={{ duration: 2, ease: [0.17, 0.67, 0.12, 0.99] }}
-              className='relative w-[130px] h-[130px]'
+              className='relative w-[100px] h-[100px] sm:w-[130px] sm:h-[130px]'
               style={{ transformStyle: 'preserve-3d' }}>
               {/* 앞면 (HEAD) */}
               <div className='absolute w-full h-full rounded-full flex flex-col items-center justify-center'
@@ -94,7 +94,7 @@ const CoinFlip = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
           <div className='h-[36px] flex items-center justify-center'>
             {won === true && (
               <motion.span animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 0.6 }}
-                className='arcade-title' style={{ color: '#ffd700', fontSize: '24px', fontWeight: 900, textShadow: '0 0 15px rgba(255,215,0,0.5)' }}>
+                className='arcade-title' style={{ color: '#ffd700', fontSize: '17px', fontWeight: 800, textShadow: '0 0 15px rgba(255,215,0,0.5)' }}>
                 🎉 WIN +${bet.toLocaleString()}
               </motion.span>
             )}
@@ -113,14 +113,14 @@ const CoinFlip = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
             <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
             {BET_OPTIONS.map((v) => (
               <button key={v} onClick={() => !flipping && setBet(v)}
-                className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
+                className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                 style={{ background: bet === v ? '#c9a84c' : '#1a1a0a', color: bet === v ? '#000' : '#666', border: bet === v ? '2px solid #ffd700' : '1px solid #3a3a1a' }}>
                 ${v >= 1000 ? `${v / 1000}K` : v}
               </button>
             ))}
             <input type='number' min={1} value={bet} disabled={flipping}
               onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
-              className='w-[70px] h-[26px] rounded-[4px] text-[11px] text-center font-bold outline-none'
+              className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
               style={{ background: '#0a0a00', color: '#ffd700', border: '1px solid #c9a84c' }} />
           </div>
 
@@ -138,7 +138,7 @@ const CoinFlip = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
             </button>
           </div>
 
-          <div className='arcade-title text-[11px]' style={{ color: '#888' }}>
+          <div className='text-[10px]' style={{ color: '#666' }}>
             BAL <span style={{ color: '#4ade80', fontWeight: 700, fontSize: '14px' }}>${money.toLocaleString()}</span>
           </div>
         </div>

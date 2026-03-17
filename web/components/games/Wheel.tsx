@@ -68,12 +68,12 @@ const FortuneWheel = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
   const totalProfit = history.reduce((s, h) => s + h.profit, 0)
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
         <div className='flex flex-col items-center gap-[10px] p-[10px]'
           >
 
-          <span className='arcade-title neon-text' style={{ '--neon-color': '#e91e63', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>
+          <span className='arcade-title neon-text' style={{ '--neon-color': '#e91e63', color: '#ffd700', fontSize: '16px', fontWeight: 900 } as any}>
             🎡 FORTUNE WHEEL
           </span>
 
@@ -108,13 +108,13 @@ const FortuneWheel = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
                 )
               })}
               {/* 중앙 */}
-              <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40px] h-[40px] rounded-full'
+              <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40px] h-[36px] rounded-full'
                 style={{ background: '#c9a84c', border: '3px solid #ffd700', boxShadow: '0 0 10px rgba(201,168,76,0.5)' }} />
             </motion.div>
           </div>
 
           {/* 결과 */}
-          <div className='h-[32px] flex items-center justify-center'>
+          <div className='h-[22px] flex items-center justify-center'>
             {result && (
               <motion.span animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 0.6 }}
                 className='arcade-title' style={{
@@ -132,25 +132,25 @@ const FortuneWheel = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
               <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
               {BET_OPTIONS.map((v) => (
                 <button key={v} onClick={() => setBet(v)}
-                  className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
+                  className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                   style={{ background: bet === v ? '#c9a84c' : '#2a0a2a', color: bet === v ? '#000' : '#666',
                     border: bet === v ? '2px solid #ffd700' : '1px solid #4a2a4a' }}>
                   ${v >= 1000 ? `${v / 1000}K` : v}
                 </button>
               ))}
               <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
-                className='w-[70px] h-[26px] rounded-[4px] text-[11px] text-center font-bold outline-none'
+                className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                 style={{ background: '#1a0520', color: '#ffd700', border: '1px solid #c9a84c' }} />
             </div>
           )}
 
           <button onClick={spin} disabled={spinning || money < bet}
-            className='arcade-btn w-full max-w-full max-w-[180px] h-[44px] rounded-full text-[16px] font-bold disabled:opacity-30'
+            className='arcade-btn w-full max-w-full max-w-[180px] h-[38px] rounded-full text-[16px] font-bold disabled:opacity-30'
             style={{ background: spinning ? '#333' : 'linear-gradient(180deg, #e91e63, #c2185b)', color: 'white', border: '3px solid #c9a84c' }}>
             {spinning ? '🎡...' : '🎡 SPIN'}
           </button>
 
-          <div className='arcade-title text-[11px]' style={{ color: '#888' }}>
+          <div className='text-[10px]' style={{ color: '#666' }}>
             BAL <span style={{ color: '#4ade80', fontWeight: 700, fontSize: '14px' }}>${money.toLocaleString()}</span>
           </div>
         </div>

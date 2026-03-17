@@ -83,7 +83,7 @@ const Roulette = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
   const row3 = [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34]
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
       <div className='flex-1 overflow-y-auto flex flex-col items-center py-[10px] gap-[10px] px-[8px]'>
       {/* 휠 + 결과 */}
       <div className='flex items-center gap-[16px]'>
@@ -96,7 +96,7 @@ const Roulette = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
         <div className='flex flex-col gap-[8px] min-w-[100px]'>
           {showResult && result !== null && (
             <div className='flex items-center gap-[8px]'>
-              <div className='w-[40px] h-[40px] rounded-full flex items-center justify-center text-white text-[16px] font-bold'
+              <div className='w-[40px] h-[30px] sm:h-[36px] rounded-full flex items-center justify-center text-white text-[16px] font-bold'
                 style={{ background: getNumberColor(result), border: '2px solid #c9a84c' }}>{result}</div>
               {winAmount > 0
                 ? <span style={{ color: '#ffd700', fontSize: '16px', fontWeight: 800 }}>+${winAmount.toLocaleString()}</span>
@@ -129,7 +129,7 @@ const Roulette = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
               const bet = getBetOn('number', n)
               return (
                 <button key={n} onClick={() => placeBet('number', n)} disabled={spinning}
-                  className='flex-1 h-[50px] rounded-[2px] text-white text-[15px] font-bold hover:brightness-150 disabled:opacity-40 relative'
+                  className='flex-1 h-[36px] sm:h-[50px] rounded-[2px] text-white text-[11px] sm:text-[14px] font-bold hover:brightness-150 disabled:opacity-40 relative'
                   style={{ background: getNumberColor(n), border: bet > 0 ? '2px solid #ffd700' : '1px solid #ffffff22' }}>
                   {n}
                   {bet > 0 && (
@@ -189,7 +189,7 @@ const Roulette = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =>
         <div className='flex gap-[6px]'>
           {CHIP_VALUES.map((v) => (
             <button key={v} onClick={() => setSelectedChip(v)}
-              className='w-[42px] h-[42px] rounded-full text-white text-[10px] font-bold'
+              className='w-[42px] h-[36px] rounded-full text-white text-[10px] font-bold'
               style={{
                 background: `radial-gradient(circle at 35% 35%, ${CHIP_COLORS[v]}dd, ${CHIP_COLORS[v]})`,
                 border: selectedChip === v ? '3px solid #ffd700' : '2px dashed #ffffff44',

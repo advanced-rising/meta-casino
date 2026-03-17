@@ -69,13 +69,13 @@ const Crash = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const bestMult = history.length > 0 ? Math.max(...history.filter((h) => h.won).map((h) => h.mult), 0) : 0
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
       {/* 좌측: 게임 */}
       <div className='flex-1 flex flex-col items-center justify-center gap-[10px] overflow-y-auto py-[12px] px-[8px]'>
         <div className='flex flex-col items-center gap-[10px] p-[10px]'
           >
 
-          <span className='arcade-title neon-text' style={{ '--neon-color': '#e74c3c', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>
+          <span className='arcade-title neon-text' style={{ '--neon-color': '#e74c3c', color: '#ffd700', fontSize: '16px', fontWeight: 900 } as any}>
             🚀 CRASH
           </span>
 
@@ -136,7 +136,7 @@ const Crash = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                 <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
                 {BET_OPTIONS.map((v) => (
                   <button key={v} onClick={() => setBet(v)}
-                    className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
+                    className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                     style={{ background: bet === v ? '#c9a84c' : '#1a1a1a', color: bet === v ? '#000' : '#666',
                       border: bet === v ? '2px solid #ffd700' : '1px solid #333' }}>
                     ${v >= 1000 ? `${v / 1000}K` : v}
@@ -144,7 +144,7 @@ const Crash = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                 ))}
                 <input type='number' min={1} value={bet}
                   onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
-                  className='w-[70px] h-[26px] rounded-[4px] text-[11px] text-center font-bold outline-none'
+                  className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                   style={{ background: '#111', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>
               <div className='flex items-center gap-[6px] flex-wrap justify-center'>
@@ -164,13 +164,13 @@ const Crash = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
           <div className='flex items-center gap-[10px]'>
             {!playing ? (
               <button onClick={startGame} disabled={money < bet}
-                className='arcade-btn w-full max-w-full max-w-[180px] h-[44px] rounded-full text-[16px] font-bold disabled:opacity-30'
+                className='arcade-btn w-full max-w-full max-w-[180px] h-[38px] rounded-full text-[16px] font-bold disabled:opacity-30'
                 >
                 🚀 START
               </button>
             ) : (
               <button onClick={doCashOut}
-                className='arcade-btn w-full max-w-full max-w-[180px] h-[44px] rounded-full text-[16px] font-bold'
+                className='arcade-btn w-full max-w-full max-w-[180px] h-[38px] rounded-full text-[16px] font-bold'
                 style={{ background: 'linear-gradient(180deg, #f39c12, #d68910)', color: 'white', border: '3px solid #c9a84c',
                   boxShadow: '0 0 20px rgba(243,156,18,0.5)', animation: 'winPulse 0.4s ease infinite' }}>
                 💰 x{multiplier.toFixed(2)}
@@ -178,7 +178,7 @@ const Crash = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             )}
           </div>
 
-          <div className='arcade-title text-[11px]' style={{ color: '#888' }}>
+          <div className='text-[10px]' style={{ color: '#666' }}>
             BAL <span style={{ color: '#4ade80', fontWeight: 700, fontSize: '14px' }}>${money.toLocaleString()}</span>
           </div>
         </div>

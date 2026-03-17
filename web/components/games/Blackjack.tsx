@@ -27,14 +27,14 @@ const cardValue = (cards: Card[]): number => {
 
 const CardView = ({ card, hidden = false }: { card: Card; hidden?: boolean }) => (
   <motion.div initial={{ scale: 0, rotateY: 180 }} animate={{ scale: 1, rotateY: 0 }} transition={{ duration: 0.3 }}
-    className='w-[60px] h-[84px] rounded-[6px] flex flex-col items-center justify-center shrink-0'
+    className='w-[48px] h-[68px] sm:w-[60px] sm:h-[84px] rounded-[6px] flex flex-col items-center justify-center shrink-0'
     style={{
       background: hidden ? 'linear-gradient(145deg, #1a3a8a, #0a1a4a)' : '#fff',
       border: '2px solid #c9a84c', boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
     }}>
     {hidden ? <span style={{ fontSize: '20px', color: '#c9a84c' }}>?</span> : (
       <>
-        <span style={{ fontSize: '18px', fontWeight: 900, color: suitColor(card.suit) }}>{card.rank}</span>
+        <span style={{ fontSize: '15px', fontWeight: 800, color: suitColor(card.suit) }}>{card.rank}</span>
         <span style={{ fontSize: '14px', color: suitColor(card.suit) }}>{card.suit}</span>
       </>
     )}
@@ -122,12 +122,12 @@ const Blackjack = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
   const totalProfit = history.reduce((s, h) => s + h.profit, 0)
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
-        <div className='flex flex-col items-center gap-[12px] p-[12px]'
+        <div className='flex flex-col items-center gap-[8px] p-[8px] sm:gap-[12px] sm:p-[12px]'
           >
 
-          <span className='arcade-title neon-text' style={{ '--neon-color': '#2ecc71', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>
+          <span className='arcade-title neon-text' style={{ '--neon-color': '#2ecc71', color: '#ffd700', fontSize: '16px', fontWeight: 900 } as any}>
             🃏 BLACKJACK
           </span>
 
@@ -140,7 +140,7 @@ const Blackjack = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
               {dealerCards.map((c, i) => (
                 <CardView key={i} card={c} hidden={!showDealer && i === 1} />
               ))}
-              {dealerCards.length === 0 && <div className='w-[60px] h-[84px] rounded-[6px]' style={{ border: '2px dashed #333' }} />}
+              {dealerCards.length === 0 && <div className='w-[48px] h-[68px] sm:w-[60px] sm:h-[84px] rounded-[6px]' style={{ border: '2px dashed #333' }} />}
             </div>
           </div>
 
@@ -153,19 +153,19 @@ const Blackjack = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
             </span>
             <div className='flex gap-[6px]'>
               {playerCards.map((c, i) => <CardView key={i} card={c} />)}
-              {playerCards.length === 0 && <div className='w-[60px] h-[84px] rounded-[6px]' style={{ border: '2px dashed #333' }} />}
+              {playerCards.length === 0 && <div className='w-[48px] h-[68px] sm:w-[60px] sm:h-[84px] rounded-[6px]' style={{ border: '2px dashed #333' }} />}
             </div>
           </div>
 
           {/* 결과 */}
-          <div className='h-[30px] flex items-center justify-center'>
+          <div className='h-[22px] flex items-center justify-center'>
             {gameResult === 'blackjack' && (
               <motion.span animate={{ scale: [1, 1.15, 1] }} transition={{ repeat: Infinity, duration: 0.5 }}
-                className='arcade-title' style={{ color: '#ffd700', fontSize: '22px', fontWeight: 900, textShadow: '0 0 15px rgba(255,215,0,0.5)' }}>
+                className='arcade-title' style={{ color: '#ffd700', fontSize: '16px', fontWeight: 900, textShadow: '0 0 15px rgba(255,215,0,0.5)' }}>
                 🎉 BLACKJACK! x2.5
               </motion.span>
             )}
-            {gameResult === 'win' && <span className='arcade-title' style={{ color: '#2ecc71', fontSize: '20px', fontWeight: 900 }}>WIN! +${bet}</span>}
+            {gameResult === 'win' && <span className='arcade-title' style={{ color: '#2ecc71', fontSize: '16px', fontWeight: 800 }}>WIN! +${bet}</span>}
             {gameResult === 'lose' && <span className='arcade-title' style={{ color: '#e74c3c', fontSize: '18px' }}>BUST!</span>}
             {gameResult === 'push' && <span className='arcade-title' style={{ color: '#888', fontSize: '16px' }}>PUSH (반환)</span>}
           </div>
@@ -194,25 +194,25 @@ const Blackjack = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
                 <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
                 {BET_OPTIONS.map((v) => (
                   <button key={v} onClick={() => setBet(v)}
-                    className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
+                    className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                     style={{ background: bet === v ? '#c9a84c' : '#0a2a0a', color: bet === v ? '#000' : '#666',
                       border: bet === v ? '2px solid #ffd700' : '1px solid #2a4a2a' }}>
                     ${v >= 1000 ? `${v / 1000}K` : v}
                   </button>
                 ))}
                 <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
-                  className='w-[70px] h-[26px] rounded-[4px] text-[11px] text-center font-bold outline-none'
+                  className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                   style={{ background: '#061a06', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>
               <button onClick={deal} disabled={money < bet}
-                className='arcade-btn w-full max-w-full max-w-[180px] h-[44px] rounded-full text-[16px] font-bold disabled:opacity-30'
+                className='arcade-btn w-full max-w-full max-w-[180px] h-[38px] rounded-full text-[16px] font-bold disabled:opacity-30'
                 >
                 DEAL
               </button>
             </>
           )}
 
-          <div className='arcade-title text-[11px]' style={{ color: '#888' }}>
+          <div className='text-[10px]' style={{ color: '#666' }}>
             BAL <span style={{ color: '#4ade80', fontWeight: 700, fontSize: '14px' }}>${money.toLocaleString()}</span>
           </div>
         </div>

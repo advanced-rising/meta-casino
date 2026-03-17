@@ -38,7 +38,7 @@ const War = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
 
   const CardView = ({ card }: { card: {rank:string;suit:string} }) => (
     <motion.div initial={{ scale: 0, rotateY: 180 }} animate={{ scale: 1, rotateY: 0 }} transition={{ duration: 0.3 }}
-      className='w-[80px] h-[110px] rounded-[8px] flex flex-col items-center justify-center'
+      className='w-[60px] h-[85px] sm:w-[80px] sm:h-[110px] rounded-[8px] flex flex-col items-center justify-center'
       style={{ background: '#fff', boxShadow: '0 4px 15px rgba(0,0,0,0.2)' }}>
       <span style={{ fontSize: '28px', fontWeight: 900, color: suitColor(card.suit) }}>{card.rank}</span>
       <span style={{ fontSize: '20px', color: suitColor(card.suit) }}>{card.suit}</span>
@@ -46,18 +46,18 @@ const War = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   )
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
-      <div className='flex-1 flex flex-col items-center justify-center gap-[14px] px-[8px]'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
+      <div className='flex-1 flex flex-col items-center justify-center gap-[8px] sm:gap-[14px] px-[8px]'>
         <span className='text-[18px] font-bold' style={{ color: '#fff' }}>⚔️ WAR</span>
         <div className='flex items-center gap-[30px]'>
           <div className='flex flex-col items-center gap-[4px]'>
             <span className='text-[10px]' style={{ color: '#3b82f6' }}>YOU</span>
-            {playerCard ? <CardView card={playerCard} /> : <div className='w-[80px] h-[110px] rounded-[8px]' style={{ background: 'rgba(255,255,255,0.04)', border: '1px dashed rgba(255,255,255,0.1)' }} />}
+            {playerCard ? <CardView card={playerCard} /> : <div className='w-[60px] h-[85px] sm:w-[80px] sm:h-[110px] rounded-[8px]' style={{ background: 'rgba(255,255,255,0.04)', border: '1px dashed rgba(255,255,255,0.1)' }} />}
           </div>
           <span className='text-[16px] font-bold' style={{ color: '#555' }}>VS</span>
           <div className='flex flex-col items-center gap-[4px]'>
             <span className='text-[10px]' style={{ color: '#ef4444' }}>DEALER</span>
-            {dealerCard ? <CardView card={dealerCard} /> : <div className='w-[80px] h-[110px] rounded-[8px]' style={{ background: 'rgba(255,255,255,0.04)', border: '1px dashed rgba(255,255,255,0.1)' }} />}
+            {dealerCard ? <CardView card={dealerCard} /> : <div className='w-[60px] h-[85px] sm:w-[80px] sm:h-[110px] rounded-[8px]' style={{ background: 'rgba(255,255,255,0.04)', border: '1px dashed rgba(255,255,255,0.1)' }} />}
           </div>
         </div>
         <div className='h-[24px]'>
@@ -67,11 +67,11 @@ const War = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
         </div>
         {!dealing && (
           <div className='flex items-center gap-[6px] flex-wrap justify-center'>
-            {BET_OPTIONS.map(v => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[10px] py-[4px] rounded-[8px] text-[11px] font-bold'
+            {BET_OPTIONS.map(v => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
               style={{ background: bet === v ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.04)', color: bet === v ? '#fff' : '#666' }}>${v >= 1000 ? `${v/1000}K` : v}</button>))}
           </div>
         )}
-        <button onClick={deal} disabled={dealing || money < bet} className='arcade-btn w-full max-w-[160px] h-[42px] rounded-[12px] text-[14px] font-bold disabled:opacity-30'
+        <button onClick={deal} disabled={dealing || money < bet} className='arcade-btn w-full max-w-[160px] h-[36px] rounded-[12px] text-[14px] font-bold disabled:opacity-30'
           style={{ background: '#ef4444', color: 'white' }}>{dealing ? '...' : '⚔️ BATTLE'}</button>
         <div className='text-[11px]' style={{ color: '#888' }}>$ <span style={{ color: '#22c55e' }}>{money.toLocaleString()}</span></div>
       </div>

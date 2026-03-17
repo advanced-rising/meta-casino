@@ -42,7 +42,7 @@ const NumberGuess = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
   }
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
         <span className='text-[18px] font-bold' style={{ color: '#fff' }}>🔢 NUMBER GUESS</span>
         <div className='text-[11px]' style={{ color: '#888' }}>1~100 숫자를 맞춰보세요 (10회 이내)</div>
@@ -67,11 +67,11 @@ const NumberGuess = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
 
         {!playing && (
           <div className='flex items-center gap-[6px] flex-wrap justify-center'>
-            {BET_OPTIONS.map(v => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[10px] py-[4px] rounded-[8px] text-[11px] font-bold'
+            {BET_OPTIONS.map(v => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
               style={{ background: bet === v ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.04)', color: bet === v ? '#fff' : '#666' }}>${v >= 1000 ? `${v/1000}K` : v}</button>))}
           </div>
         )}
-        {!playing && <button onClick={start} disabled={money < bet} className='arcade-btn w-full max-w-[160px] h-[40px] rounded-[12px] text-[14px] font-bold disabled:opacity-30'
+        {!playing && <button onClick={start} disabled={money < bet} className='arcade-btn w-full max-w-[160px] h-[36px] rounded-[12px] text-[14px] font-bold disabled:opacity-30'
           style={{ background: '#a855f7', color: 'white' }}>START</button>}
         <div className='text-[11px]' style={{ color: '#888' }}>$ <span style={{ color: '#22c55e' }}>{money.toLocaleString()}</span></div>
       </div>

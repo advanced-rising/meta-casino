@@ -65,21 +65,21 @@ const HiLo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const totalProfit = history.reduce((s, h) => s + h.profit, 0)
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
-      <div className='flex-1 flex flex-col items-center justify-center gap-[14px] px-[8px]'>
-        <div className='flex flex-col items-center gap-[12px] p-[12px]'
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
+      <div className='flex-1 flex flex-col items-center justify-center gap-[8px] sm:gap-[14px] px-[8px]'>
+        <div className='flex flex-col items-center gap-[8px] p-[8px] sm:gap-[12px] sm:p-[12px]'
           >
 
-          <span className='arcade-title neon-text' style={{ '--neon-color': '#2ecc71', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>
+          <span className='arcade-title neon-text' style={{ '--neon-color': '#2ecc71', color: '#ffd700', fontSize: '16px', fontWeight: 900 } as any}>
             🃏 HI-LO
           </span>
 
           {/* 카드 영역 */}
-          <div className='flex items-center gap-[20px]'>
+          <div className='flex items-center gap-[10px] sm:p-[18px]'>
             {/* 현재 카드 */}
-            <motion.div className='w-[130px] h-[180px] rounded-[10px] flex flex-col items-center justify-center'
+            <motion.div className='w-[90px] h-[130px] sm:w-[130px] sm:h-[180px] rounded-[10px] flex flex-col items-center justify-center'
               style={{ background: '#fff', border: '3px solid #c9a84c', boxShadow: '0 4px 15px rgba(0,0,0,0.3)' }}>
-              <span style={{ fontSize: '42px', fontWeight: 900, color: SUIT_COLORS[currentCard.suit] }}>
+              <span style={{ fontSize: '28px', fontWeight: 900, color: SUIT_COLORS[currentCard.suit] }}>
                 {currentCard.rank}
               </span>
               <span style={{ fontSize: '32px', color: SUIT_COLORS[currentCard.suit] }}>{currentCard.suit}</span>
@@ -92,14 +92,14 @@ const HiLo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             <motion.div
               animate={showNext ? { rotateY: 0 } : { rotateY: 180 }}
               transition={{ duration: 0.5 }}
-              className='w-[130px] h-[180px] rounded-[10px] flex flex-col items-center justify-center'
+              className='w-[90px] h-[130px] sm:w-[130px] sm:h-[180px] rounded-[10px] flex flex-col items-center justify-center'
               style={{
                 background: showNext && nextCard ? '#fff' : 'linear-gradient(145deg, #1a3a8a, #0a1a4a)',
                 border: '3px solid #c9a84c', boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
               }}>
               {showNext && nextCard ? (
                 <>
-                  <span style={{ fontSize: '42px', fontWeight: 900, color: SUIT_COLORS[nextCard.suit] }}>{nextCard.rank}</span>
+                  <span style={{ fontSize: '28px', fontWeight: 900, color: SUIT_COLORS[nextCard.suit] }}>{nextCard.rank}</span>
                   <span style={{ fontSize: '32px', color: SUIT_COLORS[nextCard.suit] }}>{nextCard.suit}</span>
                 </>
               ) : (
@@ -116,10 +116,10 @@ const HiLo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
           )}
 
           {/* 결과 */}
-          <div className='h-[32px] flex items-center justify-center'>
+          <div className='h-[22px] flex items-center justify-center'>
             {result === 'win' && (
               <motion.span animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 0.6 }}
-                className='arcade-title' style={{ color: '#ffd700', fontSize: '22px', fontWeight: 900, textShadow: '0 0 15px rgba(255,215,0,0.5)' }}>
+                className='arcade-title' style={{ color: '#ffd700', fontSize: '16px', fontWeight: 900, textShadow: '0 0 15px rgba(255,215,0,0.5)' }}>
                 💰 +${potentialWin.toLocaleString()} ({streak}연승)
               </motion.span>
             )}
@@ -135,18 +135,18 @@ const HiLo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                 <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
                 {BET_OPTIONS.map((v) => (
                   <button key={v} onClick={() => setBet(v)}
-                    className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
+                    className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                     style={{ background: bet === v ? '#c9a84c' : '#1a2a1a', color: bet === v ? '#000' : '#666', border: bet === v ? '2px solid #ffd700' : '1px solid #2a4a2a' }}>
                     ${v >= 1000 ? `${v / 1000}K` : v}
                   </button>
                 ))}
                 <input type='number' min={1} value={bet}
                   onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
-                  className='w-[70px] h-[26px] rounded-[4px] text-[11px] text-center font-bold outline-none'
+                  className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                   style={{ background: '#0a1a0a', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>
               <button onClick={start} disabled={money < bet}
-                className='arcade-btn w-full max-w-[180px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
+                className='arcade-btn w-full max-w-[180px] h-[38px] rounded-full text-[15px] font-bold disabled:opacity-30'
                 >
                 DEAL
               </button>
@@ -173,7 +173,7 @@ const HiLo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             </div>
           )}
 
-          <div className='arcade-title text-[11px]' style={{ color: '#888' }}>
+          <div className='text-[10px]' style={{ color: '#666' }}>
             BAL <span style={{ color: '#4ade80', fontWeight: 700, fontSize: '14px' }}>${money.toLocaleString()}</span>
           </div>
         </div>

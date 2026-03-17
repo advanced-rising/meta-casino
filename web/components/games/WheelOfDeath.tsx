@@ -54,7 +54,7 @@ const WheelOfDeath = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
   const currentMult = round > 0 ? MULTIPLIERS[round - 1] : 1
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
         <span className='text-[18px] font-bold' style={{ color: '#fff' }}>🔫 WHEEL OF DEATH</span>
 
@@ -62,7 +62,7 @@ const WheelOfDeath = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
         <div className='flex gap-[6px]'>
           {Array.from({ length: CHAMBERS }, (_, i) => (
             <motion.div key={i} animate={spinning && i === round ? { rotate: 360 } : {}} transition={{ duration: 0.5 }}
-              className='w-[40px] h-[40px] rounded-full flex items-center justify-center text-[16px]'
+              className='w-[40px] h-[36px] rounded-full flex items-center justify-center text-[16px]'
               style={{
                 background: i < round ? '#22c55e22' : i === round && result === 'dead' ? '#ef444444' : 'rgba(255,255,255,0.06)',
                 border: i === round ? '2px solid #fff' : '1px solid rgba(255,255,255,0.08)',
@@ -89,10 +89,10 @@ const WheelOfDeath = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
         ) : (
           <>
             <div className='flex items-center gap-[6px] flex-wrap justify-center'>
-              {BET_OPTIONS.map(v => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[10px] py-[4px] rounded-[8px] text-[11px] font-bold'
+              {BET_OPTIONS.map(v => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                 style={{ background: bet === v ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.04)', color: bet === v ? '#fff' : '#666' }}>${v >= 1000 ? `${v/1000}K` : v}</button>))}
             </div>
-            <button onClick={start} disabled={money < bet} className='arcade-btn w-full max-w-[160px] h-[40px] rounded-[12px] text-[14px] font-bold disabled:opacity-30'
+            <button onClick={start} disabled={money < bet} className='arcade-btn w-full max-w-[160px] h-[36px] rounded-[12px] text-[14px] font-bold disabled:opacity-30'
               style={{ background: '#ef4444', color: 'white' }}>START</button>
           </>
         )}

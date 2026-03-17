@@ -36,10 +36,10 @@ const Limbo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const totalProfit = history.reduce((s, h) => s + h.profit, 0)
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
-        <div className='flex flex-col items-center gap-[12px] p-[12px]'>
-          <span className='arcade-title neon-text' style={{ '--neon-color': '#3498db', color: '#ffd700', fontSize: '20px', fontWeight: 900 } as any}>🎯 LIMBO</span>
+        <div className='flex flex-col items-center gap-[8px] p-[8px] sm:gap-[12px] sm:p-[12px]'>
+          <span className='arcade-title neon-text' style={{ '--neon-color': '#3498db', color: '#ffd700', fontSize: '16px', fontWeight: 800 } as any}>🎯 LIMBO</span>
 
           <div className='w-[200px] h-[120px] rounded-[12px] flex items-center justify-center' style={{ background: '#111', border: '1px solid #333' }}>
             <motion.span key={result} initial={{ scale: 3, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3 }}
@@ -52,7 +52,7 @@ const Limbo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             <span className='arcade-title text-[11px]' style={{ color: '#c9a84c' }}>TARGET</span>
             <input type='range' min={1.1} max={100} step={0.1} value={target} onChange={(e) => setTarget(parseFloat(e.target.value))} className='w-[120px]' style={{ accentColor: '#3498db' }} />
             <input type='number' min={1.1} step={0.1} value={target} onChange={(e) => setTarget(Math.max(1.1, parseFloat(e.target.value) || 1.1))}
-              className='w-[60px] h-[26px] rounded-[4px] text-[12px] text-center font-bold outline-none' style={{ background: '#111', color: '#ffd700', border: '1px solid #3498db' }} />
+              className='w-[50px] h-[24px] rounded-[4px] text-[12px] text-center font-bold outline-none' style={{ background: '#111', color: '#ffd700', border: '1px solid #3498db' }} />
             <span className='arcade-title text-[10px]' style={{ color: '#888' }}>{winChance}%</span>
           </div>
 
@@ -61,15 +61,15 @@ const Limbo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
 
           {!playing && (
             <div className='flex items-center gap-[6px] flex-wrap justify-center'>
-              {BET_OPTIONS.map((v) => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
+              {BET_OPTIONS.map((v) => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                 style={{ background: bet === v ? '#c9a84c' : '#0a0a2a', color: bet === v ? '#000' : '#666' }}>${v >= 1000 ? `${v / 1000}K` : v}</button>))}
               <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
-                className='w-[60px] h-[24px] rounded-[4px] text-[10px] text-center font-bold outline-none' style={{ background: '#05051a', color: '#ffd700', border: '1px solid #c9a84c' }} />
+                className='w-[50px] h-[22px] rounded-[4px] text-[10px] text-center font-bold outline-none' style={{ background: '#05051a', color: '#ffd700', border: '1px solid #c9a84c' }} />
             </div>
           )}
-          <button onClick={play} disabled={playing || money < bet} className='arcade-btn w-full max-w-[160px] h-[42px] rounded-full text-[15px] font-bold disabled:opacity-30'
+          <button onClick={play} disabled={playing || money < bet} className='arcade-btn w-full max-w-[160px] h-[36px] rounded-full text-[15px] font-bold disabled:opacity-30'
             style={{ background: playing ? '#333' : 'linear-gradient(180deg, #3498db, #2471a3)', color: 'white' }}>{playing ? '...' : '🎯 PLAY'}</button>
-          <div className='arcade-title text-[11px]' style={{ color: '#888' }}>BAL <span style={{ color: '#4ade80', fontWeight: 700 }}>${money.toLocaleString()}</span></div>
+          <div className='text-[10px]' style={{ color: '#666' }}>BAL <span style={{ color: '#4ade80', fontWeight: 700 }}>${money.toLocaleString()}</span></div>
         </div>
       </div>
       <div className='hidden lg:flex flex-col w-[200px] overflow-y-auto py-[12px] px-[10px] gap-[10px]' style={{ background: '#05051a', borderLeft: '1px solid #c9a84c22' }}>

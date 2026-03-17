@@ -5,7 +5,7 @@ import { getMoney, addMoney, subtractMoney } from '@/utils/money'
 const SYMBOLS = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '7️⃣', '⭐']
 const COLS = 5
 const ROWS = 5
-const CELL = 56
+const CELL = typeof window !== 'undefined' && window.innerWidth < 640 ? 40 : 56
 const EXTRA = 30
 
 const LINE_DEFS = [
@@ -219,7 +219,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
   const totalProfit = gameHistory.reduce((sum, h) => sum + (h.win > 0 ? h.win - h.bet : -h.bet), 0)
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
       {/* 좌측: 슬롯 머신 */}
       <div className='flex-1 flex flex-col items-center justify-center gap-[10px] lg:overflow-hidden overflow-y-auto py-[12px] px-[8px]'>
         {/* 잭팟 배너 */}
@@ -237,7 +237,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
 
           <div className='flex items-center gap-[6px] flex-wrap justify-center'>
             <span className='text-[16px]'>⭐</span>
-            <span className='arcade-title neon-text' style={{ '--neon-color': '#c9a84c', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>
+            <span className='arcade-title neon-text' style={{ '--neon-color': '#c9a84c', color: '#ffd700', fontSize: '16px', fontWeight: 900 } as any}>
               PACHISLOT 777
             </span>
             <span className='text-[16px]'>⭐</span>
@@ -272,12 +272,12 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
           </div>
 
           {/* 결과 */}
-          <div className='h-[32px] flex items-center justify-center'>
+          <div className='h-[22px] flex items-center justify-center'>
             {lastResult === 'win' && winAmount > 0 && (
               <motion.div className='flex items-center gap-[6px]'
                 animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}>
                 <span className='text-[18px]'>🎉</span>
-                <span className='arcade-title' style={{ color: '#ffd700', fontSize: '22px', fontWeight: 900, textShadow: '0 0 15px rgba(255,215,0,0.5)' }}>
+                <span className='arcade-title' style={{ color: '#ffd700', fontSize: '16px', fontWeight: 900, textShadow: '0 0 15px rgba(255,215,0,0.5)' }}>
                   +${winAmount.toLocaleString()}
                 </span>
                 <span className='text-[10px] px-[4px] py-[1px] rounded-[3px]' style={{ background: '#ffd70033', color: '#ffd700' }}>
@@ -294,26 +294,26 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
             <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
             {BET_OPTIONS.map((v) => (
               <button key={v} onClick={() => !spinning && setBet(v)}
-                className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
+                className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                 style={{ background: bet === v ? '#c9a84c' : '#222', color: bet === v ? '#000' : '#666', border: bet === v ? '2px solid #ffd700' : '1px solid #444' }}>
                 ${v >= 1000 ? `${v / 1000}K` : v}
               </button>
             ))}
             <input type='number' min={1} disabled={spinning} value={bet}
               onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
-              className='w-[70px] h-[26px] rounded-[4px] text-[11px] text-center font-bold outline-none'
+              className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
               style={{ background: '#111', color: '#ffd700', border: '1px solid #c9a84c' }} />
           </div>
 
           <div className='flex items-center gap-[8px]'>
             <button onClick={spin} disabled={spinning || money < bet || autoSpin}
-              className='arcade-btn w-[140px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
+              className='arcade-btn w-[140px] h-[38px] rounded-full text-[15px] font-bold disabled:opacity-30'
               style={{ background: spinning ? '#333' : 'linear-gradient(180deg, #e74c3c, #a93226)',
                 color: 'white', border: '3px solid #c9a84c', letterSpacing: '2px' }}>
               {spinning ? '⏳' : '🎰 SPIN'}
             </button>
             <button onClick={toggleAuto} disabled={spinning && !autoSpin}
-              className='arcade-btn w-[80px] h-[44px] rounded-full text-[12px] font-bold disabled:opacity-30'
+              className='arcade-btn w-[80px] h-[38px] rounded-full text-[12px] font-bold disabled:opacity-30'
               style={{ background: autoSpin ? '#27ae60' : '#333', color: autoSpin ? '#fff' : '#888',
                 border: autoSpin ? '3px solid #2ecc71' : '2px solid #555' }}>
               {autoSpin ? `x${speed} (${autoCount})` : 'AUTO'}
@@ -332,7 +332,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
             )}
           </div>
 
-          <div className='arcade-title text-[11px]' style={{ color: '#888' }}>
+          <div className='text-[10px]' style={{ color: '#666' }}>
             BAL <span style={{ color: '#4ade80', fontWeight: 700, fontSize: '14px' }}>${money.toLocaleString()}</span>
           </div>
         </div>

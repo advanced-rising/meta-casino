@@ -79,13 +79,13 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const bestMult = history.length > 0 ? Math.max(...history.filter((h) => h.mult > 0).map((h) => h.mult), 0) : 0
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
       {/* 좌측: 게임 */}
       <div className='flex-1 flex flex-col items-center justify-center gap-[10px] overflow-y-auto py-[12px] px-[8px]'>
         <div className='flex flex-col items-center gap-[10px] p-[10px]'
           >
 
-          <span className='arcade-title neon-text' style={{ '--neon-color': '#3498db', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>
+          <span className='arcade-title neon-text' style={{ '--neon-color': '#3498db', color: '#ffd700', fontSize: '16px', fontWeight: 900 } as any}>
             💎 MINES 💣
           </span>
 
@@ -115,13 +115,13 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
           <div className='h-[34px] flex items-center justify-center'>
             {cashedOut && (
               <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 0.8 }}
-                className='arcade-title' style={{ color: '#ffd700', fontSize: '20px', fontWeight: 900, textShadow: '0 0 15px rgba(255,215,0,0.5)' }}>
+                className='arcade-title' style={{ color: '#ffd700', fontSize: '16px', fontWeight: 800, textShadow: '0 0 15px rgba(255,215,0,0.5)' }}>
                 💰 +${potentialWin.toLocaleString()} (x{currentMultiplier})
               </motion.div>
             )}
             {gameOver && !cashedOut && (
               <motion.div initial={{ scale: 2, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                className='arcade-title' style={{ color: '#e74c3c', fontSize: '20px', fontWeight: 900 }}>
+                className='arcade-title' style={{ color: '#e74c3c', fontSize: '16px', fontWeight: 800 }}>
                 💥 BOOM!
               </motion.div>
             )}
@@ -139,7 +139,7 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                 <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
                 {BET_OPTIONS.map((v) => (
                   <button key={v} onClick={() => setBet(v)}
-                    className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
+                    className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                     style={{ background: bet === v ? '#c9a84c' : '#1a2a3a', color: bet === v ? '#000' : '#666',
                       border: bet === v ? '2px solid #ffd700' : '1px solid #2a4a6a' }}>
                     ${v >= 1000 ? `${v / 1000}K` : v}
@@ -147,7 +147,7 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                 ))}
                 <input type='number' min={1} value={bet}
                   onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
-                  className='w-[70px] h-[26px] rounded-[4px] text-[11px] text-center font-bold outline-none'
+                  className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                   style={{ background: '#0a1a2a', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>
               <div className='flex items-center gap-[6px] flex-wrap justify-center'>
@@ -167,13 +167,13 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
           <div className='flex items-center gap-[10px]'>
             {!playing ? (
               <button onClick={startGame} disabled={money < bet}
-                className='arcade-btn w-full max-w-[180px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
+                className='arcade-btn w-full max-w-[180px] h-[38px] rounded-full text-[15px] font-bold disabled:opacity-30'
                 >
                 START
               </button>
             ) : (
               <button onClick={cashOut} disabled={revealed === 0}
-                className='arcade-btn w-full max-w-[180px] h-[44px] rounded-full text-[15px] font-bold disabled:opacity-30'
+                className='arcade-btn w-full max-w-[180px] h-[38px] rounded-full text-[15px] font-bold disabled:opacity-30'
                 style={{ background: revealed > 0 ? 'linear-gradient(180deg, #f39c12, #d68910)' : '#333', color: 'white', border: '3px solid #c9a84c',
                   boxShadow: revealed > 0 ? '0 0 15px rgba(243,156,18,0.4)' : 'none' }}>
                 💰 CASH OUT x{currentMultiplier}
@@ -181,7 +181,7 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
             )}
           </div>
 
-          <div className='arcade-title text-[11px]' style={{ color: '#888' }}>
+          <div className='text-[10px]' style={{ color: '#666' }}>
             BAL <span style={{ color: '#4ade80', fontWeight: 700, fontSize: '14px' }}>${money.toLocaleString()}</span>
           </div>
         </div>

@@ -61,7 +61,7 @@ const GameLayout = ({ children, title, theme, onMoneyChange, money: propMoney }:
       <div className='relative z-10'>{children}</div>
 
       {/* 하단 광고 */}
-      <div className='fixed bottom-0 left-0 right-0 z-20 flex items-center justify-center h-[50px]'
+      <div className='fixed bottom-0 left-0 right-0 z-20 flex items-center justify-center h-[32px] sm:h-[50px]'
         style={{ background: 'rgba(0,0,0,0.7)', borderTop: '1px solid rgba(255,255,255,0.03)' }}>
         <div id='game-ad-slot' className='w-full max-w-[728px] h-[50px] flex items-center justify-center' />
       </div>

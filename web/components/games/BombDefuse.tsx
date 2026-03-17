@@ -56,10 +56,10 @@ const BombDefuse = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) 
   const totalProfit = history.reduce((s, h) => s + h.profit, 0)
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
-        <div className='flex flex-col items-center gap-[12px] p-[12px]'>
-          <span className='arcade-title neon-text' style={{ '--neon-color': '#e74c3c', color: '#ffd700', fontSize: '20px', fontWeight: 900 } as any}>💣 BOMB DEFUSE</span>
+        <div className='flex flex-col items-center gap-[8px] p-[8px] sm:gap-[12px] sm:p-[12px]'>
+          <span className='arcade-title neon-text' style={{ '--neon-color': '#e74c3c', color: '#ffd700', fontSize: '16px', fontWeight: 800 } as any}>💣 BOMB DEFUSE</span>
 
           {/* 폭탄 */}
           <motion.div animate={exploded ? { rotate: [0, 5, -5, 5, 0], scale: [1, 1.2, 0.8, 1] } : {}} transition={{ duration: 0.3 }}
@@ -85,7 +85,7 @@ const BombDefuse = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) 
 
           <div className='h-[26px] flex items-center justify-center'>
             {playing && cutCount > 0 && <span className='arcade-title' style={{ color: '#4ade80', fontSize: '14px' }}>x{currentMult} → ${Math.floor(bet * currentMult).toLocaleString()}</span>}
-            {result === 'win' && <motion.span animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: 3, duration: 0.3 }} className='arcade-title' style={{ color: '#ffd700', fontSize: '18px', fontWeight: 900 }}>🎉 +${Math.floor(bet * currentMult - bet).toLocaleString()}</motion.span>}
+            {result === 'win' && <motion.span animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: 3, duration: 0.3 }} className='arcade-title' style={{ color: '#ffd700', fontSize: '15px', fontWeight: 800 }}>🎉 +${Math.floor(bet * currentMult - bet).toLocaleString()}</motion.span>}
             {result === 'lose' && <span className='arcade-title' style={{ color: '#e74c3c', fontSize: '16px' }}>💥 BOOM!</span>}
           </div>
 
@@ -95,17 +95,17 @@ const BombDefuse = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) 
           ) : !playing ? (
             <>
               <div className='flex items-center gap-[6px] flex-wrap justify-center'>
-                {BET_OPTIONS.map((v) => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
+                {BET_OPTIONS.map((v) => (<button key={v} onClick={() => setBet(v)} className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                   style={{ background: bet === v ? '#c9a84c' : '#2a0a0a', color: bet === v ? '#000' : '#666' }}>${v >= 1000 ? `${v / 1000}K` : v}</button>))}
                 <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
-                  className='w-[60px] h-[24px] rounded-[4px] text-[10px] text-center font-bold outline-none' style={{ background: '#1a0505', color: '#ffd700', border: '1px solid #c9a84c' }} />
+                  className='w-[50px] h-[22px] rounded-[4px] text-[10px] text-center font-bold outline-none' style={{ background: '#1a0505', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>
-              <button onClick={start} disabled={money < bet} className='arcade-btn w-full max-w-[160px] h-[40px] rounded-full text-[14px] font-bold disabled:opacity-30'
+              <button onClick={start} disabled={money < bet} className='arcade-btn w-full max-w-[160px] h-[36px] rounded-full text-[14px] font-bold disabled:opacity-30'
                 >START</button>
             </>
           ) : null}
 
-          <div className='arcade-title text-[11px]' style={{ color: '#888' }}>BAL <span style={{ color: '#4ade80', fontWeight: 700 }}>${money.toLocaleString()}</span></div>
+          <div className='text-[10px]' style={{ color: '#666' }}>BAL <span style={{ color: '#4ade80', fontWeight: 700 }}>${money.toLocaleString()}</span></div>
         </div>
       </div>
       <div className='hidden lg:flex flex-col w-[200px] overflow-y-auto py-[12px] px-[10px] gap-[10px]' style={{ background: '#1a0505', borderLeft: '1px solid #c9a84c22' }}>

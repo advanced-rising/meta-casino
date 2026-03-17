@@ -95,35 +95,35 @@ const Dice = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   const totalProfit = history.reduce((s, h) => s + h.profit, 0)
 
   return (
-    <div className='h-[calc(100vh-102px)] flex overflow-hidden'>
+    <div className='h-[calc(100vh-80px)] sm:h-[calc(100vh-102px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
-        <div className='flex flex-col items-center gap-[12px] p-[12px]'
+        <div className='flex flex-col items-center gap-[8px] p-[8px] sm:gap-[12px] sm:p-[12px]'
           >
 
-          <span className='arcade-title neon-text' style={{ '--neon-color': '#2ecc71', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>
+          <span className='arcade-title neon-text' style={{ '--neon-color': '#2ecc71', color: '#ffd700', fontSize: '16px', fontWeight: 900 } as any}>
             🎲 DICE
           </span>
 
           {/* 주사위 */}
-          <div className='flex items-center gap-[20px]'>
+          <div className='flex items-center gap-[10px] sm:p-[18px]'>
             <motion.div animate={shaking ? { rotate: [0, 15, -15, 10, -10, 0], scale: [1, 1.1, 0.9, 1.05, 1] } : {}}
               transition={{ duration: 0.3, repeat: shaking ? Infinity : 0 }}>
-              <DiceFace value={dice1} size={80} />
+              <DiceFace value={dice1} size={typeof window !== 'undefined' && window.innerWidth < 640 ? 60 : 80} />
             </motion.div>
             <span className='arcade-title text-[20px]' style={{ color: '#c9a84c' }}>+</span>
             <motion.div animate={shaking ? { rotate: [0, -15, 15, -10, 10, 0], scale: [1, 0.9, 1.1, 0.95, 1] } : {}}
               transition={{ duration: 0.3, repeat: shaking ? Infinity : 0, delay: 0.05 }}>
-              <DiceFace value={dice2} size={80} />
+              <DiceFace value={dice2} size={typeof window !== 'undefined' && window.innerWidth < 640 ? 60 : 80} />
             </motion.div>
             <span className='arcade-title text-[20px]' style={{ color: '#c9a84c' }}>=</span>
             <span className='arcade-title text-[36px] font-bold' style={{ color: '#ffd700' }}>{dice1 + dice2}</span>
           </div>
 
           {/* 결과 */}
-          <div className='h-[30px] flex items-center justify-center'>
+          <div className='h-[22px] flex items-center justify-center'>
             {result === 'win' && (
               <motion.span animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 0.6 }}
-                className='arcade-title' style={{ color: '#ffd700', fontSize: '20px', fontWeight: 900, textShadow: '0 0 10px rgba(255,215,0,0.5)' }}>
+                className='arcade-title' style={{ color: '#ffd700', fontSize: '16px', fontWeight: 800, textShadow: '0 0 10px rgba(255,215,0,0.5)' }}>
                 🎉 +${winAmount.toLocaleString()}
               </motion.span>
             )}
@@ -161,26 +161,26 @@ const Dice = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
                 <span className='arcade-title' style={{ color: '#c9a84c', fontSize: '10px' }}>BET</span>
                 {BET_OPTIONS.map((v) => (
                   <button key={v} onClick={() => setBet(v)}
-                    className='arcade-btn px-[10px] py-[4px] rounded-[4px] text-[11px] font-bold'
+                    className='arcade-btn px-[6px] py-[3px] rounded-[6px] text-[10px] font-bold'
                     style={{ background: bet === v ? '#c9a84c' : '#1a2a0a', color: bet === v ? '#000' : '#666',
                       border: bet === v ? '2px solid #ffd700' : '1px solid #2a4a2a' }}>
                     ${v >= 1000 ? `${v / 1000}K` : v}
                   </button>
                 ))}
                 <input type='number' min={1} value={bet} onChange={(e) => { const v = parseInt(e.target.value) || 0; if (v >= 0) setBet(v) }}
-                  className='w-[70px] h-[26px] rounded-[4px] text-[11px] text-center font-bold outline-none'
+                  className='w-[55px] h-[24px] rounded-[4px] text-[11px] text-center font-bold outline-none'
                   style={{ background: '#0a1a05', color: '#ffd700', border: '1px solid #c9a84c' }} />
               </div>
             </>
           )}
 
           <button onClick={roll} disabled={rolling || money < bet}
-            className='arcade-btn w-full max-w-full max-w-[180px] h-[44px] rounded-full text-[16px] font-bold disabled:opacity-30'
+            className='arcade-btn w-full max-w-full max-w-[180px] h-[38px] rounded-full text-[16px] font-bold disabled:opacity-30'
             style={{ background: rolling ? '#333' : 'linear-gradient(180deg, #2ecc71, #1e8449)', color: 'white', border: '3px solid #c9a84c' }}>
             {rolling ? '🎲...' : '🎲 ROLL'}
           </button>
 
-          <div className='arcade-title text-[11px]' style={{ color: '#888' }}>
+          <div className='text-[10px]' style={{ color: '#666' }}>
             BAL <span style={{ color: '#4ade80', fontWeight: 700, fontSize: '14px' }}>${money.toLocaleString()}</span>
           </div>
         </div>

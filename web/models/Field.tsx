@@ -233,7 +233,7 @@ const Field = ({
             })}
           </Suspense>
 
-          <Floor groundColor={isNight ? '#0a0a12' : '#3a5a2a'} onClick={(e: any) => { if (e.point) clickTargetRef.current = { x: e.point.x, z: e.point.z } }} />
+          <Floor groundColor={isNight ? '#151525' : '#3a5a2a'} onClick={(e: any) => { if (e.point) clickTargetRef.current = { x: e.point.x, z: e.point.z } }} />
 
           {/* 가로등 (도로변) */}
           {[-44, -36, -28, -20, -12, -4, 8, 16, 24, 32, 40].map((v, i) => (
@@ -277,7 +277,13 @@ const Field = ({
         )}
 
         <MobileControls mobileInputRef={mobileInputRef} onJump={handleMobileJump} onInteract={handleMobileInteract} />
-        <Loader dataInterpolation={(p) => `Loading ${p.toFixed(2)}%`} initialState={(active) => active} />
+        <Loader
+          containerStyles={{ background: '#0a0a0a' }}
+          barStyles={{ background: '#22c55e' }}
+          dataStyles={{ color: '#fff', fontSize: '12px' }}
+          dataInterpolation={(p) => `Loading ${p.toFixed(0)}%`}
+          initialState={(active) => active}
+        />
       </>
     )
   )

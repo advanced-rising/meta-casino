@@ -372,6 +372,37 @@ const Field = ({
               </mesh>
             </group>
             {nearSpace?.id === 'bombdefuse' && <Sparkles count={60} size={6} position={[35, 1, 35]} scale={[3, 2, 3]} speed={5} color='#e74c3c' />}
+
+            {/* Keno */}
+            <group position={[-35, 0, 30]}>
+              <mesh castShadow receiveShadow position={[0, 0.5, 0]}><sphereGeometry args={[0.5, 12, 12]} /><meshStandardMaterial color='#3b82f6' /></mesh>
+              {[0,1,2].map(i => (<mesh key={i} castShadow position={[Math.cos(i*2.1)*0.3, 0.9, Math.sin(i*2.1)*0.3]}>
+                <sphereGeometry args={[0.12, 8, 8]} /><meshStandardMaterial color={['#ef4444','#22c55e','#eab308'][i]} /></mesh>))}
+            </group>
+            {nearSpace?.id === 'keno' && <Sparkles count={60} size={6} position={[-35, 1, 30]} scale={[3, 2, 3]} speed={5} color='#3b82f6' />}
+
+            {/* War */}
+            <group position={[40, 0, -30]}>
+              <mesh castShadow position={[0, 0.8, 0]} rotation={[0, 0, 0.3]}><boxGeometry args={[0.1, 1.4, 0.05]} /><meshStandardMaterial color='#888' metalness={0.7} /></mesh>
+              <mesh castShadow position={[0, 1.5, 0]}><boxGeometry args={[0.4, 0.1, 0.05]} /><meshStandardMaterial color='#888' metalness={0.7} /></mesh>
+            </group>
+            {nearSpace?.id === 'war' && <Sparkles count={60} size={6} position={[40, 1, -30]} scale={[3, 2, 3]} speed={5} color='#ef4444' />}
+
+            {/* Number Guess */}
+            <group position={[-40, 0, -20]}>
+              <mesh castShadow receiveShadow position={[0, 0.6, 0]}><boxGeometry args={[0.8, 1, 0.15]} /><meshStandardMaterial color='#a855f7' /></mesh>
+              <mesh position={[0, 0.6, 0.09]}><boxGeometry args={[0.5, 0.3, 0.01]} /><meshStandardMaterial color='#fff' /></mesh>
+            </group>
+            {nearSpace?.id === 'numberguess' && <Sparkles count={60} size={6} position={[-40, 1, -20]} scale={[3, 2, 3]} speed={5} color='#a855f7' />}
+
+            {/* Wheel of Death */}
+            <group position={[0, 0, -40]}>
+              <mesh castShadow receiveShadow position={[0, 0.4, 0]}><cylinderGeometry args={[0.5, 0.5, 0.15, 6]} /><meshStandardMaterial color='#555' metalness={0.7} /></mesh>
+              {Array.from({length: 6}, (_, i) => {const a = (i/6)*Math.PI*2; return (
+                <mesh key={i} castShadow position={[Math.cos(a)*0.35, 0.5, Math.sin(a)*0.35]}>
+                  <cylinderGeometry args={[0.06, 0.06, 0.12, 6]} /><meshStandardMaterial color={i === 0 ? '#ef4444' : '#333'} /></mesh>)})}
+            </group>
+            {nearSpace?.id === 'wheelofdeath' && <Sparkles count={60} size={6} position={[0, 1, -40]} scale={[3, 2, 3]} speed={5} color='#ef4444' />}
           </Suspense>
 
           <Floor onClick={(e: any) => {

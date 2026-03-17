@@ -137,6 +137,10 @@ const HUD = () => {
                   ['🎯', 'Limbo', '목표 배수 설정, 높을수록 고위험'],
                   ['🎨', 'Color Predict', '빨x2/초x3/보x5 색 예측'],
                   ['💣', 'Bomb Defuse', '5선 중 폭탄선 피하기, x1.5~x15'],
+                  ['🎱', 'Keno', '번호 뽑기 로또, 최대 x2000'],
+                  ['⚔️', 'War', '카드 대결, 높은 카드 승'],
+                  ['🔢', 'Number Guess', '숫자 맞추기, x1.2~x5'],
+                  ['🔫', 'Wheel of Death', '6발 생존, x1.5~x25'],
                 ].map(([emoji, name, desc], i) => (
                   <div key={i} className='flex gap-[4px]'>
                     <span>{emoji}</span>

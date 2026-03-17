@@ -47,6 +47,10 @@ export const MAP_BLOCKS: [number, number, number, number, number, number][] = [
   [10, 0, 35, 1.5, 1.5, 1.5],    // 림보
   [-10, 0, -35, 1.5, 1.5, 1.5],  // 컬러프레딕트
   [35, 0, 35, 1.5, 1.5, 1.5],    // 폭탄해체
+  [-35, 0, 30, 1.5, 1.5, 1.5],   // 케노
+  [40, 0, -30, 1.5, 1.5, 1.5],   // 워
+  [-40, 0, -20, 1.5, 1.5, 1.5],  // 넘버게스
+  [0, 0, -40, 1.5, 1.5, 1.5],    // 휠오브데스
 
   // 동상 (교차로 4개)
   [20, 0, 20, 1.2, 2.5, 1.2],
@@ -103,6 +107,10 @@ export const GAME_SPACES = [
   { id: 'limbo', name: 'Limbo 🎯', position: [10, 0, 35] as [number, number, number], route: '/space/limbo', radius: 3 },
   { id: 'colorpredict', name: 'Color Predict 🎨', position: [-10, 0, -35] as [number, number, number], route: '/space/colorpredict', radius: 3 },
   { id: 'bombdefuse', name: 'Bomb Defuse 💣', position: [35, 0, 35] as [number, number, number], route: '/space/bombdefuse', radius: 3 },
+  { id: 'keno', name: 'Keno 🎱', position: [-35, 0, 30] as [number, number, number], route: '/space/keno', radius: 3 },
+  { id: 'war', name: 'War ⚔️', position: [40, 0, -30] as [number, number, number], route: '/space/war', radius: 3 },
+  { id: 'numberguess', name: 'Number Guess 🔢', position: [-40, 0, -20] as [number, number, number], route: '/space/numberguess', radius: 3 },
+  { id: 'wheelofdeath', name: 'Wheel of Death 🔫', position: [0, 0, -40] as [number, number, number], route: '/space/wheelofdeath', radius: 3 },
 ]
 
 // AABB 충돌 체크

@@ -67,23 +67,42 @@ const Character = ({
   const FLY_DURATION = 3 // 3초 비행
   const FLY_HEIGHT = 5
 
-  // 초기 위치 복원
-  useEffect(() => {
-    if (typeof window === 'undefined' || !characterGroup.current) return
-    try {
-      const saved = localStorage.getItem('meta-casino-char-pos')
-      if (saved) {
-        const [x, , z] = JSON.parse(saved)
-        characterGroup.current.position.set(x, 0, z)
-      }
-    } catch {}
-  }, [])
-
-  // 카메라 추적 (캐릭터 뒤쪽에서 따라감)
+  // 카메라 설정
   const cameraDistance = 12
   const cameraHeight = 8
   const currentCameraPos = useRef(new THREE.Vector3(0, cameraHeight, cameraDistance))
   const currentLookAt = useRef(new THREE.Vector3())
+  const initialized = useRef(false)
+
+  // 초기 위치 + 카메라 즉시 복원
+  useEffect(() => {
+    if (typeof window === 'undefined' || !characterGroup.current) return
+    try {
+      const saved = localStorage.getItem('meta-casino-char-pos')
+      const savedRot = localStorage.getItem('meta-casino-char-rot')
+      if (saved) {
+        const [x, , z] = JSON.parse(saved)
+        characterGroup.current.position.set(x, 0, z)
+
+        const rot = savedRot ? parseFloat(savedRot) : 0
+        rotationY.current = rot
+        characterGroup.current.rotation.y = rot
+
+        // 카메라도 즉시 캐릭터 뒤로 배치 (lerp 없이)
+        const behind = new THREE.Vector3(
+          -Math.sin(rot) * cameraDistance,
+          cameraHeight,
+          -Math.cos(rot) * cameraDistance,
+        )
+        const camPos = new THREE.Vector3(x, 0, z).add(behind)
+        currentCameraPos.current.copy(camPos)
+        currentLookAt.current.set(x, 1, z)
+        camera.position.copy(camPos)
+        camera.lookAt(x, 1, z)
+      }
+    } catch {}
+    initialized.current = true
+  }, [])
 
   const puffinChar = useLoader(GLTFLoader, '/assets/models/character/puffin.gltf')
   const { camera } = useThree()
@@ -145,7 +164,7 @@ const Character = ({
   }, [])
 
   useFrame((state, delta) => {
-    if (!enteredInput || !characterGroup.current) return
+    if (!enteredInput || !characterGroup.current || !initialized.current) return
 
     const anim = activeAnimation.current
     const obj = characterGroup.current
@@ -360,6 +379,7 @@ const Character = ({
     // 위치 저장 (60프레임마다 = ~1초)
     if (emitCounter.current % 60 === 0 && typeof window !== 'undefined') {
       localStorage.setItem('meta-casino-char-pos', JSON.stringify([obj.position.x, obj.position.y, obj.position.z]))
+      localStorage.setItem('meta-casino-char-rot', String(rotationY.current))
     }
 
     mixer.update(delta)

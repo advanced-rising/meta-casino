@@ -151,7 +151,7 @@ export function resolveCollisions(
       pos.x = pos.x > bx ? blockMaxX + charRadius : blockMinX - charRadius
     }
     if (!prevInZ) {
-      pos.z = pos.z > bx ? blockMaxZ + charRadius : blockMinZ - charRadius
+      pos.z = pos.z > bz ? blockMaxZ + charRadius : blockMinZ - charRadius
     }
   }
 

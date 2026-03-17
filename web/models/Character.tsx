@@ -222,7 +222,7 @@ const Character = ({
 
     // --- Socket emit ---
     emitCounter.current++
-    if (emitCounter.current % 3 === 0) {
+    if (emitCounter.current % 3 === 0 && socket?.connected) {
       const q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotationY.current)
       socket.emit('move', {
         id: socket.id,

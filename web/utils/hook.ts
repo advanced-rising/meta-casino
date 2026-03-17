@@ -15,17 +15,11 @@ import { useImmer } from 'use-immer'
 import { socket } from './context'
 
 export const useJoinRoom = (socket: Socket, roomId: string) => {
-  const requestJoin = () => {
-    console.log(`join Room: ${roomId}`)
+  useEffect(() => {
+    if (!socket?.emit) return
     socket.emit(JOIN_ROOM, roomId)
-
-    return () => {
-      console.log(`Leave Room: ${roomId}`)
-      socket.emit(LEAVE_ROOM, roomId)
-    }
-  }
-
-  useEffect(requestJoin, [])
+    return () => { socket.emit(LEAVE_ROOM, roomId) }
+  }, [])
 }
 
 export const useRoomsIo = (socket: Socket) => {

@@ -57,6 +57,7 @@ const Message = ({
       )
     }
 
+    if (!socket?.on) return
     socket.on(NEW_MESSAGE, handleNewMessage)
     socket.on(IN_ROOM_USER, handleNewUser)
 
@@ -67,7 +68,7 @@ const Message = ({
   }, [socket, chatOpen])
 
   useEffect(() => {
-    if (nickname && nickname !== 'unknown') {
+    if (nickname && nickname !== 'unknown' && socket?.emit) {
       socket.emit(IN_ROOM_USER, { nickname })
     }
   }, [nickname])

@@ -57,7 +57,7 @@ const ColorPredict = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }
   return (
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
-        <div className='rounded-[12px] p-[24px] flex flex-col items-center gap-[12px]' style={{ background: 'linear-gradient(180deg, #1a0a1a, #0d050d)' }}>
+        <div className='flex flex-col items-center gap-[12px] p-[12px]'>
           <span className='arcade-title neon-text' style={{ '--neon-color': '#e91e63', color: '#ffd700', fontSize: '20px', fontWeight: 900 } as any}>🎨 COLOR PREDICT</span>
 
           {/* 결과 원 */}

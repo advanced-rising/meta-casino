@@ -232,7 +232,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
           </motion.div>
         )}
 
-        <div className='arcade-box p-[16px] flex flex-col items-center gap-[8px]'
+        <div className='flex flex-col items-center gap-[8px] p-[8px]'
           style={{ background: 'linear-gradient(180deg, #4a1068 0%, #220840 40%, #3a1058 100%)' }}>
 
           <div className='flex items-center gap-[6px]'>

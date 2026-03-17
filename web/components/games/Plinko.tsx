@@ -121,7 +121,7 @@ const Plinko = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   return (
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center gap-[8px] overflow-y-auto py-[10px] px-[8px]'>
-        <div className='arcade-box p-[16px] flex flex-col items-center gap-[8px]'
+        <div className='flex flex-col items-center gap-[8px] p-[8px]'
           style={{ background: 'linear-gradient(180deg, #0a1a3a 0%, #050d20 50%, #0a1a3a 100%)' }}>
 
           <span className='arcade-title neon-text' style={{ '--neon-color': '#f39c12', color: '#ffd700', fontSize: '20px', fontWeight: 900 } as any}>

@@ -72,7 +72,7 @@ const Crash = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       {/* 좌측: 게임 */}
       <div className='flex-1 flex flex-col items-center justify-center gap-[10px] overflow-y-auto py-[12px] px-[8px]'>
-        <div className='arcade-box p-[20px] flex flex-col items-center gap-[10px]'
+        <div className='flex flex-col items-center gap-[10px] p-[10px]'
           style={{ background: 'linear-gradient(180deg, #1a0a0a 0%, #0d0505 50%, #1a0a0a 100%)', minWidth: '380px' }}>
 
           <span className='arcade-title neon-text' style={{ '--neon-color': '#e74c3c', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>

@@ -124,7 +124,7 @@ const Blackjack = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
   return (
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
-        <div className='arcade-box p-[24px] flex flex-col items-center gap-[12px]'
+        <div className='flex flex-col items-center gap-[12px] p-[12px]'
           style={{ background: 'linear-gradient(180deg, #0a3a0a 0%, #061a06 50%, #0a3a0a 100%)' }}>
 
           <span className='arcade-title neon-text' style={{ '--neon-color': '#2ecc71', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>

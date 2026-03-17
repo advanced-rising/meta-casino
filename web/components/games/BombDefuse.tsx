@@ -58,7 +58,7 @@ const BombDefuse = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) 
   return (
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
-        <div className='rounded-[12px] p-[24px] flex flex-col items-center gap-[12px]' style={{ background: 'linear-gradient(180deg, #2a0a0a, #1a0505)' }}>
+        <div className='flex flex-col items-center gap-[12px] p-[12px]'>
           <span className='arcade-title neon-text' style={{ '--neon-color': '#e74c3c', color: '#ffd700', fontSize: '20px', fontWeight: 900 } as any}>💣 BOMB DEFUSE</span>
 
           {/* 폭탄 */}

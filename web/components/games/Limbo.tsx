@@ -38,7 +38,7 @@ const Limbo = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
   return (
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
-        <div className='rounded-[12px] p-[24px] flex flex-col items-center gap-[12px]' style={{ background: 'linear-gradient(180deg, #0a0a2a, #05051a)' }}>
+        <div className='flex flex-col items-center gap-[12px] p-[12px]'>
           <span className='arcade-title neon-text' style={{ '--neon-color': '#3498db', color: '#ffd700', fontSize: '20px', fontWeight: 900 } as any}>🎯 LIMBO</span>
 
           <div className='w-[200px] h-[120px] rounded-[12px] flex items-center justify-center' style={{ background: '#111', border: '1px solid #333' }}>

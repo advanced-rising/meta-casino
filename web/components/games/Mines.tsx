@@ -82,7 +82,7 @@ const Mines = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       {/* 좌측: 게임 */}
       <div className='flex-1 flex flex-col items-center justify-center gap-[10px] overflow-y-auto py-[12px] px-[8px]'>
-        <div className='arcade-box p-[20px] flex flex-col items-center gap-[10px]'
+        <div className='flex flex-col items-center gap-[10px] p-[10px]'
           style={{ background: 'linear-gradient(180deg, #0a2540 0%, #061a2e 50%, #0a2540 100%)' }}>
 
           <span className='arcade-title neon-text' style={{ '--neon-color': '#3498db', color: '#ffd700', fontSize: '22px', fontWeight: 900 } as any}>

@@ -60,7 +60,7 @@ const HorseRace = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) =
   return (
     <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
       <div className='flex-1 flex flex-col items-center justify-center gap-[10px] overflow-y-auto py-[10px] px-[8px]'>
-        <div className='rounded-[12px] p-[20px] flex flex-col items-center gap-[10px] w-full max-w-[600px]'
+        <div className='flex flex-col items-center gap-[10px] p-[10px] w-full max-w-[600px]'
           style={{ background: 'linear-gradient(180deg, #1a2a0a, #0d1a05)' }}>
 
           <span className='arcade-title neon-text' style={{ '--neon-color': '#2ecc71', color: '#ffd700', fontSize: '20px', fontWeight: 900 } as any}>

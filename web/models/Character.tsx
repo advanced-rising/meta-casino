@@ -14,18 +14,25 @@ interface Animations {
   }
 }
 
+export interface CharacterInput {
+  forward: boolean; backward: boolean; left: boolean; right: boolean
+  run: boolean; dance: boolean; jump: boolean; interact: boolean
+}
+
 const Character = ({
   socket,
   enteredInput,
   nickname,
   onNearSpace,
+  inputRef,
 }: {
   socket: SocketTypes
   enteredInput: boolean
   nickname: string
   onNearSpace: (space: { id: string; name: string; route: string } | null) => void
+  inputRef?: React.MutableRefObject<CharacterInput | null>
 }) => {
-  const activeAnimation = useRef({
+  const activeAnimation = useRef<CharacterInput>({
     forward: false,
     backward: false,
     left: false,
@@ -35,6 +42,11 @@ const Character = ({
     jump: false,
     interact: false,
   })
+
+  // 외부에서 입력 접근 가능하도록
+  useEffect(() => {
+    if (inputRef) inputRef.current = activeAnimation.current
+  }, [])
 
   const characterGroup = useRef<THREE.Group>(null!)
   const velocityY = useRef(0)

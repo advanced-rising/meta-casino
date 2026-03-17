@@ -3,7 +3,8 @@ import React, { useEffect, useState, useCallback, useRef, Suspense } from 'react
 import { Sky, Loader, Sparkles, Stats } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import Lights from '@/models/ui/Lights'
-import Character, { OtherCharacter } from '@/models/Character'
+import Character, { OtherCharacter, CharacterInput } from '@/models/Character'
+import MobileControls from '@/components/dom/MobileControls'
 import { useRouter } from 'next/router'
 import StoneHenge from './ui/StoneHenge'
 import { useImmer } from 'use-immer'
@@ -61,6 +62,32 @@ const Field = ({
   useEffect(() => {
     if (typeof window !== 'undefined') setIsSet(true)
   }, [])
+
+  // 모바일 입력 ref
+  const charInputRef = useRef<CharacterInput | null>(null)
+
+  const handleMobileInput = useCallback((input: { forward: boolean; backward: boolean; left: boolean; right: boolean; run: boolean }) => {
+    if (charInputRef.current) {
+      charInputRef.current.forward = input.forward
+      charInputRef.current.backward = input.backward
+      charInputRef.current.left = input.left
+      charInputRef.current.right = input.right
+      charInputRef.current.run = input.run
+    }
+  }, [])
+
+  const handleMobileJump = useCallback(() => {
+    if (charInputRef.current) {
+      charInputRef.current.jump = true
+      setTimeout(() => { if (charInputRef.current) charInputRef.current.jump = false }, 200)
+    }
+  }, [])
+
+  const handleMobileInteract = useCallback(() => {
+    if (nearSpaceRef.current) {
+      router.push(nearSpaceRef.current.route)
+    }
+  }, [router])
 
   // 근접 상태 콜백
   const handleNearSpace = useCallback((space: { id: string; name: string; route: string } | null) => {
@@ -126,6 +153,7 @@ const Field = ({
               socket={socket}
               nickname={nickname}
               onNearSpace={handleNearSpace}
+              inputRef={charInputRef}
             />
 
             <StoneHenge
@@ -193,6 +221,13 @@ const Field = ({
             </div>
           </div>
         )}
+
+        {/* 모바일 조이스틱 + 버튼 */}
+        <MobileControls
+          onInput={handleMobileInput}
+          onJump={handleMobileJump}
+          onInteract={handleMobileInteract}
+        />
 
         <Loader dataInterpolation={(p) => `Loading ${p.toFixed(2)}%`} initialState={(active) => active} />
       </>

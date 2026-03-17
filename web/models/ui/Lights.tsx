@@ -37,22 +37,22 @@ export function getDayProgress() {
   const celestialY = Math.sin(sunAngle) * 100   // 최고점 100
   const celestialZ = 30
 
-  // 조명 강도
-  const moonBrightness = Math.sin(sunAngle) * 0.4
-  const intensity = isDay ? Math.sin(sunAngle) * 2.0 : 0.6 + moonBrightness
-  const ambientIntensity = isDay ? 0.2 + Math.sin(sunAngle) * 0.3 : 0.35 + moonBrightness * 0.3
+  // 조명 강도 (밤에도 충분히 밝게)
+  const moonBrightness = Math.sin(sunAngle) * 0.5
+  const intensity = isDay ? Math.sin(sunAngle) * 2.0 : 1.2 + moonBrightness
+  const ambientIntensity = isDay ? 0.2 + Math.sin(sunAngle) * 0.3 : 0.6 + moonBrightness
 
   // 하늘 색상
   const noon = isDay ? Math.sin(sunAngle) : 0
   const skyColor = isDay
     ? new THREE.Color().lerpColors(new THREE.Color('#ff8c42'), new THREE.Color('#87ceeb'), noon)
-    : new THREE.Color('#1a1a3a')
+    : new THREE.Color('#2a2a4a')
   const groundColor = isDay
     ? new THREE.Color().lerpColors(new THREE.Color('#4a3520'), new THREE.Color('#556b2f'), noon)
-    : new THREE.Color('#15152a')
+    : new THREE.Color('#202035')
   const sunColor = isDay
     ? new THREE.Color().lerpColors(new THREE.Color('#ff6b35'), new THREE.Color('#fffbe6'), noon)
-    : new THREE.Color('#9999cc')
+    : new THREE.Color('#bbbbee')
 
   // Sky 컴포넌트용 sunPosition
   const sunPosition: [number, number, number] = isDay
@@ -65,7 +65,7 @@ export function getDayProgress() {
     if (noon < 0.3) bgColor = '#d4886b' // 일출/일몰
     else bgColor = '#6bb3d4' // 낮
   } else {
-    bgColor = '#101025' // 밤 (달빛 반영)
+    bgColor = '#1a1a35' // 밤
   }
 
   return { hour, isDay, sunAngle, intensity, ambientIntensity, skyColor, groundColor, sunColor, sunPosition, celestialX, celestialY, celestialZ, bgColor }
@@ -96,7 +96,7 @@ function Lights() {
     if (hemiRef.current) {
       hemiRef.current.color.copy(d.skyColor)
       hemiRef.current.groundColor.copy(d.groundColor)
-      hemiRef.current.intensity = d.isDay ? 0.5 : 0.12
+      hemiRef.current.intensity = d.isDay ? 0.5 : 0.4
     }
     if (ambientRef.current) {
       ambientRef.current.intensity = d.ambientIntensity

@@ -233,7 +233,7 @@ const Field = ({
             })}
           </Suspense>
 
-          <Floor groundColor={isNight ? '#151525' : '#3a5a2a'} onClick={(e: any) => { if (e.point) clickTargetRef.current = { x: e.point.x, z: e.point.z } }} />
+          <Floor groundColor={isNight ? '#1a1a30' : '#3a5a2a'} onClick={(e: any) => { if (e.point) clickTargetRef.current = { x: e.point.x, z: e.point.z } }} />
 
           {/* 가로등 (도로변) */}
           {[-44, -36, -28, -20, -12, -4, 8, 16, 24, 32, 40].map((v, i) => (

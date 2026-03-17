@@ -6,8 +6,7 @@ import Lights from '@/models/ui/Lights'
 import Character, { OtherCharacter, CharacterInput } from '@/models/Character'
 import MobileControls, { MobileInput } from '@/components/dom/MobileControls'
 import { useRouter } from 'next/router'
-import StoneHenge from './ui/StoneHenge'
-import { useImmer } from 'use-immer'
+import { RouletteTable, SlotCabinet, MineRock, RocketPad } from './ui/GameLandmarks'
 import { MAP_BLOCKS } from '@/utils/mapData'
 
 const MAP_SIZE = 50
@@ -103,7 +102,6 @@ const Field = ({
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [router])
 
-  const [sparkel, setSparkel] = useImmer({ stone_henge: false })
 
   return (
     isSet &&
@@ -148,63 +146,28 @@ const Field = ({
               mobileInputRef={mobileInputRef}
             />
 
-            <StoneHenge
-              position={[10, 0.4, 0]}
-              onPointerOver={() => setSparkel((d) => { d.stone_henge = true })}
-              onPointerOut={() => setSparkel((d) => { d.stone_henge = false })}
-            />
-            {(sparkel.stone_henge || nearSpace?.id === 'roulette') && (
-              <Sparkles count={50} size={6} position={[10, 0.4, 0]} scale={[3, 1.5, 2]} speed={5} color='white' />
+            {/* 게임장: 룰렛 테이블 */}
+            <RouletteTable position={[10, 0, 0]} />
+            {nearSpace?.id === 'roulette' && (
+              <Sparkles count={60} size={6} position={[10, 1, 0]} scale={[3, 2, 3]} speed={5} color='#2ecc71' />
             )}
 
-            {/* 게임장: 슬롯머신 */}
-            <group position={[-10, 0, 10]}>
-              {/* 슬롯머신 모형 */}
-              <mesh castShadow receiveShadow position={[0, 1, 0]}>
-                <boxGeometry args={[1.2, 2, 0.8]} />
-                <meshStandardMaterial color='#6a1b9a' />
-              </mesh>
-              <mesh castShadow position={[0, 2.2, 0]}>
-                <boxGeometry args={[1.4, 0.3, 0.9]} />
-                <meshStandardMaterial color='#c9a84c' />
-              </mesh>
-              <mesh castShadow position={[0, 0.3, 0.5]}>
-                <cylinderGeometry args={[0.08, 0.08, 0.6, 8]} />
-                <meshStandardMaterial color='#e74c3c' />
-              </mesh>
-            </group>
+            {/* 게임장: 슬롯머신 캐비넷 */}
+            <SlotCabinet position={[-10, 0, 10]} />
             {nearSpace?.id === 'slot' && (
-              <Sparkles count={50} size={6} position={[-10, 0.4, 10]} scale={[3, 1.5, 2]} speed={5} color='#da70d6' />
+              <Sparkles count={60} size={6} position={[-10, 1.5, 10]} scale={[3, 3, 3]} speed={5} color='#da70d6' />
             )}
 
-            {/* 게임장: Mines */}
-            <group position={[0, 0, -12]}>
-              <mesh castShadow receiveShadow position={[0, 0.6, 0]}>
-                <dodecahedronGeometry args={[0.8, 0]} />
-                <meshStandardMaterial color='#2980b9' />
-              </mesh>
-              <mesh castShadow position={[0, 1.6, 0]}>
-                <octahedronGeometry args={[0.4, 0]} />
-                <meshStandardMaterial color='#3498db' emissive='#1a5276' emissiveIntensity={0.5} />
-              </mesh>
-            </group>
+            {/* 게임장: 지뢰찾기 보석 바위 */}
+            <MineRock position={[0, 0, -12]} />
             {nearSpace?.id === 'mines' && (
-              <Sparkles count={50} size={6} position={[0, 0.4, -12]} scale={[3, 1.5, 2]} speed={5} color='#3498db' />
+              <Sparkles count={60} size={6} position={[0, 1, -12]} scale={[3, 2, 3]} speed={5} color='#3498db' />
             )}
 
-            {/* 게임장: Crash */}
-            <group position={[-12, 0, -5]}>
-              <mesh castShadow receiveShadow position={[0, 1, 0]} rotation={[0, 0, 0.3]}>
-                <coneGeometry args={[0.5, 2, 6]} />
-                <meshStandardMaterial color='#e74c3c' />
-              </mesh>
-              <mesh castShadow position={[0, 0.15, 0]}>
-                <cylinderGeometry args={[0.8, 0.8, 0.3, 8]} />
-                <meshStandardMaterial color='#c0392b' />
-              </mesh>
-            </group>
+            {/* 게임장: 크래시 로켓 */}
+            <RocketPad position={[-12, 0, -5]} />
             {nearSpace?.id === 'crash' && (
-              <Sparkles count={50} size={6} position={[-12, 0.4, -5]} scale={[3, 1.5, 2]} speed={5} color='#e74c3c' />
+              <Sparkles count={60} size={6} position={[-12, 1, -5]} scale={[3, 2, 3]} speed={5} color='#e74c3c' />
             )}
           </Suspense>
 

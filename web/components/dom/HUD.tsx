@@ -131,6 +131,11 @@ const HUD = () => {
               <p>🃏 Baccarat - 바카라</p>
               <p>✊ RPS - 가위바위보</p>
               <p>🏇 Horse Race - 경마</p>
+              <p>🏗️ Tower - 층 올라가기</p>
+              <p>🎫 Scratch Card - 스크래치</p>
+              <p>🎯 Limbo - 목표 배수</p>
+              <p>🎨 Color Predict - 색 예측</p>
+              <p>💣 Bomb Defuse - 폭탄 해체</p>
             </div>
             <div style={{ borderTop: '1px solid #333', paddingTop: '6px', marginTop: '2px' }}>
               <span style={{ color: '#ffd700' }}>머니</span>

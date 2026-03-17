@@ -311,6 +311,67 @@ const Field = ({
             {nearSpace?.id === 'horserace' && (
               <Sparkles count={60} size={6} position={[25, 1, -25]} scale={[3, 2, 3]} speed={5} color='#2ecc71' />
             )}
+
+            {/* Tower */}
+            <group position={[35, 0, 10]}>
+              {[0, 0.5, 1, 1.5].map((y, i) => (
+                <mesh key={i} castShadow position={[0, y + 0.25, 0]}>
+                  <boxGeometry args={[1.2 - i * 0.15, 0.5, 1.2 - i * 0.15]} />
+                  <meshStandardMaterial color={['#9b59b6', '#8e44ad', '#7d3c98', '#6c3483'][i]} />
+                </mesh>
+              ))}
+            </group>
+            {nearSpace?.id === 'tower' && <Sparkles count={60} size={6} position={[35, 1.5, 10]} scale={[3, 3, 3]} speed={5} color='#9b59b6' />}
+
+            {/* Scratch Card */}
+            <group position={[-35, 0, -10]}>
+              <mesh castShadow receiveShadow position={[0, 0.5, 0]}>
+                <boxGeometry args={[1.2, 0.05, 0.8]} />
+                <meshStandardMaterial color='#f39c12' metalness={0.3} />
+              </mesh>
+              <mesh castShadow position={[0, 0.7, 0]}>
+                <boxGeometry args={[0.8, 0.02, 0.5]} />
+                <meshStandardMaterial color='#c9a84c' metalness={0.5} />
+              </mesh>
+            </group>
+            {nearSpace?.id === 'scratch' && <Sparkles count={60} size={6} position={[-35, 1, -10]} scale={[3, 2, 3]} speed={5} color='#f39c12' />}
+
+            {/* Limbo */}
+            <group position={[10, 0, 35]}>
+              <mesh castShadow position={[0, 1, 0]}>
+                <cylinderGeometry args={[0.08, 0.1, 2, 6]} />
+                <meshStandardMaterial color='#3498db' />
+              </mesh>
+              <mesh castShadow position={[0, 2.1, 0]}>
+                <sphereGeometry args={[0.3, 8, 8]} />
+                <meshStandardMaterial color='#e74c3c' emissive='#e74c3c' emissiveIntensity={0.3} />
+              </mesh>
+            </group>
+            {nearSpace?.id === 'limbo' && <Sparkles count={60} size={6} position={[10, 1, 35]} scale={[3, 2, 3]} speed={5} color='#3498db' />}
+
+            {/* Color Predict */}
+            <group position={[-10, 0, -35]}>
+              {[[-0.3, '#e74c3c'], [0, '#2ecc71'], [0.3, '#9b59b6']].map(([x, c], i) => (
+                <mesh key={i} castShadow position={[x as number, 0.5 + i * 0.2, 0]}>
+                  <sphereGeometry args={[0.25, 8, 8]} />
+                  <meshStandardMaterial color={c as string} emissive={c as string} emissiveIntensity={0.3} />
+                </mesh>
+              ))}
+            </group>
+            {nearSpace?.id === 'colorpredict' && <Sparkles count={60} size={6} position={[-10, 1, -35]} scale={[3, 2, 3]} speed={5} color='#e91e63' />}
+
+            {/* Bomb Defuse */}
+            <group position={[35, 0, 35]}>
+              <mesh castShadow position={[0, 0.4, 0]}>
+                <sphereGeometry args={[0.5, 8, 8]} />
+                <meshStandardMaterial color='#1a1a1a' />
+              </mesh>
+              <mesh castShadow position={[0, 0.9, 0]}>
+                <cylinderGeometry args={[0.05, 0.05, 0.3, 6]} />
+                <meshStandardMaterial color='#c9a84c' />
+              </mesh>
+            </group>
+            {nearSpace?.id === 'bombdefuse' && <Sparkles count={60} size={6} position={[35, 1, 35]} scale={[3, 2, 3]} speed={5} color='#e74c3c' />}
           </Suspense>
 
           <Floor onClick={(e: any) => {

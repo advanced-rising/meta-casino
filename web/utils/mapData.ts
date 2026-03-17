@@ -42,6 +42,11 @@ export const MAP_BLOCKS: [number, number, number, number, number, number][] = [
   [0, 0, 25, 2.4, 1.5, 2.4],     // 바카라
   [-25, 0, -25, 1.6, 1.5, 1.6],  // 가위바위보
   [25, 0, -25, 2.4, 1.5, 2.4],   // 경마
+  [35, 0, 10, 1.5, 2, 1.5],      // 타워
+  [-35, 0, -10, 1.5, 1.5, 1.5],  // 스크래치
+  [10, 0, 35, 1.5, 1.5, 1.5],    // 림보
+  [-10, 0, -35, 1.5, 1.5, 1.5],  // 컬러프레딕트
+  [35, 0, 35, 1.5, 1.5, 1.5],    // 폭탄해체
 
   // 동상 (교차로 4개)
   [20, 0, 20, 1.2, 2.5, 1.2],
@@ -93,6 +98,11 @@ export const GAME_SPACES = [
   { id: 'baccarat', name: 'Baccarat 🃏', position: [0, 0, 25] as [number, number, number], route: '/space/baccarat', radius: 3 },
   { id: 'rps', name: 'Rock Paper Scissors ✊', position: [-25, 0, -25] as [number, number, number], route: '/space/rps', radius: 3 },
   { id: 'horserace', name: 'Horse Race 🏇', position: [25, 0, -25] as [number, number, number], route: '/space/horserace', radius: 3 },
+  { id: 'tower', name: 'Tower 🏗️', position: [35, 0, 10] as [number, number, number], route: '/space/tower', radius: 3 },
+  { id: 'scratch', name: 'Scratch Card 🎫', position: [-35, 0, -10] as [number, number, number], route: '/space/scratch', radius: 3 },
+  { id: 'limbo', name: 'Limbo 🎯', position: [10, 0, 35] as [number, number, number], route: '/space/limbo', radius: 3 },
+  { id: 'colorpredict', name: 'Color Predict 🎨', position: [-10, 0, -35] as [number, number, number], route: '/space/colorpredict', radius: 3 },
+  { id: 'bombdefuse', name: 'Bomb Defuse 💣', position: [35, 0, 35] as [number, number, number], route: '/space/bombdefuse', radius: 3 },
 ]
 
 // AABB 충돌 체크

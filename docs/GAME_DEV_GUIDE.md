@@ -1,144 +1,174 @@
 # META CASINO - 게임 개발 가이드
 
-새로운 게임을 추가할 때 참고하는 가이드.
-
 ---
 
-## 새 게임 추가 절차
+## 새 게임 추가 (4단계)
 
-### Step 1: 게임 페이지
-
-`web/pages/space/{game-name}.tsx`:
-
-```tsx
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { getMoney } from '@/utils/money'
-import MyGame from '@/components/games/MyGame'
-
-export default function MyGamePage() {
-  const router = useRouter()
-  const [money, setMoney] = useState(0)
-  useEffect(() => setMoney(getMoney()), [])
-
-  return (
-    <div className='fixed top-0 w-screen h-screen z-[9000] bg-[#1a1a2e]'>
-      <div className='flex items-center justify-between px-[20px] py-[10px] bg-[#16213e]'>
-        <button className='bg-[#e94560] text-white px-[16px] py-[8px] rounded-[8px]'
-          onClick={() => router.push('/')}>필드이동</button>
-        <h2 className='text-white text-[18px] font-bold'>My Game</h2>
-        <div className='text-white'>💰 {money.toLocaleString()}</div>
-      </div>
-      <MyGame onMoneyChange={setMoney} />
-    </div>
-  )
-}
-```
-
-### Step 2: 게임 로직 컴포넌트
+### 1. 게임 컴포넌트
 
 `web/components/games/MyGame.tsx`:
 
 ```tsx
+import { useState, useEffect } from 'react'
 import { getMoney, addMoney, subtractMoney } from '@/utils/money'
 
-const MyGame = ({ onMoneyChange }) => {
-  const handleWin = (amount) => {
-    const newMoney = addMoney(amount)
-    onMoneyChange(newMoney)
-  }
-  const handleLose = (amount) => {
-    const newMoney = subtractMoney(amount)
-    onMoneyChange(newMoney)
-  }
-  // 게임 UI...
+const BET_OPTIONS = [100, 500, 1000, 2000]
+
+const MyGame = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void }) => {
+  const [money, setMoneyLocal] = useState(0)
+  const [bet, setBet] = useState(100)
+  const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
+  useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
+
+  return (
+    <div className='h-[calc(100vh-52px)] flex overflow-hidden'>
+      <div className='flex-1 flex flex-col items-center justify-center gap-[12px] px-[8px]'>
+        {/* 게임 UI */}
+      </div>
+      {/* 데스크탑 사이드 패널 */}
+      <div className='hidden lg:flex flex-col w-[220px] overflow-y-auto py-[12px] px-[10px] gap-[10px]'
+        style={{ background: '#0d0d0d', borderLeft: '1px solid #c9a84c22' }}>
+        {/* 통계, 히스토리 */}
+      </div>
+    </div>
+  )
+}
+export default MyGame
+```
+
+### 2. 페이지
+
+`web/pages/space/mygame.tsx`:
+
+```tsx
+import MyGame from '@/components/games/MyGame'
+import GameLayout from '@/components/layout/GameLayout'
+import { useState } from 'react'
+
+export default function Page() {
+  const [money, setMoney] = useState(0)
+  return (
+    <GameLayout title='MY GAME' theme='green' money={money} onMoneyChange={setMoney}>
+      <MyGame onMoneyChange={setMoney} />
+    </GameLayout>
+  )
 }
 ```
 
-### Step 3: 필드에 게임장 추가
+**테마 옵션**: `green`, `purple`, `blue`, `red`, `gold`, `dark`
 
-`web/models/Field.tsx`에 랜드마크 배치:
+### 3. 맵 등록
 
-```tsx
-<StoneHenge // 또는 새 3D 모델
-  position={[-15, 0.4, -10]}
-  onClick={() => {
-    openModal(EnterSpace, {
-      props: { spaceName: 'My Game', onClick: () => router.push('/space/my-game') }
-    })
-  }}
-/>
+`web/utils/mapData.ts`의 `GAME_SPACES`에 추가:
+
+```ts
+{ id: 'mygame', name: 'My Game 🎮', position: [x, 0, z], route: '/space/mygame', radius: 3 },
 ```
+
+충돌 박스도 `MAP_BLOCKS`에 추가:
+
+```ts
+[x, 0, z, 1.5, 1.5, 1.5],  // mygame
+```
+
+### 4. 3D 랜드마크
+
+`web/models/ui/GameLandmarks.tsx`에 컴포넌트 추가 후 `Field.tsx`에서 import + 배치.
+
+`web/components/dom/HUD.tsx`의 게임 목록에도 추가.
 
 ---
 
-## 머니 시스템
+## 머니 API
 
-```tsx
+```ts
 import { getMoney, addMoney, subtractMoney, resetMoney } from '@/utils/money'
 
-getMoney()              // 현재 잔액
-addMoney(5000)          // +5000, 반환: 갱신된 잔액
-subtractMoney(3000)     // -3000 (0 미만 안됨)
-resetMoney()            // 10,000으로 초기화
+getMoney()           // 현재 잔액
+addMoney(5000)       // +5000 (반환: 갱신된 잔액)
+subtractMoney(3000)  // -3000 (0 미만 불가)
+resetMoney()         // $10,000으로 초기화
 ```
 
-- localStorage 저장
-- 1시간마다 5,000 자동 충전 (HUD에서 자동 처리)
+- 1시간마다 $5,000 자동 충전 (HUD에서 자동 처리)
+
+---
+
+## GameLayout 테마
+
+| 테마 | 배경 | 게임 |
+|------|------|------|
+| green | 다크 그린 | 룰렛, 블랙잭, 바카라, 하이로, 다이스, 경마 |
+| purple | 다크 퍼플 | 슬롯, 포춘휠 |
+| blue | 다크 블루 | 마인즈, 플링코, 림보 |
+| red | 다크 레드 | 크래시, 폭탄해체 |
+| gold | 다크 골드 | 코인플립, 스크래치, 가위바위보 |
+| dark | 다크 | 기본 |
 
 ---
 
 ## 맵 좌표
 
-맵 크기: 50x50 (반경 25), 보이지 않는 벽으로 경계.
+현재 게임장 배치:
 
-현재 오브젝트 배치:
-- `[10, 0.4, 0]` - 룰렛 StoneHenge
-- `[-5 ~ 5, 0, -8 ~ 5]` - 장애물 박스
-- `[-10, 0.25~1.25, -8~-4]` - 계단식 장애물
+```
+              -Z (위)
+               │
+  [-30,0]BJ   [0,-18]Mines  [18,-15]HiLo  [30,-20]Plinko
+               │
+  [-25,-25]RPS  중앙분수[0,0]               [25,-25]Horse
+               │
+  [-18,-12]Crash [-10,-35]Color            [35,-10]MidPlat
+               │
+  [-15,15]Slot [0,25]Baccarat [15,0]Roulette
+               │
+  [-20,20]Dice [15,18]Coin  [20,20]Wheel  [35,10]Tower
+               │
+  [-35,-10]Scratch          [35,35]Bomb    [10,35]Limbo
+               │
+              +Z (아래)
+```
 
-비어있는 추천 위치:
-- `[-15, 0.4, -10]` - 좌측 하단
-- `[15, 0.4, -15]` - 우측 상단
-- `[-15, 0.4, 10]` - 좌측 상단
+비어있는 추천 위치: `[-35, 0, 35]`, `[40, 0, 0]`, `[0, 0, -35]`
 
 ---
 
-## 기존 게임 참고: 룰렛
+## 기존 게임 패턴 참고
+
+### 캐시아웃형 (Mines, Crash, Tower, RPS, Hi-Lo, Bomb Defuse)
 
 ```
-web/pages/space/roulette.tsx       ← 페이지
-web/components/games/Roulette.tsx  ← 게임 (배팅 + 결과 + 머니 연동)
-web/components/roulette/Wheel.tsx  ← 휠 애니메이션 (anime.js)
-web/components/roulette/Global.tsx ← 타입 정의
+배팅 → 진행 중 배수 증가 → 캐시아웃 또는 실패
 ```
 
-룰렛 기능:
-- 칩 선택 (100, 500, 1K, 5K)
-- 숫자/색상/홀짝/하이로 배팅
-- anime.js 스핀 애니메이션
-- 당첨금 자동 계산 + 머니 반영
-- 히스토리 표시
+### 즉시 결과형 (Roulette, Coin Flip, Dice, Limbo, Color Predict)
 
----
+```
+배팅 → 선택 → 결과 → 당첨/꽝
+```
 
-## 추가 가능한 게임
+### 애니메이션형 (Slot, Fortune Wheel, Plinko, Horse Race)
 
-| 게임 | 난이도 | 배당 |
-|------|--------|------|
-| 슬롯 머신 | ★☆☆ | CSS 릴 애니메이션 |
-| 블랙잭 | ★★☆ | 카드 로직 + AI 딜러 |
-| 하이로우 | ★☆☆ | 다음 카드 높/낮 예측 |
-| 주사위 | ★☆☆ | 홀짝/합 맞추기 |
-| 바카라 | ★★☆ | 플레이어 vs 뱅커 |
+```
+배팅 → 스핀/낙하/레이스 애니메이션 → 결과
+```
+
+### 카드형 (Blackjack, Baccarat, Hi-Lo)
+
+```
+배팅 → 카드 딜 → 선택(Hit/Stand) → 결과
+```
 
 ---
 
 ## 체크리스트
 
-- [ ] `web/pages/space/{name}.tsx` 페이지
-- [ ] `web/components/games/{Name}.tsx` 게임 컴포넌트
-- [ ] `web/models/Field.tsx`에 랜드마크 추가
-- [ ] `@/utils/money`로 머니 연동
-- [ ] 필드 복귀 버튼 (`router.push('/')`)
-- [ ] 잔액 표시
+- [ ] `web/components/games/` 게임 컴포넌트
+- [ ] `web/pages/space/` 페이지 (GameLayout 래핑)
+- [ ] `web/utils/mapData.ts` GAME_SPACES + MAP_BLOCKS 추가
+- [ ] `web/models/ui/GameLandmarks.tsx` 3D 랜드마크
+- [ ] `web/models/Field.tsx` 랜드마크 import + 배치 + Sparkles
+- [ ] `web/components/dom/HUD.tsx` 게임 목록 추가
+- [ ] 데스크탑 사이드 패널 (통계 + 히스토리)
+- [ ] 직접 입력 배팅
+- [ ] `@/utils/money` 머니 연동

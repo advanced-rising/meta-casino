@@ -205,23 +205,30 @@ const Character = ({
       }
     }
 
-    // 모바일 조이스틱 입력
+    // 모바일 조이스틱: MMORPG 방식 (위=앞, 좌우=회전)
     const mobile = mobileInputRef?.current
     if (mobile && mobile.active) {
       const mobileSpeed = mobile.magnitude > 0.7 ? 14 : 7
 
-      // 화면 방향 → 월드 좌표 변환 (아이소메트릭 카메라 45도)
-      // 화면 오른쪽(+dx) = 월드 (+x, -z) / 화면 아래(+dy) = 월드 (+x, +z)
-      const SIN45 = 0.7071
-      const worldX = (mobile.dx + mobile.dy) * SIN45
-      const worldZ = (-mobile.dx + mobile.dy) * SIN45
+      // 좌우(dx) = 캐릭터 회전, 상하(-dy) = 앞뒤 이동
+      if (Math.abs(mobile.dx) > 0.3) {
+        rotationY.current -= mobile.dx * 3.0 * delta
+      }
 
-      moveX = worldX * mobileSpeed * delta * mobile.magnitude
-      moveZ = worldZ * mobileSpeed * delta * mobile.magnitude
-
-      // 캐릭터가 이동 방향을 바라보도록
-      rotationY.current = Math.atan2(worldX, worldZ)
-      isMoving = true
+      const fwd = new THREE.Vector3(Math.sin(rotationY.current), 0, Math.cos(rotationY.current))
+      // 위로 밀면(-dy) 전진, 아래로 밀면(+dy) 후진
+      if (Math.abs(mobile.dy) > 0.2) {
+        const forwardAmount = -mobile.dy * mobileSpeed * delta
+        moveX += fwd.x * forwardAmount
+        moveZ += fwd.z * forwardAmount
+        isMoving = true
+      }
+      // 좌우만 밀어도 약간 전진
+      if (Math.abs(mobile.dx) > 0.3 && Math.abs(mobile.dy) < 0.2) {
+        moveX += fwd.x * mobileSpeed * 0.3 * delta
+        moveZ += fwd.z * mobileSpeed * 0.3 * delta
+        isMoving = true
+      }
       anim.run = mobile.magnitude > 0.7
     } else {
       // 키보드: W=앞, S=뒤, A=좌회전, D=우회전 (MMORPG 스타일)

@@ -39,12 +39,13 @@ const randSym = () => WEIGHTED_POOL[Math.floor(Math.random() * WEIGHTED_POOL.len
  * 스트립 = 현재 5개 + 랜덤 EXTRA개 + 최종 5개
  * 초기 y=0 (현재 5개 보임) → y=-(EXTRA+ROWS)*CELL (최종 5개 보임) → 완료 후 y=0으로 리셋 (최종을 현재로)
  */
-const Column = ({ symbols, colIdx, spinSignal, finalSymbols, onDone }: {
+const Column = ({ symbols, colIdx, spinSignal, finalSymbols, onDone, speed = 1 }: {
   symbols: string[]
   colIdx: number
   spinSignal: number
   finalSymbols: string[]
   onDone: () => void
+  speed?: number
 }) => {
   const controls = useAnimation()
   const [strip, setStrip] = useState<string[]>(symbols)
@@ -61,8 +62,8 @@ const Column = ({ symbols, colIdx, spinSignal, finalSymbols, onDone }: {
     setStrip(full)
 
     const scrollY = (full.length - ROWS) * CELL
-    const delay = colIdx * 0.2
-    const duration = 1.5 + colIdx * 0.3
+    const delay = (colIdx * 0.2) / speed
+    const duration = (1.5 + colIdx * 0.3) / speed
 
     controls.set({ y: 0 })
 
@@ -115,6 +116,8 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
   const [autoSpin, setAutoSpin] = useState(false)
   const [autoCount, setAutoCount] = useState(0)
   const [spinSignal, setSpinSignal] = useState(0)
+  const [speed, setSpeed] = useState(1)
+  const speedRef = useRef(1)
   const stoppedCols = useRef(0)
   const nextGrid = useRef<string[][]>([])
   const autoRef = useRef(false)
@@ -122,6 +125,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
   const setMoney = (v: number) => { setMoneyLocal(v); onMoneyChange?.(v) }
   useEffect(() => { const m = getMoney(); setMoneyLocal(m); onMoneyChange?.(m) }, [])
   useEffect(() => { autoRef.current = autoSpin }, [autoSpin])
+  useEffect(() => { speedRef.current = speed }, [speed])
 
   const checkWins = useCallback((g: string[][]): { total: number; cells: Set<number>; lineCount: number } => {
     const flat: string[] = []
@@ -154,7 +158,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
       setSpinning(false)
       if (autoRef.current) {
         setAutoCount((c) => c + 1)
-        setTimeout(() => { if (autoRef.current) doSpin() }, 1800)
+        setTimeout(() => { if (autoRef.current) doSpin() }, 1800 / speedRef.current)
       }
     }
   }, [bet, checkWins])
@@ -205,6 +209,7 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
                 spinSignal={spinSignal}
                 finalSymbols={nextGrid.current[c] || grid[c]}
                 onDone={onColDone}
+                speed={autoSpin ? speed : 1}
               />
             ))}
           </div>
@@ -291,6 +296,23 @@ const SlotMachine = ({ onMoneyChange }: { onMoneyChange?: (m: number) => void })
             }}>
             {autoSpin ? `AUTO (${autoCount})` : 'AUTO'}
           </button>
+
+          {/* 배속 (AUTO 중에만 활성) */}
+          {autoSpin && (
+            <div className='flex gap-[4px]'>
+              {[1, 2, 3, 5].map((s) => (
+                <button key={s} onClick={() => setSpeed(s)}
+                  className='w-[36px] h-[36px] rounded-[6px] text-[11px] font-bold'
+                  style={{
+                    background: speed === s ? '#c9a84c' : '#333',
+                    color: speed === s ? '#1a0f08' : '#666',
+                    border: speed === s ? '2px solid #ffd700' : '1px solid #555',
+                  }}>
+                  x{s}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className='text-[12px]' style={{ color: '#888' }}>

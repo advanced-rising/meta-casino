@@ -176,6 +176,36 @@ const Field = ({
             {nearSpace?.id === 'slot' && (
               <Sparkles count={50} size={6} position={[-10, 0.4, 10]} scale={[3, 1.5, 2]} speed={5} color='#da70d6' />
             )}
+
+            {/* 게임장: Mines */}
+            <group position={[0, 0, -12]}>
+              <mesh castShadow receiveShadow position={[0, 0.6, 0]}>
+                <dodecahedronGeometry args={[0.8, 0]} />
+                <meshStandardMaterial color='#2980b9' />
+              </mesh>
+              <mesh castShadow position={[0, 1.6, 0]}>
+                <octahedronGeometry args={[0.4, 0]} />
+                <meshStandardMaterial color='#3498db' emissive='#1a5276' emissiveIntensity={0.5} />
+              </mesh>
+            </group>
+            {nearSpace?.id === 'mines' && (
+              <Sparkles count={50} size={6} position={[0, 0.4, -12]} scale={[3, 1.5, 2]} speed={5} color='#3498db' />
+            )}
+
+            {/* 게임장: Crash */}
+            <group position={[-12, 0, -5]}>
+              <mesh castShadow receiveShadow position={[0, 1, 0]} rotation={[0, 0, 0.3]}>
+                <coneGeometry args={[0.5, 2, 6]} />
+                <meshStandardMaterial color='#e74c3c' />
+              </mesh>
+              <mesh castShadow position={[0, 0.15, 0]}>
+                <cylinderGeometry args={[0.8, 0.8, 0.3, 8]} />
+                <meshStandardMaterial color='#c0392b' />
+              </mesh>
+            </group>
+            {nearSpace?.id === 'crash' && (
+              <Sparkles count={50} size={6} position={[-12, 0.4, -5]} scale={[3, 1.5, 2]} speed={5} color='#e74c3c' />
+            )}
           </Suspense>
 
           <Floor />

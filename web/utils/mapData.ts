@@ -16,6 +16,8 @@ export const MAP_LIMIT = 48
 export const GAME_SPACES = [
   { id: 'roulette', name: 'Casino Roulette', position: [10, 0, 0] as [number, number, number], route: '/space/roulette', radius: 3 },
   { id: 'slot', name: 'Slot Machine 777', position: [-10, 0, 10] as [number, number, number], route: '/space/slot', radius: 3 },
+  { id: 'mines', name: 'Mines 💎💣', position: [0, 0, -12] as [number, number, number], route: '/space/mines', radius: 3 },
+  { id: 'crash', name: 'Crash 🚀', position: [-12, 0, -5] as [number, number, number], route: '/space/crash', radius: 3 },
 ]
 
 // AABB 충돌 체크: 캐릭터를 점+높이로 간소화

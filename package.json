@@ -1,9 +1,12 @@
 {
   "name": "meta-casino-root",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "cd web && yarn dev",
-    "build": "cd web && yarn build",
+    "build": "cd web && yarn install --ignore-engines && cd web && yarn build",
     "install": "cd web && yarn install --ignore-engines"
   }
 }
